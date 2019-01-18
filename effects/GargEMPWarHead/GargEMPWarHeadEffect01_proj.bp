@@ -1,0 +1,31 @@
+ProjectileBlueprint {
+    DevStatus = 'STABLE',
+    Display = {
+        Mesh = {
+            LODs = {
+                {
+                    MeshName = '/effects/Entities/Sphere01/Sphere01_lod0.scm',
+                    LODCutoff = 1000.0,
+                },
+            },
+        },
+        UniformScale = 1,
+    },
+    Physics = {
+        Acceleration = 0,
+        AccelerationRange = 0,
+        CollideEntity = false,
+        CollideSurface = false,
+        DestroyOnWater = false,
+        InitialSpeed = 0,
+        InitialSpeedRange = 0,
+        Lifetime = 26,
+        MaxSpeed = 1,
+        PositionY = -18,
+        RotationalVelocity = 0,
+        RotationalVelocityRange = 0,
+        TurnRate = 0,
+        UseGravity = false,
+        VelocityAlign = false,
+    },
+}
