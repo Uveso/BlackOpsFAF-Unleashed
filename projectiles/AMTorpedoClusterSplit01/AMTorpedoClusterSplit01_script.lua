@@ -10,9 +10,9 @@ local VizMarker = import('/lua/sim/VizMarker.lua').VizMarker
 
 AANTorpedoCluster01 = Class(AMTorpedoCluster) {
     CountdownLength = 10,
-    FxEnterWater= { '/effects/emitters/water_splash_ripples_ring_01_emit.bp',
+    FxEnterWater= {'/effects/emitters/water_splash_ripples_ring_01_emit.bp',
                     '/effects/emitters/water_splash_plume_01_emit.bp',},
-    FxExitWater= { '/effects/emitters/water_splash_ripples_ring_01_emit.bp',
+    FxExitWater= {'/effects/emitters/water_splash_ripples_ring_01_emit.bp',
                     '/effects/emitters/water_splash_plume_01_emit.bp',},
 
     OnCreate = function(self)
@@ -38,7 +38,7 @@ AANTorpedoCluster01 = Class(AMTorpedoCluster) {
         end
         self:ForkThread(self.EnterWaterMovementThread)
     end,
-    
+
     OnExitWater = function(self)
         AMTorpedoCluster.OnExitWater(self)
         local army = self:GetArmy()
@@ -46,7 +46,7 @@ AANTorpedoCluster01 = Class(AMTorpedoCluster) {
             CreateEmitterAtEntity(self,army,self.FxExitWater[i])
         end
     end,
-    
+
     EnterWaterMovementThread = function(self)
         self:SetAcceleration(2.5)
         self:TrackTarget(true)

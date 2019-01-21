@@ -1,5 +1,5 @@
 -----------------------------------------------------------------
--- File     :  /cdimage/units/XSB0001/XSB0001_script.lua 
+-- File     :  /cdimage/units/XSB0001/XSB0001_script.lua
 -- Author(s):  John Comes, David Tomandl
 -- Summary  :  UEF Wall Piece Script
 -- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
@@ -54,7 +54,7 @@ BSB0001 = Class(SShieldLandUnit) {
 
     OnKilled = function(self, instigator, type, overkillRatio)
         if self.ShieldEffctsBag then
-            for k,v in self.ShieldEffectsBag do
+            for k, v in self.ShieldEffectsBag do
                 v:Destroy()
             end
         end

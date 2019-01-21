@@ -14,7 +14,7 @@ local SDFHeavyPhasicAutoGunWeapon = SeraphimWeapons.SDFHeavyPhasicAutoGunWeapon
 local SeraLambdaFieldDestroyer = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsDefaultAntiProjectile.lua').SeraLambdaFieldDestroyer
 
 BSA0309 = Class(AirTransport) {
-    AirDestructionEffectBones = { 'XSA0309','Left_Attachpoint08','Right_Attachpoint02'},
+    AirDestructionEffectBones = {'XSA0309','Left_Attachpoint08','Right_Attachpoint02'},
 
     Weapons = {
         AutoGun = Class(SDFHeavyPhasicAutoGunWeapon) {},
@@ -23,7 +23,7 @@ BSA0309 = Class(AirTransport) {
         AALeft02 = Class(SAAShleoCannonWeapon) {},
         AARight02 = Class(SAAShleoCannonWeapon) {},
     },
-    
+
     OnStopBeingBuilt = function(self, builder, layer)
         local bp = self:GetBlueprint().Defense.LambdaField
         local field = SeraLambdaFieldDestroyer {
@@ -36,7 +36,7 @@ BSA0309 = Class(AirTransport) {
         self.UnitComplete = true
         AirTransport.OnStopBeingBuilt(self,builder,layer)
     end,
-    
+
     -- Override air destruction effects so we can do something custom here
     CreateUnitAirDestructionEffects = function(self, scale)
         self:ForkThread(self.AirDestructionEffectsThread, self)

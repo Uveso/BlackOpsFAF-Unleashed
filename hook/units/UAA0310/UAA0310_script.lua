@@ -58,7 +58,7 @@ UAA0310 = Class(AAirUnit) {
 
     OnAnimTerrainCollision = function(self, bone,x,y,z)
         DamageArea(self, {x,y,z}, 5, 1000, 'Default', true, false)
-        explosion.CreateDefaultHitExplosionAtBone( self, bone, 5.0 )
+        explosion.CreateDefaultHitExplosionAtBone(self, bone, 5.0)
         explosion.CreateDebrisProjectiles(self, explosion.GetAverageBoundingXYZRadius(self), {self:GetUnitSizes()})
     end,
     BuildAttachBone = 'UAA0310',
@@ -69,7 +69,7 @@ UAA0310 = Class(AAirUnit) {
         self:SetWeaponEnabledByLabel('SuperQuantumBeamGeneratorWeapon', false)
         self:ForkThread(self.CheckAIThread)
     end,
-    
+
     CheckAIThread = function(self)
         if not self.AnimationManipulator then
             self.AnimationManipulator = CreateAnimator(self)
@@ -136,10 +136,10 @@ UAA0310 = Class(AAirUnit) {
             ChangeState(self, self.IdleState)
         end,
     },
-    
+
     OnScriptBitSet = function(self, bit)
         AAirUnit.OnScriptBitSet(self, bit)
-        if bit == 1 then 
+        if bit == 1 then
             if not self.Animator then
                 self.Animator = CreateAnimator(self)
                 self.Trash:Add(self.Animator)
@@ -147,9 +147,9 @@ UAA0310 = Class(AAirUnit) {
             end
             self.Animator:SetRate(0.2)
             self:SetSpeedMult(0.25)
-            
+
             self:ForkThread(function()
-                self:AddBuildRestriction( categories.BUILTBYTIER3FACTORY )
+                self:AddBuildRestriction(categories.BUILTBYTIER3FACTORY)
                 self:RemoveToggleCap('RULEUTC_WeaponToggle')
                 self:SetWeaponEnabledByLabel('SuperQuantumBeamGeneratorWeapon', false)
                 self:SetWeaponEnabledByLabel('QuantumBeamGeneratorWeapon', false)
@@ -158,13 +158,13 @@ UAA0310 = Class(AAirUnit) {
                 self:SetWeaponEnabledByLabel('QuantumBeamGeneratorWeapon', true)
                 self:AddToggleCap('RULEUTC_WeaponToggle')
             end)
-            
+
         end
     end,
 
     OnScriptBitClear = function(self, bit)
         AAirUnit.OnScriptBitClear(self, bit)
-        if bit == 1 then 
+        if bit == 1 then
             if self.Animator then
                 self.Animator:SetRate(-0.2)
             end
@@ -175,12 +175,12 @@ UAA0310 = Class(AAirUnit) {
                 WaitSeconds(self.Animator:GetAnimationDuration()*4)
                 self:SetWeaponEnabledByLabel('QuantumBeamGeneratorWeapon', true)
                 self:AddToggleCap('RULEUTC_WeaponToggle')
-                self:RemoveBuildRestriction( categories.BUILTBYTIER3FACTORY )
+                self:RemoveBuildRestriction(categories.BUILTBYTIER3FACTORY)
                 self:SetSpeedMult(1.0)
             end)
         end
     end,
-    
+
 }
 
 TypeClass = UAA0310
