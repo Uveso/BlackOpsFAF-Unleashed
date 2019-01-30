@@ -417,13 +417,6 @@ UnitBlueprint {
             FiringTolerance = 2,
             Label = 'DeathImpact',
             WeaponCategory = 'Death',
-            FireTargetLayerCapsTable = {
-                Air = 'Land|Water|Seabed',
-                Land = 'Land|Water|Seabed',
-                Seabed = 'Land|Water|Seabed',
-                Sub = 'Land|Water|Seabed',
-                Water = 'Land|Water|Seabed',
-            },
         },
     },
     Wreckage = {
