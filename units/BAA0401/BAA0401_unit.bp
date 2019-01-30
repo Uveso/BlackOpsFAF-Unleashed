@@ -341,7 +341,7 @@ UnitBlueprint {
             CollideFriendly = false,
             Damage = 0,
             DamageFriendly = true,
-            DamageType = 'Artemis',
+            DamageType = 'Nuke',
             DisplayName = 'Golden Retribution',
             FireTargetLayerCapsTable = {
                 Air = 'Land|Water|Seabed',

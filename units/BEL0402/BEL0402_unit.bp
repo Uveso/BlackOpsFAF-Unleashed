@@ -668,7 +668,7 @@ UnitBlueprint {
             Damage = 15000,
             DamageFriendly = true,
             DamageRadius = 15,
-            DamageType = 'Normal',
+            DamageType = 'Nuke',
             DisplayName = 'Death Nuke',
             FireTargetLayerCapsTable = {
                 Land = 'Land|Water|Seabed',

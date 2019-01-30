@@ -453,7 +453,7 @@ UnitBlueprint {
             },
             Damage = 100,
             DamageRadius = 30,
-            DamageType = 'Normal',
+            DamageType = 'Nuke',
             DisplayName = 'Head weapon',
             CountedProjectile = true,
             EnergyDrainPerSecond = 0,
