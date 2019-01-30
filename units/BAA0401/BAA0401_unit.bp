@@ -147,7 +147,7 @@ UnitBlueprint {
         },
         FactionName = 'Aeon',
         Icon = 'air',
-        SelectionPriority = 5,
+        SelectionPriority = 1,
         TechLevel = 'RULEUTL_Secret',
         UnitName = '<LOC BAA0401_name>Artemis',
         UnitWeight = 1,
