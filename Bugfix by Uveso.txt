@@ -1,0 +1,9 @@
+V19 (22.Dec.2020)
+
+- Unit UAA0310 Added VeteranMassMult = 0.5, to blueprint for propper veterancy calculation
+- Unit UAS0401 Added VeteranMassMult = 0.5, to blueprint for propper veterancy calculation
+
+- Unit BAA0309 Added TeleportDelay = 10, to blueprint to match FAF patch
+- Unit BSB4209 Added TeleportDelay = 10, to blueprint to match FAF patch
+
+*************************************************************************************************************************************

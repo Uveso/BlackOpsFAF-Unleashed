@@ -225,6 +225,7 @@ UnitBlueprint {
         TechLevel = 'RULEUTL_Secret',
         UnitName = '<LOC BAA0309_name>Illuminate',
         UnitWeight = 1,
+        TeleportDelay = 10,
     },
     Intel = {
         VisionRadius = 32,
