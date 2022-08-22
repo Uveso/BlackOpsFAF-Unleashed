@@ -178,7 +178,7 @@ BSB0405 = Class(SShieldStructureUnit) {
     end,
 
     OnDamage = function(self, instigator, amount, vector, damagetype)
-        if self.Dead == false then
+        if not self.Dead then
             -- Base script for this script function was developed by Gilbot_x
             -- sets the damage resistance of the rebuilder bot to 30%
             local lambdaEmitter_DLS = 0.3

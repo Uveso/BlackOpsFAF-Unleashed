@@ -103,12 +103,6 @@ BSA0002 = Class(SConstructionUnit) {
     end,
 
     OnDamage = function(self, instigator, amount, vector, damagetype)
-        if self.Dead == false then
-            -- Base script for this script function was developed by Gilbot_x
-            -- sets the damage resistance of the rebuilder bot to 30%
-            -- local rebuilerBot_DLS = 0.3
-            -- amount = math.ceil(amount*rebuilerBot_DLS)
-        end
         if not self.Dead and instigator and IsUnit(instigator) and not instigator.Dead and not self.EvadeThread then
             self.EvadeThread = self:ForkThread(function()
                 self:SetSpeedMult(2.0)

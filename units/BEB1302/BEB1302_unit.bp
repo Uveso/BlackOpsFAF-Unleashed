@@ -120,7 +120,7 @@ UnitBlueprint {
         FactionName = 'UEF',
         Icon = 'amph',
         SelectionPriority = 5,
-        TechLevel = 'RULEUTL_Basic',
+        TechLevel = 'RULEUTL_Secret',
         UnitName = '<LOC beb1302_name>HCPP - X3000',
         UnitWeight = 1,
         UpgradesFrom = 'beb1202',

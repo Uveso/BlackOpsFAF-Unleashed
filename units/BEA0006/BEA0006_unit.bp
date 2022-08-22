@@ -177,7 +177,7 @@ UnitBlueprint {
         BuildCostMass = 180,
         BuildTime = 180,
     },
-    SizeSphere = 0.6,
+    SizeSphere = 1.4,
     General = {
         CapCost = 0,
         Category = 'Utility',
@@ -235,7 +235,6 @@ UnitBlueprint {
     SelectionSizeX = 0.3,
     SelectionSizeZ = 0.3,
     SelectionThickness = 1.2,
-    SizeSphere = 1,
     SizeX = 0.5,
     SizeY = 0.2,
     SizeZ = 0.5,

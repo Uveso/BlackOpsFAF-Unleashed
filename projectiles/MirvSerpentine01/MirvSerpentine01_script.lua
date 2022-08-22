@@ -11,14 +11,6 @@ AIFMissileSerpentine01 = Class(AMissileSerpentineProjectile) {
         self.MoveThread = self:ForkThread(self.MovementThread)
     end,
 
-    PassDamageData = function(self, damageData)
-        AMissileSerpentineProjectile.PassDamageData(self,damageData)
-        local launcherbp = self:GetLauncher():GetBlueprint()
-        self.ChildDamageData = table.copy(self.DamageData)
-        self.ChildDamageData.DamageAmount = launcherbp.SplitDamage.DamageAmount or 0
-        self.ChildDamageData.DamageRadius = launcherbp.SplitDamage.DamageRadius or 1
-    end,
-
     OnImpact = function(self, TargetType, TargetEntity)
         local FxFragEffect = EffectTemplate.TFragmentationSensorShellFrag
         local ChildProjectileBP = '/mods/BlackOpsFAF-Unleashed/projectiles/MirvSerpentineVChild01/MirvSerpentineVChild01_proj.bp'
@@ -32,7 +24,7 @@ AIFMissileSerpentine01 = Class(AMissileSerpentineProjectile) {
         local velocity = 6
 
         -- One initial projectile following same directional path as the original
-        self:CreateChildProjectile(ChildProjectileBP):SetVelocity(vx, vy, vz):SetVelocity(velocity):PassDamageData(self.ChildDamageData)
+        self:CreateChildProjectile(ChildProjectileBP):SetVelocity(vx, vy, vz):SetVelocity(velocity):PassDamageData(self.DamageData)
 
         -- Create several other projectiles in a dispersal pattern
         local numProjectiles = 5

@@ -1,4 +1,23 @@
-V19 (22.Dec.2020)
+v20 (21.Aug.2022)
+
+- added missing translation tags in tooltip.lua
+- added german translation (translation by John kobo)
+- Unit bsl0310 (Lambda Equipped Assault Bot) Added StandUpright = true,
+- Unit bsb2402 (Seraphim Quantum Rift Archway) Changed General.TechLevel from "RULEUTL_Basic" to "RULEUTL_Experimental"
+- Unit bab1302 (Hydrocarbon Power Plant) Changed General.TechLevel from "RULEUTL_Basic" to "RULEUTL_Secret"
+- Unit beb4309 (Anti-Teleport Field Tower) Changed General.TechLevel from "RULEUTL_Advanced" to "RULEUTL_Secret"
+- Unit bab2404 (Artemis Satelite Control) Changed General.TechLevel from "RULEUTL_Secret" to "RULEUTL_Experimental"
+- Unit beb1302 (Hydrocarbon Power Plant) Changed General.TechLevel from "RULEUTL_Basic" to "RULEUTL_Secret"
+- Unit brb5205 (Advanced Air Staging Facility) Fixed Display.Abilities.
+- Unit bss0401 (Experimental Dreadnought) Changed Damage for weapon (Hu Strategic Missile Defense) from 30 to 30000.
+- Unit bra0309 (T3 Air Transport) Added missing transport capacity variable (Class1Capacity = 16,)
+- Unit bsa0309 (Tech3 Air Transport) Added missing transport capacity variable (Class1Capacity = 32,)
+- Unit bra0409 (Experimental Assault Transport) Added missing transport capacity variable (Class1Capacity = 20,)
+- Unit baa0309 (T3 Air Transport) Added missing transport capacity variable (Class1Capacity = 24,)
+- Unit bab2308 (Tactical Missile Launcher) fixed no damage on AMissileSerpentineProjectile
+
+*************************************************************************************************************************************
+v19 (22.Dec.2020)
 
 - Unit UAA0310 Added VeteranMassMult = 0.5, to blueprint for propper veterancy calculation
 - Unit UAS0401 Added VeteranMassMult = 0.5, to blueprint for propper veterancy calculation

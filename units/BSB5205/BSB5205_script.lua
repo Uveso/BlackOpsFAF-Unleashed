@@ -470,7 +470,7 @@ BSB5205 = Class(SAirStagingPlatformUnit) {
 
     OnDamage = function(self, instigator, amount, vector, damagetype)
         -- Check to make sure that the carrier isnt already dead and what just damaged it is a unit we can attack
-        if self.Dead == false and damagetype == 'Normal' and self.MyAttacker == nil then
+        if not self.Dead and damagetype == 'Normal' and self.MyAttacker == nil then
             if IsUnit(instigator) then
                 self.MyAttacker = instigator
             end

@@ -194,7 +194,7 @@ BSA0001 = Class(SAirUnit) {
 
     OnDamage = function(self, instigator, amount, vector, damagetype)
         SAirUnit.OnDamage(self, instigator, amount, vector, damagetype)
-        if self.Dead == false and instigator and IsUnit(instigator) then
+        if not self.Dead and instigator and IsUnit(instigator) then
             if self.BurnerActive == false then
                 -- Set flags to true
                 self.BurnerActive = true

@@ -283,7 +283,7 @@ UnitBlueprint {
         ClassGenericUpTo = 3,
         StorageSlots = 20,
         TransportClass = 10,
-
+        Class1Capacity = 20,
     },
     UseOOBTestZoom = 200,
     Veteran = {

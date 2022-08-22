@@ -156,7 +156,7 @@ UnitBlueprint {
         FactionName = 'Seraphim',
         Icon = 'land',
         SelectionPriority = 5,
-        TechLevel = 'RULEUTL_Basic',
+        TechLevel = 'RULEUTL_Experimental',
         UnitName = '<LOC bsb5202_name>Haasioz-Iya',
         UnitWeight = 1,
     },

@@ -120,9 +120,9 @@ UnitBlueprint {
     SelectionSizeX = 0.3,
     SelectionSizeZ = 0.3,
     SelectionThickness = 1.2,
-    SizeX = 0.01,
+    SizeX = 0.46,
     SizeY = 0.01,
-    SizeZ = 0.01,
+    SizeZ = 0.46,
     StrategicIconName = 'icon_bot3_directfire',
     StrategicIconSortPriority = 207,
 }
