@@ -44,6 +44,7 @@ AirDroneCarrier = Class() {
         if not self.Dead
         and self.MyAttacker == nil
         and self:IsValidDroneTarget(instigator) then
+            LOG("Valid!")
             self.MyAttacker = instigator
         end
     end,
@@ -51,8 +52,8 @@ AirDroneCarrier = Class() {
     -- Runs a potential target through filters to insure that drones can attack it; checks are as simple and efficient as possible
     IsValidDroneTarget = function(self, target)
         local ivdt
+
         if target ~= nil
-        and target.Dead ~= nil
         and not target.Dead
         and IsEnemy(self:GetArmy(), target:GetArmy())
         and not EntityCategoryContains(categories.UNTARGETABLE, target)
@@ -246,6 +247,9 @@ AirDroneCarrier = Class() {
         local TargetWeapon = self:GetWeapon(1)
 
         while not self.Dead do
+
+            LOG(self.MyAttacker)
+
             -- Refresh current firestate and check for holdfire
             local MyFireState = self:GetFireState()
             local HoldFire = MyFireState == 1
