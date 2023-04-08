@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/XSB4205/XSB4205_script.lua
 -- Author(s):  Dru Staltman
 -- Summary  :  Seraphim T2 Power Generator Script
--- Copyright � 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local SStructureUnit = import('/lua/seraphimunits.lua').SStructureUnit
