@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/XRB4309/XRB4309_script.lua
 -- Author(s):  David Tomandl, Greg Kohne
 -- Summary  :  Cybran Shield Generator lvl 5 Script
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright Â© 2007 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local CStructureUnit = import('/lua/cybranunits.lua').CStructureUnit
@@ -12,7 +12,8 @@ BRB4209 = Class(CStructureUnit) {
     OnStopBeingBuilt = function(self,builder,layer)
         CStructureUnit.OnStopBeingBuilt(self,builder,layer)
         self:SetScriptBit('RULEUTC_ShieldToggle', true)
-        self:DisableUnitIntel('unitScript', 'CloakField') -- Used to show anti-tele range
+        -- only used to show anti-teleport range
+        self:DisableIntel('CloakField')
         self.antiteleportEmitterTable = {}
         self:ForkThread(self.ResourceThread)
     end,

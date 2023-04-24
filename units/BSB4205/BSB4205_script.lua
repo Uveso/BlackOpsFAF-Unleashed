@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/XSB4205/XSB4205_script.lua
 -- Author(s):  Dru Staltman
 -- Summary  :  Seraphim T2 Power Generator Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright Â© 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local SStructureUnit = import('/lua/seraphimunits.lua').SStructureUnit
@@ -31,7 +31,8 @@ BSB4205 = Class(SStructureUnit) {
     OnStopBeingBuilt = function(self,builder,layer)
         SStructureUnit.OnStopBeingBuilt(self,builder,layer)
         self:SetMaintenanceConsumptionActive()
-        self:DisableUnitIntel('unitScript', 'CloakField') -- Used to show restoration range
+        -- only used to show restoration range
+        self:DisableIntel('CloakField')
         if not self.ShieldEffectsBag then
             self.ShieldEffectsBag = {}
         end

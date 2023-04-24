@@ -2,7 +2,7 @@
 -- File     :  /data/units/BSB4309/BSB4309_script.lua
 -- Author(s):  Jessica St. Croix
 -- Summary  :  Seraphim T3 Radar Tower Script
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright Â© 2007 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local SStructureUnit = import('/lua/seraphimunits.lua').SStructureUnit
@@ -20,7 +20,8 @@ BSB4309 = Class(SStructureUnit) {
     OnStopBeingBuilt = function(self,builder,layer)
         SStructureUnit.OnStopBeingBuilt(self,builder,layer)
         self:SetScriptBit('RULEUTC_ShieldToggle', true)
-        self:DisableUnitIntel('unitScript', 'CloakField') -- Used to show anti-tele range
+        -- only used to show anti-teleport range
+        self:DisableIntel('CloakField')
         self.antiteleportEmitterTable = {}
         self.AntiTeleportBag = {}
         self.AntiTeleportOrbsBag = {}

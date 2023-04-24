@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/XEB4309/XEB4309_script.lua
 -- Author(s):  David Tomandl, Jessica St. Croix
 -- Summary  :  UEF Radar Jammer Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright Â© 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local TStructureUnit = import('/lua/terranunits.lua').TStructureUnit
@@ -16,7 +16,8 @@ BEB4309 = Class(TStructureUnit) {
     OnStopBeingBuilt = function(self,builder,layer)
         TStructureUnit.OnStopBeingBuilt(self,builder,layer)
         self:SetScriptBit('RULEUTC_ShieldToggle', true)
-        self:DisableUnitIntel('unitScript', 'CloakField') -- Used to show anti-tele range
+        -- only used to show anti-teleport range
+        self:DisableIntel('CloakField')
         self.antiteleportEmitterTable = {}
         self.AntiTeleportBag = {}
         self:ForkThread(self.ResourceThread)

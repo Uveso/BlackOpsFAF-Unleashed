@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/BAB4309/BAB4309_script.lua
 -- Author(s):  John Comes, Dave Tomandl, Jessica St. Croix
 -- Summary  :  Aeon Power Generator Script
--- Copyright © 1205 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright Â© 1205 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local AStructureUnit = import('/lua/aeonunits.lua').AStructureUnit
@@ -21,7 +21,8 @@ BAB4309 = Class(AStructureUnit) {
     OnStopBeingBuilt = function(self,builder,layer)
         AStructureUnit.OnStopBeingBuilt(self,builder,layer)
         self:SetScriptBit('RULEUTC_ShieldToggle', true)
-        self:DisableUnitIntel('unitScript', 'CloakField') -- Used to show anti-tele range
+        -- only used to show anti-teleport range
+        self:DisableIntel('CloakField')
         self.AntiTeleportEffectsBag = {}
         self.AmbientEffectsBag = {}
         self.antiteleportEmitterTable = {}
