@@ -1,3 +1,18 @@
+v21 (24.Apr.2023)
+Thanks to Jip who provided this patch.
+
+- Unit baa0309 Illuminate - (T3 Air Transport) fix for teleport
+- Unit beb4209 ATF-205 Preventer - (Anti-Teleport Field Tower) fix for teleport
+- Unit bab4309 Quantum Wake Generator - (Anti-Teleport Generator) fix for teleport
+- Unit brb4309 Shroud - (Anti-Teleport Tower) fix for teleport
+- Unit bsb4309 Haazthue-Uhthena - (Anti-Teleport Tower) fix for teleport
+- Unit beb4309 ATF-305 Preventer - (Anti-Teleport Field Tower) fix for teleport
+- Unit brb4209 Mist - (Anti-Teleport Tower) fix for teleport
+- Unit bsb4209 Haazthue-Uhthena - (Anti-Teleport Tower) fix for teleport
+- Unit bab4209 Quantum Wake Generator - (Anti-Teleport Generator) fix for teleport
+- drones no longer checks for target.Dead ~= nil; (it is sometimes false, not nil)
+
+*************************************************************************************************************************************
 v20 (21.Aug.2022)
 
 - added missing translation tags in tooltip.lua
