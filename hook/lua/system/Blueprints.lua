@@ -146,7 +146,7 @@ function CalculateNewLod(uBP)
     uBP.Display.Mesh.LODs[2] = nil
     -- calculate unit/building surface by SelectionSize or HitBoxSize, whatever is bigger
     local SelectionSize = uBP.SelectionSizeX * uBP.SelectionSizeZ
-    local HitBoxSize = uBP.SizeX / 1.4  * uBP.SizeZ / 1.4
+    local HitBoxSize = (uBP.SizeX or 1) / 1.4  * (uBP.SizeZ or 1) / 1.4
     local UnitLodSize
     if SelectionSize > HitBoxSize then
         UnitLodSize = SelectionSize
