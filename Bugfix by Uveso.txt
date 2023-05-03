@@ -1,3 +1,9 @@
+v22 (03.May.2023)
+Thanks to Balthazar who provided this patch.
+
+- fixed a incompatibility with BrewLAN (missing SizeZ on units)
+
+*************************************************************************************************************************************
 v21 (24.Apr.2023)
 Thanks to Jip who provided this patch.
 
