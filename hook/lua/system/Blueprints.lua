@@ -113,7 +113,7 @@ do
             end
             if bp.Weapon then
                 for ik, wep in bp.Weapon do
-                    if wep.RangeCategory == 'UWRC_AntiAir' then
+                    if HasTargetLayer(wep, "Air") then
                         if not wep.AntiSat == true then
                             wep.TargetRestrictDisallow = wep.TargetRestrictDisallow and wep.TargetRestrictDisallow .. ', SATELLITE' or 'SATELLITE'
                         end
@@ -124,6 +124,15 @@ do
             CalculateNewLod(bp)
         end
     end
+end
+
+function HasTargetLayer(weapon, searchLayer)
+    for _,TargetLayer in weapon.FireTargetLayerCapsTable or {} do
+        if string.find( TargetLayer, searchLayer ) then
+            return true
+        end
+    end
+    return false
 end
 
 function CalculateNewLod(uBP)

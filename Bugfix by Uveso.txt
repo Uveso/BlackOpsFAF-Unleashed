@@ -1,3 +1,9 @@
+v23 (05.May.2023)
+
+- fixed a incompatibility with BrewLAN (Thanks to Balthazar)
+- fixed a bug in case a air weapon has no RangeCategory UWRC_AntiAir
+
+*************************************************************************************************************************************
 v22 (03.May.2023)
 Thanks to Balthazar who provided this patch.
 
