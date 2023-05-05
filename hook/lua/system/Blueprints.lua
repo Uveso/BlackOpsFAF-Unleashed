@@ -115,7 +115,7 @@ do
                 for ik, wep in bp.Weapon do
                     if wep.RangeCategory == 'UWRC_AntiAir' then
                         if not wep.AntiSat == true then
-                            wep.TargetRestrictDisallow = wep.TargetRestrictDisallow .. ', SATELLITE'
+                            wep.TargetRestrictDisallow = wep.TargetRestrictDisallow and wep.TargetRestrictDisallow .. ', SATELLITE' or 'SATELLITE'
                         end
                     end
                 end
