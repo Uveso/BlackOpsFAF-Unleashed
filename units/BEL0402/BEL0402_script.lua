@@ -100,23 +100,6 @@ BEL0402 = Class(BaseTransport, TWalkingLandUnit, AirDroneCarrier) {
         end
     end,
 
-    -- Handles drone docking
-    OnTransportAttach = function(self, bone, unit)
-        self.DroneData[unit.Name].Docked = bone
-        unit:SetDoNotTarget(true)
-        BaseTransport.OnTransportAttach(self, bone, unit)
-    end,
-
-    -- Handles drone undocking, also called when docked drones die
-    OnTransportDetach = function(self, bone, unit)
-        self.DroneData[unit.Name].Docked = false
-        unit:SetDoNotTarget(false)
-        if unit.Name == self.BuildingDrone then
-            self:CleanupDroneMaintenance(self.BuildingDrone)
-        end
-        BaseTransport.OnTransportDetach(self, bone, unit)
-    end,
-
     -- Cleans up threads and drones on death
     OnKilled = function(self, instigator, type, overkillRatio)
         if self:GetFractionComplete() == 1 then
@@ -443,6 +426,46 @@ BEL0402 = Class(BaseTransport, TWalkingLandUnit, AirDroneCarrier) {
         self:Destroy()
     end,
 
+    -- Handles drone docking
+    OnTransportAttach = function(self, bone, unit)
+        BaseTransport.OnTransportAttach(self, bone, unit)
+        TWalkingLandUnit.OnTransportAttach(self, bone, unit)
+
+        self.DroneData[unit.Name].Docked = bone
+        unit:SetDoNotTarget(true)
+    end,
+
+    -- Handles drone undocking, also called when docked drones die
+    OnTransportDetach = function(self, bone, unit)
+        BaseTransport.OnTransportDetach(self, bone, unit)
+        TWalkingLandUnit.OnTransportDetach(self, bone, unit)
+
+        self.DroneData[unit.Name].Docked = false
+        unit:SetDoNotTarget(false)
+        if unit.Name == self.BuildingDrone then
+            self:CleanupDroneMaintenance(self.BuildingDrone)
+        end
+    end,
+
+    OnAttachedKilled = function(self, attached)
+        BaseTransport.OnAttachedKilled(self, attached)
+        TWalkingLandUnit.OnAttachedKilled(self, attached)
+    end,
+
+    OnStartTransportLoading = function(self)
+        BaseTransport.OnStartTransportLoading(self)
+        TWalkingLandUnit.OnStartTransportLoading(self)
+    end,
+
+    OnStopTransportLoading = function(self)
+        BaseTransport.OnStopTransportLoading(self)
+        TWalkingLandUnit.OnStopTransportLoading(self)
+    end,
+
+    DestroyedOnTransport = function(self)
+        BaseTransport.DestroyedOnTransport(self)
+        TWalkingLandUnit.DestroyedOnTransport(self)
+    end,
 }
 
 TypeClass = BEL0402

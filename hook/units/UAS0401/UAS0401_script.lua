@@ -138,20 +138,46 @@ UAS0401 = Class(BaseTransport, ASeaUnit, AirDroneCarrier) {
 
     --Handles drone docking
     OnTransportAttach = function(self, attachBone, unit)
+        BaseTransport.OnTransportAttach(self, attachBone, unit)
+        ASeaUnit.OnTransportAttach(self, attachBone, unit)
+
         self.DroneData[unit.Name].Docked = attachBone
         unit:SetDoNotTarget(true)
-        BaseTransport.OnTransportAttach(self, attachBone, unit)
     end,
 
     --Handles drone undocking, also called when docked drones die
     OnTransportDetach = function(self, attachBone, unit)
+        BaseTransport.OnTransportDetach(self, attachBone, unit)
+        ASeaUnit.OnTransportDetach(self, attachBone, unit)
+
         self.DroneData[unit.Name].Docked = false
         unit:SetDoNotTarget(false)
         if unit.Name == self.BuildingDrone then
             self:CleanupDroneMaintenance(self.BuildingDrone)
         end
-        BaseTransport.OnTransportDetach(self, attachBone, unit)
     end,
+
+    OnAttachedKilled = function(self, attached)
+        BaseTransport.OnAttachedKilled(self, attached)
+        ASeaUnit.OnAttachedKilled(self, attached)
+    end,
+
+    OnStartTransportLoading = function(self)
+        BaseTransport.OnStartTransportLoading(self)
+        ASeaUnit.OnStartTransportLoading(self)
+    end,
+
+    OnStopTransportLoading = function(self)
+        BaseTransport.OnStopTransportLoading(self)
+        ASeaUnit.OnStopTransportLoading(self)
+    end,
+
+    DestroyedOnTransport = function(self)
+        BaseTransport.DestroyedOnTransport(self)
+        ASeaUnit.DestroyedOnTransport(self)
+    end,
+
+
     --Cleans up threads and drones on death
     OnKilled = function(self, instigator, type, overkillRatio)
         --Kill our heartbeat thread

@@ -219,21 +219,24 @@ BSL0401 = Class(BaseTransport, SHoverLandUnit, AirDroneCarrier) {
 
     -- Handles drone docking
     OnTransportAttach = function(self, attachBone, unit)
+        BaseTransport.OnTransportAttach(self, attachBone, unit)
+        SHoverLandUnit.OnTransportAttach(self, attachBone, unit)
+
         self.DroneData[unit.Name].Docked = attachBone
         unit:SetDoNotTarget(true)
-        BaseTransport.OnTransportAttach(self, attachBone, unit)
     end,
 
     -- Handles drone undocking, also called when docked drones die
     OnTransportDetach = function(self, attachBone, unit)
+        BaseTransport.OnTransportDetach(self, attachBone, unit)
+        SHoverLandUnit.OnTransportDetach(self, attachBone, unit)
+
         self.DroneData[unit.Name].Docked = false
         unit:SetDoNotTarget(false)
         if unit.Name == self.BuildingDrone then
             self:CleanupDroneMaintenance(self.BuildingDrone)
         end
-        BaseTransport.OnTransportDetach(self, attachBone, unit)
     end,
-
     -- Cleans up threads and drones on death
     OnKilled = function(self, instigator, damageType, overkillRatio)
         -- Kill our heartbeat thread
@@ -253,11 +256,6 @@ BSL0401 = Class(BaseTransport, SHoverLandUnit, AirDroneCarrier) {
             end
         end,
     },
-
-
-
-
-
 
     DeathThread = function(self, overkillRatio , instigator)
         local bigExplosionBones = {'BSL0401', 'Beam_Muzzle01'}
@@ -327,6 +325,26 @@ BSL0401 = Class(BaseTransport, SHoverLandUnit, AirDroneCarrier) {
         for k, v in self.SpawnEffects do
             CreateAttachedEmitter(spiritUnit, -1, self:GetArmy(), v)
         end
+    end,
+
+    OnAttachedKilled = function(self, attached)
+        BaseTransport.OnAttachedKilled(self, attached)
+        SHoverLandUnit.OnAttachedKilled(self, attached)
+    end,
+
+    OnStartTransportLoading = function(self)
+        BaseTransport.OnStartTransportLoading(self)
+        SHoverLandUnit.OnStartTransportLoading(self)
+    end,
+
+    OnStopTransportLoading = function(self)
+        BaseTransport.OnStopTransportLoading(self)
+        SHoverLandUnit.OnStopTransportLoading(self)
+    end,
+
+    DestroyedOnTransport = function(self)
+        BaseTransport.DestroyedOnTransport(self)
+        SHoverLandUnit.DestroyedOnTransport(self)
     end,
 }
 
