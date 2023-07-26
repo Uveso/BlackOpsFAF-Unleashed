@@ -1,7 +1,7 @@
 UnitBlueprint {
     Merge = true,
     BlueprintId="uab1102",-- T1 aeon hydro
-    Categories = {
+    AddCategories = {
         'SHOWQUEUE',
     },
     Display = {

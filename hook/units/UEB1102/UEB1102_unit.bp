@@ -1,7 +1,7 @@
 UnitBlueprint {
     Merge = true,
     BlueprintId="ueb1102",-- T1 uef hydro
-    Categories = {
+    AddCategories = {
         'SHOWQUEUE',
     },
     Display = {
