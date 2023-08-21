@@ -1,3 +1,20 @@
+v24 (21.Aug.2023)
+
+Fixes by Uveso:
+- fixed an issue where drones where able to target non unit entities
+
+Fixes by Jip:
+- Unit bel0402 (Experimental Assault Bot) fixed issue with drones
+- Unit uas0401 (Experimental Battleship) fixed issue with drones
+- Unit bsl0401 (Experimental Hover Tank) fixed issue with drones
+
+Fixes by Balthazar:
+- Unit xsb1102 (Hydrocarbon Power Plant) was not buildable on tech 1
+- Unit urb1102 (Hydrocarbon Power Plant) was not buildable on tech 1
+- Unit uab1102 (Hydrocarbon Power Plant) was not buildable on tech 1
+- Unit ueb1102 (Hydrocarbon Power Plant) was not buildable on tech 1
+
+*************************************************************************************************************************************
 v23 (05.May.2023)
 
 - fixed a incompatibility with BrewLAN (Thanks to Balthazar)

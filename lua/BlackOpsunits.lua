@@ -51,9 +51,9 @@ AirDroneCarrier = Class() {
     -- Runs a potential target through filters to insure that drones can attack it; checks are as simple and efficient as possible
     IsValidDroneTarget = function(self, target)
         local ivdt
-
         if target ~= nil
         and not target.Dead
+        and target.IsUnit
         and IsEnemy(self:GetArmy(), target:GetArmy())
         and not EntityCategoryContains(categories.UNTARGETABLE, target)
         and target:GetCurrentLayer() ~= 'Sub'
