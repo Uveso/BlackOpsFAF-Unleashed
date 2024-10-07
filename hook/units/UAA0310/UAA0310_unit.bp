@@ -75,6 +75,16 @@ UnitBlueprint {
             Cue = 'Aeon_Select_Air',
             LodCutoff = 'UnitMove_LodCutoff',
         },
+        ShieldOff = Sound {
+            Bank = 'UAB',
+            Cue = 'UAB4301_Activate',
+            LodCutoff = 'UnitMove_LodCutoff'
+        },
+        ShieldOn = Sound {
+            Bank = 'UAB',
+            Cue = 'UAB4301_Activate',
+            LodCutoff = 'UnitMove_LodCutoff'
+        },
     },
     Buffs = {
         Regen = {
@@ -112,6 +122,7 @@ UnitBlueprint {
         'OVERLAYSONAR',
         'OVERLAYMISC',
         'CANNOTUSEAIRSTAGING',
+        'PERSONALSHIELD',
     },
     CollisionOffsetY = -1.5,
     Defense = {
@@ -121,6 +132,20 @@ UnitBlueprint {
         Health = 48000,
         MaxHealth = 48000,
         RegenRate = 15,
+        Shield = {
+            ImpactEffects = "AeonShieldHit01",
+            ImpactMesh = "/effects/entities/CzarShieldSection/CzarShieldSection_mesh",
+            ImpactMeshBig = "/effects/entities/CzarShieldSection/CzarShieldSectionBig_mesh",
+            Mesh = "/effects/entities/CzarShield/CzarShield_mesh",
+            RegenAssistMult = 60,
+            ShieldEnergyDrainRechargeTime = 5,
+            ShieldMaxHealth = 30000,
+            ShieldRechargeTime = 120,
+            ShieldRegenRate = 180,
+            ShieldRegenStartTime = 2,
+            ShieldSize = 26,
+            ShieldVerticalOffset = -1.25,
+        },
         SubThreatLevel = 30,
         SurfaceThreatLevel = 500,
     },

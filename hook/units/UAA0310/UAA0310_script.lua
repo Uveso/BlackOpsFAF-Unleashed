@@ -14,6 +14,7 @@ local AANDepthChargeBombWeapon = aWeapons.AANDepthChargeBombWeapon
 local AAATemporalFizzWeapon = aWeapons.AAATemporalFizzWeapon
 local explosion = import('/lua/defaultexplosions.lua')
 local SuperQuantumBeamGenerator = WeaponsFile.SuperQuantumBeamGenerator
+local CzarShield = import("/lua/shield.lua").CzarShield
 
 UAA0310 = Class(AAirUnit) {
     DestroyNoFallRandomChance = 1.1,
@@ -29,6 +30,18 @@ UAA0310 = Class(AAirUnit) {
         AAFizz01 = Class(AAATemporalFizzWeapon) {},
         AAFizz02 = Class(AAATemporalFizzWeapon) {},
     },
+
+    CreateShield = function(self, bpShield)
+        local bpShield = table.deepcopy(bpShield)
+        local trash = self.Trash
+        self:DestroyShield()
+
+        self.MyShield = CzarShield(bpShield, self)
+
+        self:SetFocusEntity(self.MyShield)
+        self:EnableShield()
+        TrashBag.Add(trash,self.MyShield)
+    end,
 
     OnKilled = function(self, instigator, type, overkillRatio)
         local wep = self:GetWeaponByLabel('QuantumBeamGeneratorWeapon')

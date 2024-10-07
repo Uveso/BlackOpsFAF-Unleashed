@@ -2,9 +2,11 @@ v25 (07.Oct.2024)
 
 Fixes by Basilisk3:
 - Unit bes0402 (Experimental Dreadnaught) Hitbox enlarged downwards so that torpedoes can hit the unit more effectively
+- Unit uaa0310 (Experimental Aircraft Carrier) Add switch and fix animation for Superweapon
 
 Fixes by Uveso:
 - Unit eeb0402 (Stellar Generator) Hitbox enlarged downwards so that torpedoes can hit the unit more effectively
+- Unit uaa0310 (Experimental Aircraft Carrier) Add shield from FAF CZAR
 
 
 *************************************************************************************************************************************
