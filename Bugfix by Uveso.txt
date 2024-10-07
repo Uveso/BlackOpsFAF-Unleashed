@@ -1,3 +1,13 @@
+v25 (07.Oct.2024)
+
+Fixes by Basilisk3:
+- Unit bes0402 (Experimental Dreadnaught) Hitbox enlarged downwards so that torpedoes can hit the unit more effectively
+
+Fixes by Uveso:
+- Unit eeb0402 (Stellar Generator) Hitbox enlarged downwards so that torpedoes can hit the unit more effectively
+
+
+*************************************************************************************************************************************
 v24 (21.Aug.2023)
 
 Fixes by Uveso:

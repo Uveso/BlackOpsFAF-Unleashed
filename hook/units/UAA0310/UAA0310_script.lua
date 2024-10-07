@@ -5,7 +5,9 @@
 -- Copyright © 2006 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
-local AAirUnit = import('/lua/aeonunits.lua').AAirUnit
+
+local AirTransport = import("/lua/defaultunits.lua").AirTransport
+local ExternalFactoryComponent = import("/lua/defaultcomponents.lua").ExternalFactoryComponent
 local aWeapons = import('/lua/aeonweapons.lua')
 local WeaponsFile = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsWeapons.lua')
 local AQuantumBeamGenerator = aWeapons.AQuantumBeamGenerator
@@ -15,7 +17,7 @@ local AAATemporalFizzWeapon = aWeapons.AAATemporalFizzWeapon
 local explosion = import('/lua/defaultexplosions.lua')
 local SuperQuantumBeamGenerator = WeaponsFile.SuperQuantumBeamGenerator
 
-UAA0310 = Class(AAirUnit) {
+UAA0310 = Class(AirTransport, ExternalFactoryComponent) {
     DestroyNoFallRandomChance = 1.1,
     Weapons = {
         QuantumBeamGeneratorWeapon = Class(AQuantumBeamGenerator){},
@@ -53,7 +55,7 @@ UAA0310 = Class(AAirUnit) {
         self.detector:EnableTerrainCheck(true)
         self.detector:Enable()
 
-        AAirUnit.OnKilled(self, instigator, type, overkillRatio)
+        AirTransport.OnKilled(self, instigator, type, overkillRatio)
     end,
 
     OnAnimTerrainCollision = function(self, bone,x,y,z)
@@ -64,7 +66,7 @@ UAA0310 = Class(AAirUnit) {
     BuildAttachBone = 'UAA0310',
 
     OnStopBeingBuilt = function(self,builder,layer)
-        AAirUnit.OnStopBeingBuilt(self,builder,layer)
+        AirTransport.OnStopBeingBuilt(self,builder,layer)
         ChangeState(self, self.IdleState)
         self:SetWeaponEnabledByLabel('SuperQuantumBeamGeneratorWeapon', false)
         self:ForkThread(self.CheckAIThread)
@@ -85,7 +87,7 @@ UAA0310 = Class(AAirUnit) {
     end,
 
     OnFailedToBuild = function(self)
-        AAirUnit.OnFailedToBuild(self)
+        AirTransport.OnFailedToBuild(self)
         ChangeState(self, self.IdleState)
     end,
 
@@ -96,7 +98,7 @@ UAA0310 = Class(AAirUnit) {
         end,
 
         OnStartBuild = function(self, unitBuilding, order)
-            AAirUnit.OnStartBuild(self, unitBuilding, order)
+            AirTransport.OnStartBuild(self, unitBuilding, order)
             self.UnitBeingBuilt = unitBuilding
             ChangeState(self, self.BuildingState)
         end,
@@ -113,7 +115,7 @@ UAA0310 = Class(AAirUnit) {
         end,
 
         OnStopBuild = function(self, unitBeingBuilt)
-            AAirUnit.OnStopBuild(self, unitBeingBuilt)
+            AirTransport.OnStopBuild(self, unitBeingBuilt)
             ChangeState(self, self.FinishedBuildingState)
         end,
     },
@@ -138,7 +140,7 @@ UAA0310 = Class(AAirUnit) {
     },
 
     OnScriptBitSet = function(self, bit)
-        AAirUnit.OnScriptBitSet(self, bit)
+        AirTransport.OnScriptBitSet(self, bit)
         if bit == 1 then
             if not self.Animator then
                 self.Animator = CreateAnimator(self)
@@ -163,7 +165,7 @@ UAA0310 = Class(AAirUnit) {
     end,
 
     OnScriptBitClear = function(self, bit)
-        AAirUnit.OnScriptBitClear(self, bit)
+        AirTransport.OnScriptBitClear(self, bit)
         if bit == 1 then
             if self.Animator then
                 self.Animator:SetRate(-0.2)
