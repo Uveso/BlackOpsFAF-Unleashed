@@ -1,6 +1,6 @@
 
-local OLDSetupSession = SetupSession
+local OLDSetupSessionBlackOpsUnleashed = SetupSession
 function SetupSession()
-    OLDSetupSession()
+    OLDSetupSessionBlackOpsUnleashed()
     import('/mods/BlackOpsFAF-Unleashed/lua/AI/AIBuilders/HydroCarbonUpgrade.lua')
 end
