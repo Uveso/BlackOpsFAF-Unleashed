@@ -276,9 +276,9 @@ UnitBlueprint {
         },
     },
     Intel = {
-        RadarRadius = 110,
+        RadarRadius = 112,
         RadarStealth = true,
-        VisionRadius = 35,
+        VisionRadius = 36,
     },
     Interface = {
         HelpText = 'Experimental Assault Bot',
@@ -330,7 +330,7 @@ UnitBlueprint {
     Transport = {
         CanFireFromTransport = false,
         ClassSAttachSize = 0,
-        TransportClass = 4,
+        TransportClass = 3,
     },
     Veteran = {
         Level1 = 75,

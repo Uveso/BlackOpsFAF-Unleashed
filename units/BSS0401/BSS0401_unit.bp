@@ -196,7 +196,7 @@ UnitBlueprint {
     Intel = {
         RadarRadius = 80,
         VisionRadius = 70,
-        WaterVisionRadius = 50,
+        WaterVisionRadius = 64,
     },
     Interface = {
         HelpText = '<LOC BSS0401_help>Experimental Dreadnought',

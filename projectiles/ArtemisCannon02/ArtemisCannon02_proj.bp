@@ -54,7 +54,7 @@ ProjectileBlueprint {
         },
         Faction = 'Aeon',
     },
-    DesiredShooterCap = 1,
+    DesiredShooterCap = 25,
     Interface = {
         HelpText = 0,
     },

@@ -215,7 +215,7 @@ UnitBlueprint {
         UnitWeight = 1,
     },
     Intel = {
-        VisionRadius = 35,
+        VisionRadius = 36,
     },
     Interface = {
         HelpText = '<LOC bal0401_help>Experimental Siege Weapon',

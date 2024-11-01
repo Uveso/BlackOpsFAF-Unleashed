@@ -5,9 +5,14 @@ Fixes by Basilisk3:
 - Unit uaa0310 (Experimental Aircraft Carrier) Add switch and fix animation for Superweapon
 
 Fixes by Uveso:
+- fixed SorianDefenseBuilders.lua (removed dependency for sorian buildconditions)
+- fixed TransportClass on several units
+- GargEMPWarhead01_proj.bp fix DesiredShooterCap not matching health
+- ArtemisCannon02_proj.bp fix DesiredShooterCap not matching health
 - Unit eeb0402 (Stellar Generator) Hitbox enlarged downwards so that torpedoes can hit the unit more effectively
 - Unit uaa0310 (Experimental Aircraft Carrier) Add shield from FAF CZAR
-
+- Unit bal0206 (Medium Assault Tank) fix collision box
+- Unit bel9010 (Jammer Crystal) fix collision box
 
 *************************************************************************************************************************************
 v24 (21.Aug.2023)

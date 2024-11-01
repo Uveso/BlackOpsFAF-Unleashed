@@ -135,7 +135,7 @@ UnitBlueprint {
     },
     Intel = {
         CloakField = true,
-        CloakFieldRadius = 27,
+        CloakFieldRadius = 28,
         ReactivateTime = 5,
         VisionRadius = 20,
         ShowIntelOnSelect = true,

@@ -244,7 +244,7 @@ UnitBlueprint {
         UnitWeight = 1,
     },
     Intel = {
-        VisionRadius =25,
+        VisionRadius =26,
     },
     Interface = {
         HelpText = '<LOC BEL0307_help>Battle Station',
@@ -290,7 +290,7 @@ UnitBlueprint {
     StrategicIconName = 'icon_land3_directfire',
     StrategicIconSortPriority = 125,
     Transport = {
-        TransportClass = 4,
+        TransportClass = 3,
     },
     Veteran = {
         Level1 = 10,

@@ -242,7 +242,7 @@ UnitBlueprint {
         UnitWeight = 1,
     },
     Intel = {
-        VisionRadius = 35,
+        VisionRadius = 36,
     },
     Interface = {
         HelpText = '<LOC brl0308_help>Ultra Heavy Assault Mech',
@@ -292,7 +292,7 @@ UnitBlueprint {
     StrategicIconSortPriority = 115,
     Transport = {
         CanFireFromTransport = false,
-        TransportClass = 4,
+        TransportClass = 3,
     },
     Veteran = {
         Level1 = 75,

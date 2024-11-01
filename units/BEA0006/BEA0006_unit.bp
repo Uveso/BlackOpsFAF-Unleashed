@@ -206,7 +206,7 @@ UnitBlueprint {
     Intel = {
         FreeIntel = true,
         RadarStealth = true,
-        VisionRadius = 25,
+        VisionRadius = 26,
     },
     Interface = {
         HelpText = '<LOC bea0006_help>Defense Drone',
@@ -243,7 +243,7 @@ UnitBlueprint {
     StrategicIconSortPriority = 105,
     Transport = {
         AirClass = true,
-        TransportClass = 5,
+        TransportClass = 3,
     },
     Veteran = {
         Level1 = 5,

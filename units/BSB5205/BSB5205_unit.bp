@@ -181,7 +181,7 @@ UnitBlueprint {
         ReactivateTime = 5,
         ShowIntelOnSelect = true,
         VisionRadius = 30,
-        WaterVisionRadius = 30,
+        WaterVisionRadius = 32,
     },
     Interface = {
         HelpText = '<LOC BSB5205_help>Advanced Air Staging Beacon',

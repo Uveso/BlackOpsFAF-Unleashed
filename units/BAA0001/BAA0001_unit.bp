@@ -172,7 +172,7 @@ UnitBlueprint {
         UnitWeight = 1,
     },
     Intel = {
-        VisionRadius = 15,
+        VisionRadius = 16,
     },
     Interface = {
         HelpText = '<LOC baa0001_help>Defense Drone',
@@ -211,7 +211,7 @@ UnitBlueprint {
     StrategicIconSortPriority = 105,
     Transport = {
         AirClass = true,
-        TransportClass = 5,
+        TransportClass = 3,
     },
     Veteran = {
         Level1 = 5,

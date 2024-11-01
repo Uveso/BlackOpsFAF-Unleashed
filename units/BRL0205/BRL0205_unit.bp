@@ -189,10 +189,10 @@ UnitBlueprint {
     Intel = {
         FreeIntel = false,
         Cloak = true,
-        RadarRadius = 30,
+        RadarRadius = 32,
         RadarStealth = true,
         CloakWaitTime = 1,
-        VisionRadius = 25,
+        VisionRadius = 26,
     },
     Interface = {
         HelpText = '<LOC BRL0205_help>Ambush Bot',

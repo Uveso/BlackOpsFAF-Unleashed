@@ -162,8 +162,8 @@ UnitBlueprint {
     },
     Intel = {
         RadarRadius = 120,
-        VisionRadius = 35,
-        WaterVisionRadius = 30,
+        VisionRadius = 36,
+        WaterVisionRadius = 32,
     },
     Interface = {
         HelpText = '<LOC bss0206_help>Bombardment Ship',

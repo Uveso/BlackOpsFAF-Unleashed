@@ -39,7 +39,7 @@ ProjectileBlueprint {
         BuildTime = 48600,
     },
     Description = 'CYBRAN Nuclear Missile',
-    DesiredShooterCap = 1,
+    DesiredShooterCap = 3,
     Display = {
         CameraFollowTimeout = 5,
         CameraFollowsProjectile = true,

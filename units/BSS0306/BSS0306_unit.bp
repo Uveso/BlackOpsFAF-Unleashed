@@ -172,11 +172,11 @@ UnitBlueprint {
         UnitWeight = 1,
     },
     Intel = {
-        OmniRadius = 50,
+        OmniRadius = 52,
         RadarRadius = 120,
         SonarRadius = 120,
-        VisionRadius = 75,
-        WaterVisionRadius = 35,
+        VisionRadius = 76,
+        WaterVisionRadius = 36,
     },
     Interface = {
         HelpText = '<LOC BSS0306_help>Heavy Cruiser',

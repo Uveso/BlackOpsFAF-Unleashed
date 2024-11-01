@@ -228,7 +228,7 @@ UnitBlueprint {
         RadarRadius = 100,
         SonarRadius = 60,
         VisionRadius = 70,
-        WaterVisionRadius = 50,
+        WaterVisionRadius = 64,
     },
     Interface = {
         HelpText = '<LOC BRS0402_help>Experimental Dreadnaught',

@@ -156,9 +156,9 @@ UnitBlueprint {
         FreeIntel = false,
         RadarRadius = 60,
         SonarRadius = 60,
-        VisionRadius = 25,
+        VisionRadius = 26,
         ShowIntelOnSelect = true,
-        WaterVisionRadius = 25,
+        WaterVisionRadius = 28,
     },
     Interface = {
         HelpText = '<LOC bab5205_help>Advanced Air Staging Facility',

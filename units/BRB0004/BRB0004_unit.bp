@@ -182,7 +182,7 @@ UnitBlueprint {
         UnitWeight = 1,
     },
     Intel = {
-        VisionRadius = 15,
+        VisionRadius = 16,
     },
     LifeBarRender = false,
     Physics = {

@@ -284,7 +284,7 @@ UnitBlueprint {
         },
     },
     Intel = {
-        VisionRadius = 50,
+        VisionRadius = 60,
     },
     Interface = {
         HelpText = '<LOC bsl0401_help>Experimental Hover Tank',
@@ -336,7 +336,7 @@ UnitBlueprint {
     StrategicIconName = 'icon_experimental_generic',
     StrategicIconSortPriority = 115,
     Transport = {
-        TransportClass = 4,
+        TransportClass = 3,
     },
     Veteran = {
         Level1 = 25,

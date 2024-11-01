@@ -179,7 +179,7 @@ UnitBlueprint {
         UpgradesFrom = 'xeb0104',
     },
     Intel = {
-        VisionRadius = 15,
+        VisionRadius = 16,
     },
     Interface = {
         HelpText = '<LOC xeb0204_help>Engineering Station',

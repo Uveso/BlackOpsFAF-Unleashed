@@ -207,7 +207,7 @@ UnitBlueprint {
         UnitWeight = 1,
     },
     Intel = {
-        VisionRadius = 25,
+        VisionRadius = 26,
     },
     Interface = {
         HelpText = '<LOC BSA0001_help>Ground Attack/Anti-Air Drone',

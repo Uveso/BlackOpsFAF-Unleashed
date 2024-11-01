@@ -114,7 +114,7 @@ UnitBlueprint {
         RadarStealth = true,
         SonarStealth = true,
         Cloak = true,
-        VisionRadius = 5,
+        VisionRadius = 6,
         ReactivateTime = 5,
     },
     Interface = {

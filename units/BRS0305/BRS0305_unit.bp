@@ -262,7 +262,7 @@ UnitBlueprint {
     Intel = {
         SonarRadius = 80,
         VisionRadius = 42,
-        WaterVisionRadius = 42,
+        WaterVisionRadius = 44,
     },
     Interface = {
         HelpText = '<LOC BRS0305_help>Assault Submarine',
