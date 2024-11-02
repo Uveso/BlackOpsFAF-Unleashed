@@ -1,4 +1,4 @@
-v25 (07.Oct.2024)
+v25 (02.Nov.2024)
 
 Fixes by Basilisk3:
 - Unit bes0402 (Experimental Dreadnaught) Hitbox enlarged downwards so that torpedoes can hit the unit more effectively
