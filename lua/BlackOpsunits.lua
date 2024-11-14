@@ -1,8 +1,9 @@
-
 local AirUnit = import('/lua/defaultunits.lua').AirUnit
 
+---@class AirDroneCarrier
 AirDroneCarrier = Class() {
 
+    ---@param self AirDroneCarrier
     InitDrones = function(self)
         -- Transportslots
         self.slots = {}
@@ -14,12 +15,14 @@ AirDroneCarrier = Class() {
         self.MyAttacker = nil
         self.MyTarget = nil
         -- Drone construction/repair buildrate
-        self.BuildRate = self:GetBlueprint().Economy.BuildRate or 30
+        self.BuildRate = self.Blueprint.Economy.BuildRate or 30
         -- Drone setup (load globals/tables & create drones)
         self:DroneSetup()
     end,
 
     -- Creates specified drone from its entry in DroneData and creates handles
+    ---@param self AirDroneCarrier
+    ---@param droneName string
     CreateDrone = function(self, droneName)
         if not self.Dead and not self.DroneTable[droneName] and not self.DroneData[droneName].Active then
             if not self:IsValidBone(self.DroneData[droneName].Attachpoint) then
@@ -27,7 +30,7 @@ AirDroneCarrier = Class() {
                 return
             end
             local location = self:GetPosition(self.DroneData[droneName].Attachpoint)
-            local newdrone = CreateUnitHPR(self.DroneData[droneName].UnitID, self:GetArmy(), location[1], location[2], location[3], 0, 0, 0)
+            local newdrone = CreateUnitHPR(self.DroneData[droneName].UnitID, self.Army, location[1], location[2], location[3], 0, 0, 0)
             newdrone:SetParent(self, self.DroneData[droneName].Name)
             newdrone:SetCreator(self)
             self.DroneTable[droneName] = newdrone
@@ -40,6 +43,8 @@ AirDroneCarrier = Class() {
         end
     end,
 
+    ---@param self AirDroneCarrier
+    ---@param instigator Unit
     SetAttacker = function(self, instigator)
         if not self.Dead
         and self.MyAttacker == nil
@@ -49,20 +54,27 @@ AirDroneCarrier = Class() {
     end,
 
     -- Runs a potential target through filters to insure that drones can attack it; checks are as simple and efficient as possible
+    ---@param self AirDroneCarrier
+    ---@param target Unit
+    ---@return boolean|unknown
     IsValidDroneTarget = function(self, target)
         local ivdt
+        local army = self.Army
+
         if target ~= nil
         and not target.Dead
         and target.IsUnit
-        and IsEnemy(self:GetArmy(), target:GetArmy())
+        and IsEnemy(army, target.army)
         and not EntityCategoryContains(categories.UNTARGETABLE, target)
         and target:GetCurrentLayer() ~= 'Sub'
-        and target:GetBlip(self:GetArmy()) ~= nil then
+        and target:GetBlip(army) ~= nil then
             ivdt = true
         end
         return ivdt
     end,
 
+    ---@param self AirDroneCarrier
+    ---@param instigator Unit unused
     KillAllDrones = function(self, instigator)
         if next(self.DroneTable or {}) then
             for name, drone in self.DroneTable do
@@ -73,7 +85,10 @@ AirDroneCarrier = Class() {
     end,
 
     --Initial drone setup - loads globals, DroneData table, and creates drones
+    ---@param self AirDroneCarrier
     DroneSetup = function(self)
+        local bp = self.Blueprint
+
         --Drone handle table, used to issue orders to all drones at once
         self.DroneTable = {}
 
@@ -81,15 +96,15 @@ AirDroneCarrier = Class() {
         self.BuildingDrone = false    --Holds the name (string) of the drone currently being repaired or rebuilt
 
         --Drone control parameters (inherited by drones in SetParent)
-        self.ControlRange = self:GetBlueprint().AI.DroneControlRange or 70   --Range at which drones will be recalled
-        self.ReturnRange = self:GetBlueprint().AI.DroneReturnRange or (ControlRange / 2)    --Range at which returning drones will be released
+        self.ControlRange = bp.AI.DroneControlRange or 70   --Range at which drones will be recalled
+        self.ReturnRange = bp.AI.DroneReturnRange or (ControlRange / 2)    --Range at which returning drones will be released
         self.AssistRange = self.ControlRange + 10    --Max target distance for retaliation - drones can engage targets just beyond recall range
-        self.AirMonitorRange = self:GetBlueprint().AI.AirMonitorRange or (self.AssistRange / 2)    --Air target search distance
-        self.HeartBeatInterval = self:GetBlueprint().AI.AssistHeartbeatInterval or 1 -- Heartbeat wait time, in seconds
+        self.AirMonitorRange = bp.AI.AirMonitorRange or (self.AssistRange / 2)    --Air target search distance
+        self.HeartBeatInterval = bp.AI.AssistHeartbeatInterval or 1 -- Heartbeat wait time, in seconds
 
         --Load DroneData table from BP (name, attachpoint, unitid)
         --Only drones with entries in this table (including unique key names and the other two required values) will be spawned!
-        self.DroneData = table.deepcopy(self:GetBlueprint().DroneData)
+        self.DroneData = table.deepcopy(bp.DroneData)
 
         --Load other data from drone BP and spawn drones
         for droneName, droneData in self.DroneData do
@@ -113,6 +128,8 @@ AirDroneCarrier = Class() {
     end,
 
     --Clears all handles and active DroneData variables for the calling drone.
+    ---@param self AirDroneCarrier
+    ---@param droneName string
     NotifyOfDroneDeath = function(self,droneName)
         self.DroneTable[droneName] = nil
         self.DroneData[droneName].Active = false
@@ -213,6 +230,8 @@ AirDroneCarrier = Class() {
     },
 
     -- Enables economy drain
+    ---@param self AirDroneCarrier
+    ---@param econdata table
     EnableResourceConsumption = function(self, econdata)
         local energy_rate = econdata.BuildCostEnergy / (econdata.BuildTime / self.BuildRate)
         local mass_rate = econdata.BuildCostMass / (econdata.BuildTime / self.BuildRate)
@@ -222,13 +241,18 @@ AirDroneCarrier = Class() {
     end,
 
     -- Disables economy drain
+    ---@param self AirDroneCarrier
     DisableResourceConsumption = function(self)
         self:SetConsumptionPerSecondEnergy(0)
         self:SetConsumptionPerSecondMass(0)
         self:SetConsumptionActive(false)
     end,
+
     -- Resets resume/progress data, clears effects
     -- Used to clean up finished construction and repair, and to interrupt repairs when undocking
+    ---@param self AirDroneCarrier
+    ---@param droneName string
+    ---@param deadState boolean
     CleanupDroneMaintenance = function(self, droneName, deadState)
         if deadState or (droneName and droneName == self.BuildingDrone) then
             self:SetWorkProgress(0)
@@ -236,7 +260,9 @@ AirDroneCarrier = Class() {
             self:DisableResourceConsumption()
         end
     end,
+
     -- Manages drone assistance and firestate propagation
+    ---@param self AirDroneCarrier
     AssistHeartBeat = function(self)
         local SuspendAssist = 0
         local LastFireState
@@ -330,7 +356,9 @@ AirDroneCarrier = Class() {
             WaitSeconds(self.HeartBeatInterval)
         end
     end,
+
     -- Recalls all drones to the carrier at 2x speed under temp command lockdown
+    ---@param self AirDroneCarrier
     RecallDrones = function(self)
         if next(self.DroneTable or {}) then
             for id, drone in self.DroneTable do
@@ -338,13 +366,16 @@ AirDroneCarrier = Class() {
             end
         end
     end,
+
     -- Issues an attack order for all drones
+    ---@param self AirDroneCarrier
+    ---@param dronetarget Unit
     AssignDroneTarget = function(self, dronetarget)
         if next(self.DroneTable or {}) then
             for id, drone in self.DroneTable do
                 --if not self.DroneData[self.BuildingDrone].Docked then
                 if drone.AwayFromCarrier == false then
-                    local targetblip = dronetarget:GetBlip(self:GetArmy())
+                    local targetblip = dronetarget:GetBlip(self.Army)
                     if targetblip ~= nil then
                         IssueClearCommands({drone})
                         IssueAttack({drone}, targetblip)
@@ -355,6 +386,7 @@ AirDroneCarrier = Class() {
     end,
 
     -- Sets a firestate for all drones
+    ---@param self AirDroneCarrier
     SetDroneFirestate = function(self, firestate)
         if next(self.DroneTable or {}) then
             for id, drone in self.DroneTable do
@@ -364,8 +396,10 @@ AirDroneCarrier = Class() {
             end
         end
     end,
+
     -- Checks whether any drones are docked.  Used by AssistHeartBeat.
     -- Returns a table of dronenames that are currently docked, or false if none
+    ---@param self AirDroneCarrier
     GetDronesDocked = function(self)
         local docked = {}
         if next(self.DroneTable or {}) then
@@ -381,10 +415,14 @@ AirDroneCarrier = Class() {
             return false
         end
     end,
+
     -- Returns a hostile gunship/transport in range for drone targeting, or nil if none
+    ---@param self AirDroneCarrier
+    ---@param radius number
+    ---@return Unit|nil
     SearchForGunshipTarget = function(self, radius)
         local targetindex, target
-        local units = self:GetAIBrain():GetUnitsAroundPoint(categories.AIR - (categories.HIGHALTAIR + categories.UNTARGETABLE), self:GetPosition(), radius, 'Enemy')
+        local units = self.AIBrain.GetUnitsAroundPoint(categories.AIR - (categories.HIGHALTAIR + categories.UNTARGETABLE), self:GetPosition(), radius, 'Enemy')
         if next(units) then
             targetindex, target = next(units)
         end
@@ -392,6 +430,9 @@ AirDroneCarrier = Class() {
     end,
 
     -- De-blip a weapon target - stolen from the GC tractorclaw script
+    ---@param self AirDroneCarrier unused
+    ---@param target Unit
+    ---@return Unit
     GetRealTarget = function(self, target)
         if target and not IsUnit(target) then
             local unitTarget = target:GetSource()
@@ -405,8 +446,10 @@ AirDroneCarrier = Class() {
         return target
     end,
 
-
     -- Insures that potential retaliation targets are within drone control range
+    ---@param self AirDroneCarrier
+    ---@param target Unit
+    ---@return boolean|any
     IsTargetInRange = function(self, target)
         local tpos = target:GetPosition()
         local mpos = self:GetPosition()
@@ -420,8 +463,12 @@ AirDroneCarrier = Class() {
 
 }
 
+---@class AirDroneUnit : AirUnit
 AirDroneUnit = Class(AirUnit) {
 
+    ---@param self AirDroneUnit
+    ---@param builder Unit 
+    ---@param layer Layer
     OnStopBeingBuilt = function(self, builder, layer)
         AirUnit.OnStopBeingBuilt(self, builder, layer)
         --Table of all command caps the drone may have available, for recall lockdown
@@ -438,6 +485,11 @@ AirDroneUnit = Class(AirUnit) {
         self.Carrier = nil
     end,
 
+    ---@param self AirDroneUnit
+    ---@param instigator Unit
+    ---@param amount number
+    ---@param vector Vector
+    ---@param damagetype DamageType
     OnDamage = function(self, instigator, amount, vector, damagetype)
         AirUnit.OnDamage(self, instigator, amount, vector, damagetype)
         if self.Carrier.DroneData[self.Name] and not self.Carrier.DroneData[self.Name].Damaged and amount > 0 and amount < self:GetHealth() then
@@ -445,6 +497,10 @@ AirDroneUnit = Class(AirUnit) {
         end
     end,
 
+    ---@param self AirDroneUnit
+    ---@param instigator Unit
+    ---@param damagetype DamageType
+    ---@param overkillRatio number
     OnKilled = function(self, instigator, damagetype, overkillRatio)
         -- Notify the carrier of our death
         self.Carrier:NotifyOfDroneDeath(self.Name)
@@ -454,12 +510,18 @@ AirDroneUnit = Class(AirUnit) {
         AirUnit.OnKilled(self, instigator, damagetype, overkillRatio)
     end,
 
+    ---@param self AirDroneUnit
+    ---@param transport any
+    ---@param bone Bone
     OnDetachedFromTransport = function(self, transport, bone)
         AirUnit.OnDetachedFromTransport(self, transport, bone)
         self:SetImmobile(false)
     end,
 
     -- Called on us by the carrier after creation, sets our name, parent ref and control variables
+    ---@param self AirDroneUnit
+    ---@param parent Unit
+    ---@param droneName string
     SetParent = function(self, parent, droneName)
         self.Name = droneName
         self.Carrier = parent
@@ -474,6 +536,7 @@ AirDroneUnit = Class(AirUnit) {
     end,
 
     -- Monitors drone distance from the carrier, issuing recalls and releases as necessary
+    ---@param self AirDroneUnit
     DroneLinkHeartbeat = function(self)
         while self and not self.Dead and self.Carrier and not self.Carrier.Dead do
             local distance = self:GetDistanceFromAttachpoint()
@@ -487,6 +550,8 @@ AirDroneUnit = Class(AirUnit) {
     end,
 
     -- Returns the drone's horizontal distance from its original attach point, used for all distance checks
+    ---@param self AirDroneUnit
+    ---@return number
     GetDistanceFromAttachpoint = function(self)
         local myPosition = self:GetPosition()
         local parentPosition = self.Carrier:GetPosition(self.Carrier.DroneData[self.Name].Attachpoint)
@@ -495,6 +560,8 @@ AirDroneUnit = Class(AirUnit) {
     end,
 
     -- Locks drone down and returns it to the carrier - also called in the carrier script by the recall button
+    ---@param self AirDroneUnit
+    ---@param disableweapons boolean
     DroneRecall = function(self, disableweapons)
         self.AwayFromCarrier = true
         -- Accelerate the drone for return
@@ -520,6 +587,7 @@ AirDroneUnit = Class(AirUnit) {
     end,
 
     -- Cancels drone lockdown and returns it to normal speed
+    ---@param self AirDroneUnit
     DroneRelease = function(self)
         self.AwayFromCarrier = false
         -- Restore standard mobility
@@ -538,5 +606,4 @@ AirDroneUnit = Class(AirUnit) {
         -- Cancel drone lockdown, re-enable command caps
         self:RestoreCommandCaps()
     end,
-
 }
