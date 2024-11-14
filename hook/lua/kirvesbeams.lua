@@ -1,3 +1,4 @@
+---@class TargetingCollisionBeamBO : EmptyCollisionBeam
 TargetingCollisionBeamBO = Class(EmptyCollisionBeam) {
     FxBeam = {
         '/effects/emitters/particle_cannon_beam_01_emit.bp',
@@ -5,6 +6,7 @@ TargetingCollisionBeamBO = Class(EmptyCollisionBeam) {
     },
 }
 
+---@class UnstablePhasonLaserCollisionBeam3 : UnstablePhasonLaserCollisionBeam2
 UnstablePhasonLaserCollisionBeam3 = Class(UnstablePhasonLaserCollisionBeam2) {
     TerrainImpactScale = 0.2,
 }

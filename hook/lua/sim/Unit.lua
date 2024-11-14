@@ -1,12 +1,16 @@
 local BlackOpsEffectTemplate = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsEffectTemplates.lua')
 
+---@class oldUnit
 local oldUnit = Unit
+
+---@class Unit : oldUnit
 Unit = Class(oldUnit) {
 
     -----------------------------------------------------------
     -- First, all the functions which are hooking the originals
     -----------------------------------------------------------
 
+    ---@param self Unit
     OnCreate = function(self)
         oldUnit.OnCreate(self)
         self.StunEffectsBag = {}

@@ -2,22 +2,22 @@
 -- File     : /cdimage/lua/BlackOpsProjectiles.lua
 -- Author(s): Lt_Hawkeye
 -- Summary  :
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
-
-local Projectile = import('/lua/sim/projectile.lua').Projectile
+local EffectTemplate = import('/lua/EffectTemplates.lua')
+local util = import('/lua/utilities.lua')
 local DefaultProjectileFile = import('/lua/sim/defaultprojectiles.lua')
+local BlackOpsEffectTemplate = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsEffectTemplates.lua')
+local Projectile = import('/lua/sim/projectile.lua').Projectile
+
 local EmitterProjectile = DefaultProjectileFile.EmitterProjectile
 local OnWaterEntryEmitterProjectile = DefaultProjectileFile.OnWaterEntryEmitterProjectile
 local SingleBeamProjectile = DefaultProjectileFile.SingleBeamProjectile
 local SinglePolyTrailProjectile = DefaultProjectileFile.SinglePolyTrailProjectile
 local MultiPolyTrailProjectile = DefaultProjectileFile.MultiPolyTrailProjectile
 local SingleCompositeEmitterProjectile = DefaultProjectileFile.SingleCompositeEmitterProjectile
-local NullShell = DefaultProjectileFile.NullShell
-local EffectTemplate = import('/lua/EffectTemplates.lua')
-local BlackOpsEffectTemplate = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsEffectTemplates.lua')
-local util = import('/lua/utilities.lua')
 local NukeProjectile = DefaultProjectileFile.NukeProjectile
+local NullShell = DefaultProjectileFile.NullShell
 
 -- Null Shell
 EXNullShell = Class(Projectile) {}
@@ -30,7 +30,7 @@ EXEmitterProjectile = Class(Projectile) {
 
     OnCreate = function(self)
         Projectile.OnCreate(self)
-        local army = self:GetArmy()
+        local army = self.Army
         for i in self.FxTrails do
             CreateEmitterOnEntity(self, army, self.FxTrails[i]):ScaleEmitter(self.FxTrailScale):OffsetEmitter(0, 0, self.FxTrailOffset)
         end
@@ -45,7 +45,7 @@ EXSingleBeamProjectile = Class(EXEmitterProjectile) {
     OnCreate = function(self)
         EmitterProjectile.OnCreate(self)
         if self.BeamName then
-            CreateBeamEmitterOnEntity(self, -1, self:GetArmy(), self.BeamName)
+            CreateBeamEmitterOnEntity(self, -1, self.Army, self.BeamName)
         end
     end,
 }
@@ -57,7 +57,7 @@ EXMultiBeamProjectile = Class(EXEmitterProjectile) {
     OnCreate = function(self)
         EmitterProjectile.OnCreate(self)
         local beam = nil
-        local army = self:GetArmy()
+        local army = self.Army
         for k, v in self.Beams do
             CreateBeamEmitterOnEntity(self, -1, army, v)
         end
@@ -73,7 +73,7 @@ EXSinglePolyTrailProjectile = Class(EXEmitterProjectile) {
     OnCreate = function(self)
         EmitterProjectile.OnCreate(self)
         if self.PolyTrail ~= '' then
-            CreateTrail(self, -1, self:GetArmy(), self.PolyTrail):OffsetEmitter(0, 0, self.PolyTrailOffset)
+            CreateTrail(self, -1, self.Army, self.PolyTrail):OffsetEmitter(0, 0, self.PolyTrailOffset)
         end
     end,
 }
@@ -87,7 +87,7 @@ EXMultiPolyTrailProjectile = Class(EXEmitterProjectile) {
         EmitterProjectile.OnCreate(self)
         if self.PolyTrails then
             local NumPolyTrails = table.getn(self.PolyTrails)
-            local army = self:GetArmy()
+            local army = self.Army
 
             if self.RandomPolyTrails ~= 0 then
                 local index = nil
@@ -115,7 +115,7 @@ EXSingleCompositeEmitterProjectile = Class(EXSinglePolyTrailProjectile) {
     OnCreate = function(self)
         SinglePolyTrailProjectile.OnCreate(self)
         if self.BeamName ~= '' then
-            CreateBeamEmitterOnEntity(self, -1, self:GetArmy(), self.BeamName)
+            CreateBeamEmitterOnEntity(self, -1, self.Army, self.BeamName)
         end
     end,
 }
@@ -130,7 +130,7 @@ EXMultiCompositeEmitterProjectile = Class(EXMultiPolyTrailProjectile) {
     OnCreate = function(self)
         MultiPolyTrailProjectile.OnCreate(self)
         local beam = nil
-        local army = self:GetArmy()
+        local army = self.Army
         for k, v in self.Beams do
             CreateBeamEmitterOnEntity(self, -1, army, v)
         end
@@ -162,7 +162,7 @@ MiniRocketPRojectile = Class(SingleBeamProjectile) {
     FxImpactUnderWater = {},
 
     OnImpact = function(self, targetType, targetEntity)
-        local army = self:GetArmy()
+        local army = self.Army
         SingleBeamProjectile.OnImpact(self, targetType, targetEntity)
     end,
 
@@ -190,7 +190,7 @@ MiniRocket03PRojectile = Class(SingleBeamProjectile) {
     FxImpactUnderWater = {},
 
     OnImpact = function(self, targetType, targetEntity)
-        local army = self:GetArmy()
+        local army = self.Army
         SingleBeamProjectile.OnImpact(self, targetType, targetEntity)
     end,
 
@@ -210,7 +210,7 @@ MiniRocket04PRojectile = Class(SingleBeamProjectile) {
     BeamName = '/mods/BlackOpsFAF-Unleashed/effects/emitters/missile_munition_exhaust_beam_03_emit.bp',
 
     OnImpact = function(self, targetType, targetEntity)
-        local army = self:GetArmy()
+        local army = self.Army
         SingleBeamProjectile.OnImpact(self, targetType, targetEntity)
     end,
 
@@ -250,7 +250,7 @@ MiniRocket02Projectile = Class(SingleBeamProjectile) {
 
     OnExitWater = function(self)
         EmitterProjectile.OnExitWater(self)
-        local army = self:GetArmy()
+        local army = self.Army
         for k, v in self.FxExitWaterEmitter do
             CreateEmitterAtBone(self,-2,army,v)
         end
@@ -279,7 +279,7 @@ SeaDragonShell = Class(SinglePolyTrailProjectile) {
 
     DelayedDestroyThread = function(self)
         WaitSeconds(0.3)
-        self.CreateImpactEffects(self, self:GetArmy(), self.FxImpactUnit, self.FxUnitHitScale)
+        self.CreateImpactEffects(self, self.Army, self.FxImpactUnit, self.FxUnitHitScale)
         self:Destroy()
     end,
 
@@ -338,7 +338,7 @@ ZCannon01Projectile = Class(MultiPolyTrailProjectile) {
     FxSplatScale = 9,
 
     OnImpact = function(self, targetType, targetEntity)
-        local army = self:GetArmy()
+        local army = self.Army
         if targetType == 'Terrain' then
             CreateDecal(self:GetPosition(), util.GetRandomFloat(0,2*math.pi), 'nuke_scorch_001_normals', '', 'Alpha Normals', self.FxSplatScale, self.FxSplatScale, 150, 50, army)
             CreateDecal(self:GetPosition(), util.GetRandomFloat(0,2*math.pi), 'nuke_scorch_002_albedo', '', 'Albedo', self.FxSplatScale * 2, self.FxSplatScale * 2, 150, 50, army)
@@ -926,7 +926,7 @@ UEFACUAntiMatterProjectile01 = Class(EXMultiCompositeEmitterProjectile) {
     FxSplatScale = 8,
 
     OnImpact = function(self, targetType, targetEntity)
-        local army = self:GetArmy()
+        local army = self.Army
         if targetType == 'Terrain' then
             CreateDecal(self:GetPosition(), util.GetRandomFloat(0.0,6.28), 'nuke_scorch_001_normals', '', 'Alpha Normals', self.FxSplatScale, self.FxSplatScale, 150, 30, army)
             CreateDecal(self:GetPosition(), util.GetRandomFloat(0.0,6.28), 'nuke_scorch_002_albedo', '', 'Albedo', self.FxSplatScale * 2, self.FxSplatScale * 2, 150, 30, army)
@@ -970,7 +970,7 @@ NovaStunProjectile = Class(NullShell) {
     FxImpactWater = BlackOpsEffectTemplate.NovaCannonHitUnit,
     FxImpactUnderWater = {},
     OnImpact = function(self, targetType, targetEntity)
-        local army = self:GetArmy()
+        local army = self.Army
         local blanketSides = 12
         local blanketAngle = (2*math.pi) / blanketSides
         local blanketStrength = 1
@@ -1034,7 +1034,7 @@ GargEMPWarheadProjectile = Class(NukeProjectile, SingleBeamProjectile) {
     FxImpactUnderWater = {},
 
     OnImpact = function(self, targetType, targetEntity)
-        local army = self:GetArmy()
+        local army = self.Army
 
         local blanketSides = 12
         local blanketAngle = (2*math.pi) / blanketSides
