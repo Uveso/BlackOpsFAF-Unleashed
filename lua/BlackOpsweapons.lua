@@ -1,52 +1,42 @@
 -----------------------------------------------------------------
 -- File     :  /cdimage/lua/BlackOpsWeapons.lua
 -- Author(s):  Lt_hawkeye
--- Summary  :
 -- Copyright � 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
-
 local WeaponFile = import('/lua/sim/defaultweapons.lua')
 local CollisionBeams = import('/lua/defaultcollisionbeams.lua')
 local CollisionBeamFile = import('/lua/defaultcollisionbeams.lua')
 local BlackOpsCollisionBeamFile = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsDefaultCollisionBeams.lua')
-local MiniQuantumBeamGeneratorCollisionBeam = BlackOpsCollisionBeamFile.MiniQuantumBeamGeneratorCollisionBeam
-local SuperQuantumBeamGeneratorCollisionBeam = BlackOpsCollisionBeamFile.SuperQuantumBeamGeneratorCollisionBeam
 local HawkTractorClawCollisionBeam = BlackOpsCollisionBeamFile.HawkTractorClawCollisionBeam
-local MiniPhasonLaserCollisionBeam = BlackOpsCollisionBeamFile.MiniPhasonLaserCollisionBeam
-local YenaothaExperimentalLaserCollisionBeam = BlackOpsCollisionBeamFile.YenaothaExperimentalLaserCollisionBeam
-local TDFGoliathCollisionBeam = BlackOpsCollisionBeamFile.TDFGoliathCollisionBeam
 local JuggLaserCollisionBeam = BlackOpsCollisionBeamFile.JuggLaserCollisionBeam
-local MartyrMicrowaveLaserCollisionBeam01 = BlackOpsCollisionBeamFile.MartyrMicrowaveLaserCollisionBeam01
-local GoldenLaserCollisionBeam01 = BlackOpsCollisionBeamFile.GoldenLaserCollisionBeam01
 local KamikazeWeapon = WeaponFile.KamikazeWeapon
 local BareBonesWeapon = WeaponFile.BareBonesWeapon
 local DefaultProjectileWeapon = WeaponFile.DefaultProjectileWeapon
 local DefaultBeamWeapon = WeaponFile.DefaultBeamWeapon
-local GinsuCollisionBeam = CollisionBeams.GinsuCollisionBeam
 local EffectTemplate = import('/lua/EffectTemplates.lua')
 local BlackOpsEffectTemplate = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsEffectTemplates.lua')
-local QuantumBeamGeneratorCollisionBeam = CollisionBeamFile.QuantumBeamGeneratorCollisionBeam
-local PhasonLaserCollisionBeam = CollisionBeamFile.PhasonLaserCollisionBeam
-local MicrowaveLaserCollisionBeam01 = CollisionBeamFile.MicrowaveLaserCollisionBeam01
 
+---@class HawkNapalmWeapon : DefaultProjectileWeapon
 HawkNapalmWeapon = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = EffectTemplate.TGaussCannonFlash,
 }
 
-RebelArtilleryProtonWeapon = Class(DefaultProjectileWeapon) {
-}
+---@class HawkNapalmWeapon02 : DefaultProjectileWeapon
+RebelArtilleryProtonWeapon = Class(DefaultProjectileWeapon) {}
 
+---@class MiniQuantumBeamGenerator : DefaultBeamWeapon
 MiniQuantumBeamGenerator = Class(DefaultBeamWeapon) {
     BeamType = BlackOpsCollisionBeamFile.MiniQuantumBeamGeneratorCollisionBeam,
 
     FxUpackingChargeEffects = {},
     FxUpackingChargeEffectScale = 0.2,
 
+    ---@param self MiniQuantumBeamGenerator
     PlayFxWeaponUnpackSequence = function(self)
-        local army = self.unit:GetArmy()
+        local army = self.unit.Army
         local bp = self.Blueprint
-        for k, v in self.FxUpackingChargeEffects do
-            for ek, ev in bp.RackBones[self.CurrentRackSalvoNumber].MuzzleBones do
+        for _, v in self.FxUpackingChargeEffects do
+            for _, ev in bp.RackBones[self.CurrentRackSalvoNumber].MuzzleBones do
                 CreateAttachedEmitter(self.unit, ev, army, v):ScaleEmitter(self.FxUpackingChargeEffectScale):ScaleEmitter(0.2)
             end
         end
@@ -54,17 +44,19 @@ MiniQuantumBeamGenerator = Class(DefaultBeamWeapon) {
     end,
 }
 
+---@class SuperQuantumBeamGenerator : DefaultBeamWeapon
 SuperQuantumBeamGenerator = Class(DefaultBeamWeapon) {
     BeamType = BlackOpsCollisionBeamFile.SuperQuantumBeamGeneratorCollisionBeam,
 
     FxUpackingChargeEffects = {},
     FxUpackingChargeEffectScale = 1,
 
+    ---@param self SuperQuantumBeamGenerator
     PlayFxWeaponUnpackSequence = function(self)
-        local army = self.unit:GetArmy()
+        local army = self.unit.Army
         local bp = self.Blueprint
-        for k, v in self.FxUpackingChargeEffects do
-            for ek, ev in bp.RackBones[self.CurrentRackSalvoNumber].MuzzleBones do
+        for _, v in self.FxUpackingChargeEffects do
+            for _, ev in bp.RackBones[self.CurrentRackSalvoNumber].MuzzleBones do
                 CreateAttachedEmitter(self.unit, ev, army, v):ScaleEmitter(self.FxUpackingChargeEffectScale):ScaleEmitter(1)
             end
         end
@@ -72,6 +64,7 @@ SuperQuantumBeamGenerator = Class(DefaultBeamWeapon) {
     end,
 }
 
+---@class MiniPhasonLaser : DefaultBeamWeapon
 MiniPhasonLaser = Class(DefaultBeamWeapon) {
     BeamType = BlackOpsCollisionBeamFile.MiniPhasonLaserCollisionBeam,
     FxMuzzleFlash = {},
@@ -94,6 +87,7 @@ MiniPhasonLaser = Class(DefaultBeamWeapon) {
 }
 
 -- SPIDER BOT WEAPON!
+---@class MiniHeavyMicrowaveLaserGenerator : DefaultBeamWeapon
 MiniHeavyMicrowaveLaserGenerator = Class(DefaultBeamWeapon) {
     BeamType = BlackOpsCollisionBeamFile.MiniMicrowaveLaserCollisionBeam01,
     FxMuzzleFlash = {},
@@ -114,6 +108,8 @@ MiniHeavyMicrowaveLaserGenerator = Class(DefaultBeamWeapon) {
         end,
     },
 
+    ---@param self MiniHeavyMicrowaveLaserGenerator
+    ---@param muzzle string
     CreateProjectileAtMuzzle = function(self, muzzle)
         if not self.SliderManip then
             self.SliderManip = CreateSlider(self.unit, 'Center_Turret_Barrel')
@@ -130,12 +126,13 @@ MiniHeavyMicrowaveLaserGenerator = Class(DefaultBeamWeapon) {
         DefaultBeamWeapon.CreateProjectileAtMuzzle(self, muzzle)
     end,
 
+    ---@param self MiniHeavyMicrowaveLaserGenerator
     PlayFxWeaponUnpackSequence = function(self)
         if not self.ContBeamOn then
-            local army = self.unit:GetArmy()
+            local army = self.unit.Army
             local bp = self.Blueprint
-            for k, v in self.FxUpackingChargeEffects do
-                for ek, ev in bp.RackBones[self.CurrentRackSalvoNumber].MuzzleBones do
+            for _, v in self.FxUpackingChargeEffects do
+                for _, ev in bp.RackBones[self.CurrentRackSalvoNumber].MuzzleBones do
                     CreateAttachedEmitter(self.unit, ev, army, v):ScaleEmitter(self.FxUpackingChargeEffectScale):ScaleEmitter(0.2)
                 end
             end
@@ -144,10 +141,13 @@ MiniHeavyMicrowaveLaserGenerator = Class(DefaultBeamWeapon) {
     end,
 }
 
+---@class HawkTractorClaw : DefaultBeamWeapon
 HawkTractorClaw = Class(DefaultBeamWeapon) {
     BeamType = HawkTractorClawCollisionBeam,
     FxMuzzleFlash = {},
 
+    ---@param self HawkTractorClaw
+    ---@param muzzle string
     PlayFxBeamStart = function(self, muzzle)
         local target = self:GetCurrentTarget()
         if not target or
@@ -166,11 +166,14 @@ HawkTractorClaw = Class(DefaultBeamWeapon) {
         self:ForkThread(self.TractorWatchThread, target)
     end,
 
+    ---@param self HawkTractorClaw
     OnLostTarget = function(self)
         self:AimManipulatorSetEnabled(true)
         DefaultBeamWeapon.OnLostTarget(self)
     end,
 
+    ---@param self HawkTractorClaw
+    ---@param target Entity
     TractorThread = function(self, target)
         self.unit.Trash:Add(target)
         local beam = self.Beams[1].Beam
@@ -206,6 +209,8 @@ HawkTractorClaw = Class(DefaultBeamWeapon) {
         self.AimControl:SetResetPoseTime(2)
     end,
 
+    ---@param self HawkTractorClaw
+    ---@param target Entity
     TractorWatchThread = function(self, target)
         while not target.Dead do
             WaitTicks(1)
@@ -223,6 +228,7 @@ HawkTractorClaw = Class(DefaultBeamWeapon) {
 }
 
 -- SeaDragon Battleship WEAPON!
+---@class MartyrHeavyMicrowaveLaserGenerator : DefaultBeamWeapon
 MartyrHeavyMicrowaveLaserGenerator = Class(DefaultBeamWeapon) {
     BeamType = BlackOpsCollisionBeamFile.MartyrMicrowaveLaserCollisionBeam01,
     FxMuzzleFlash = {},
@@ -232,6 +238,7 @@ MartyrHeavyMicrowaveLaserGenerator = Class(DefaultBeamWeapon) {
 }
 
 -- ShadowCat WEAPON!
+---@class RailLaserGenerator : DefaultBeamWeapon
 RailLaserGenerator = Class(DefaultBeamWeapon) {
     BeamType = BlackOpsCollisionBeamFile.RailLaserCollisionBeam01,
     FxMuzzleFlash = {},
@@ -241,6 +248,7 @@ RailLaserGenerator = Class(DefaultBeamWeapon) {
 }
 
 --UEF heavy tank railgun and laser
+---@class RailGunWeapon01 : DefaultProjectileWeapon
 RailGunWeapon01 = Class(DefaultProjectileWeapon) {
     FxChargeMuzzleFlash = {
         '/mods/BlackOpsFAF-Unleashed/effects/emitters/x_cannon_charge_test_01_emit.bp',
@@ -255,6 +263,7 @@ RailGunWeapon01 = Class(DefaultProjectileWeapon) {
     FxChargeMuzzleFlashScale = 0.25,
 }
 
+---@class RailGunWeapon02 : DefaultProjectileWeapon
 RailGunWeapon02 = Class(DefaultProjectileWeapon) {
     FxChargeMuzzleFlash = {
         '/mods/BlackOpsFAF-Unleashed/effects/emitters/x_cannon_charge_test_01_emit.bp',
@@ -269,6 +278,7 @@ RailGunWeapon02 = Class(DefaultProjectileWeapon) {
     FxChargeMuzzleFlashScale = 0.75,
 }
 
+---@class JuggLaserweapon : DefaultBeamWeapon
 JuggLaserweapon = Class(DefaultBeamWeapon) {
     BeamType = JuggLaserCollisionBeam,
 
@@ -288,16 +298,19 @@ JuggLaserweapon = Class(DefaultBeamWeapon) {
 }
 
 -- SeaDragon Weapon
+---@class XCannonWeapon01 : DefaultProjectileWeapon
 XCannonWeapon01 = Class(DefaultProjectileWeapon) {
     FxMuzzleFlashScale = 1.2,
     FxChargeMuzzleFlashScale = 5,
 }
 
 -- Cybran Hailfire
+---@class HailfireLauncherWeapon : DefaultProjectileWeapon
 HailfireLauncherWeapon = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = BlackOpsEffectTemplate.HailfireLauncherExhaust,
 }
 
+---@class ShadowCannonWeapon01 : DefaultProjectileWeapon
 ShadowCannonWeapon01 = Class(DefaultProjectileWeapon) {
     FxChargeMuzzleFlash = {
         '/mods/BlackOpsFAF-Unleashed/effects/emitters/shadow_muzzle_charge_01_emit.bp',
@@ -323,6 +336,7 @@ ShadowCannonWeapon01 = Class(DefaultProjectileWeapon) {
     FxChargeMuzzleFlashScale = 1,
 }
 
+---@class BassieCannonWeapon01 : DefaultProjectileWeapon
 BassieCannonWeapon01 = Class(DefaultProjectileWeapon) {
     FxChargeMuzzleFlash = {
         '/mods/BlackOpsFAF-Unleashed/effects/emitters/shadow_muzzle_charge_01_emit.bp',
@@ -348,12 +362,14 @@ BassieCannonWeapon01 = Class(DefaultProjectileWeapon) {
 }
 
 -- T3 PD stun weapon Cybran
+---@class StunZapperWeapon : DefaultBeamWeapon
 StunZapperWeapon = Class(DefaultBeamWeapon) {
     BeamType = BlackOpsCollisionBeamFile.EMCHPRFDisruptorBeam,
     FxMuzzleFlash = {'/effects/emitters/cannon_muzzle_flash_01_emit.bp',},
     FxMuzzleFlashScale = 2,
 }
 
+---@class ZCannonWeapon : DefaultProjectileWeapon
 ZCannonWeapon = Class(DefaultProjectileWeapon) {
     FxChargeMuzzleFlash = BlackOpsEffectTemplate.ZCannonChargeMuzzleFlash,
     FxMuzzleFlash = BlackOpsEffectTemplate.ZCannonMuzzleFlash,
@@ -376,12 +392,14 @@ ZCannonWeapon = Class(DefaultProjectileWeapon) {
     end,
 }
 
+---@class YCannonWeapon : DefaultProjectileWeapon
 YCannonWeapon = Class(DefaultProjectileWeapon) {
     FxChargeMuzzleFlash = BlackOpsEffectTemplate.YCannonMuzzleChargeFlash,
     FxMuzzleFlash = BlackOpsEffectTemplate.YCannonMuzzleFlash,
     FxMuzzleFlashScale = 2,
 }
 
+---@class ScorpDisintegratorWeapon : DefaultProjectileWeapon
 ScorpDisintegratorWeapon = Class(DefaultProjectileWeapon) {
     FxChargeMuzzleFlash = {},
     FxMuzzleFlash = {
@@ -394,15 +412,18 @@ ScorpDisintegratorWeapon = Class(DefaultProjectileWeapon) {
     FxMuzzleFlashScale = 0.2,
 }
 
+---@class HawkMissileTacticalSerpentineWeapon : DefaultProjectileWeapon
 HawkMissileTacticalSerpentineWeapon = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = {'/effects/emitters/aeon_missile_launch_02_emit.bp',},
 }
 
+---@class LambdaWeapon : DefaultProjectileWeapon
 LambdaWeapon = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = EffectTemplate.SDFExperimentalPhasonProjMuzzleFlash,
     FxChargeMuzzleFlash = EffectTemplate.SDFExperimentalPhasonProjChargeMuzzleFlash,
 }
 
+---@class ArtemisWeapon : DefaultProjectileWeapon
 ArtemisWeapon = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = BlackOpsEffectTemplate.ArtemisMuzzleFlash,
     FxChargeMuzzleFlash = BlackOpsEffectTemplate.ArtemisMuzzleChargeFlash,
@@ -410,6 +431,7 @@ ArtemisWeapon = Class(DefaultProjectileWeapon) {
     FxChargeMuzzleFlashScale = 2,
 }
 
+---@class TDFGoliathShoulderBeam : DefaultBeamWeapon
 TDFGoliathShoulderBeam = Class(DefaultBeamWeapon) {
     BeamType = BlackOpsCollisionBeamFile.TDFGoliathCollisionBeam,
     FxMuzzleFlash = {},
@@ -431,10 +453,12 @@ TDFGoliathShoulderBeam = Class(DefaultBeamWeapon) {
     end,
 }
 
+---@class HawkGaussCannonWeapon : DefaultProjectileWeapon
 HawkGaussCannonWeapon = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = EffectTemplate.TGaussCannonFlash,
 }
 
+---@class UEFNavyMineWeapon : KamikazeWeapon
 UEFNavyMineWeapon = Class(KamikazeWeapon){
     FxDeath = BlackOpsEffectTemplate.NavalMineHit01,
 
@@ -447,6 +471,7 @@ UEFNavyMineWeapon = Class(KamikazeWeapon){
     end,
 }
 
+---@class UEFNavyMineDeathWeapon : BareBonesWeapon
 UEFNavyMineDeathWeapon = Class(BareBonesWeapon) {
     FxDeath = BlackOpsEffectTemplate.NavalMineHit01,
 
@@ -468,6 +493,7 @@ UEFNavyMineDeathWeapon = Class(BareBonesWeapon) {
     end,
 }
 
+---@class AeonMineDeathWeapon : DefaultProjectileWeapon
 AeonMineDeathWeapon = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = {
         '/effects/emitters/default_muzzle_flash_01_emit.bp',
@@ -479,6 +505,7 @@ AeonMineDeathWeapon = Class(DefaultProjectileWeapon) {
     end,
 }
 
+---@class SeraNavyMineWeapon : KamikazeWeapon
 SeraNavyMineWeapon = Class(KamikazeWeapon){
     FxDeath = BlackOpsEffectTemplate.SDFExperimentalPhasonProjHit01,
 
@@ -491,6 +518,7 @@ SeraNavyMineWeapon = Class(KamikazeWeapon){
     end,
 }
 
+---@class SeraNavyMineDeathWeapon : BareBonesWeapon
 SeraNavyMineDeathWeapon = Class(BareBonesWeapon) {
     FxDeath = BlackOpsEffectTemplate.MineExplosion01,
 
@@ -513,6 +541,7 @@ SeraNavyMineDeathWeapon = Class(BareBonesWeapon) {
     end,
 }
 
+---@class SeraMineDeathExplosion : BareBonesWeapon
 SeraMineDeathExplosion = Class(BareBonesWeapon) {
     FxDeath = BlackOpsEffectTemplate.MineExplosion01,
 
@@ -535,6 +564,7 @@ SeraMineDeathExplosion = Class(BareBonesWeapon) {
     end,
 }
 
+---@class SeraMineExplosion : KamikazeWeapon
 SeraMineExplosion = Class(KamikazeWeapon){
     FxDeath = BlackOpsEffectTemplate.MineExplosion01,
 
@@ -547,21 +577,25 @@ SeraMineExplosion = Class(KamikazeWeapon){
     end,
 }
 
+---@class MGAALaserWeapon : DefaultBeamWeapon
 MGAALaserWeapon = Class(DefaultBeamWeapon) {
     BeamType = BlackOpsCollisionBeamFile.MGAALaserCollisionBeam,
     FxMuzzleFlash = {'/effects/emitters/particle_cannon_muzzle_01_emit.bp'},
 }
 
+---@class GoldenLaserGenerator : DefaultBeamWeapon
 GoldenLaserGenerator = Class(DefaultBeamWeapon) {
     BeamType = BlackOpsCollisionBeamFile.GoldenLaserCollisionBeam01,
     FxMuzzleFlash = {},
     FxChargeMuzzleFlash = {},
 }
 
+---@class RedHeavyTurboLaserWeapon : DefaultProjectileWeapon
 RedHeavyTurboLaserWeapon = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = BlackOpsEffectTemplate.RedLaserMuzzleFlash01,
 }
 
+---@class ArtemisLaserGenerator : DefaultBeamWeapon
 ArtemisLaserGenerator = Class(DefaultBeamWeapon) {
     BeamType = BlackOpsCollisionBeamFile.GoldenLaserCollisionBeam01,
     FxMuzzleFlash = BlackOpsEffectTemplate.ArtemisMuzzleFlash,
@@ -569,6 +603,7 @@ ArtemisLaserGenerator = Class(DefaultBeamWeapon) {
     FxChargeMuzzleFlash = {},
 }
 
+---@class BOHellstormGun : DefaultProjectileWeapon
 BOHellstormGun = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = EffectTemplate.TIFArtilleryMuzzleFlash,
     FxShellEject  = BlackOpsEffectTemplate.HellStormGunShells,
@@ -581,6 +616,7 @@ BOHellstormGun = Class(DefaultProjectileWeapon) {
     end,
 }
 
+---@class GoliathTMDGun : DefaultProjectileWeapon
 GoliathTMDGun = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = EffectTemplate.TPhalanxGunMuzzleFlash,
     FxShellEject  = EffectTemplate.TPhalanxGunShells,
@@ -593,6 +629,7 @@ GoliathTMDGun = Class(DefaultProjectileWeapon) {
     end,
 }
 
+---@class YenzothaExperimentalLaser : DefaultBeamWeapon
 YenzothaExperimentalLaser = Class(DefaultBeamWeapon) {
     BeamType = BlackOpsCollisionBeamFile.YenaothaExperimentalLaserCollisionBeam,
     FxUpackingChargeEffects = EffectTemplate.SDFExperimentalPhasonProjChargeMuzzleFlash,
@@ -612,6 +649,7 @@ YenzothaExperimentalLaser = Class(DefaultBeamWeapon) {
     end,
 }
 
+---@class YenzothaExperimentalLaser02 : DefaultBeamWeapon
 YenzothaExperimentalLaser02 = Class(DefaultBeamWeapon) {
     BeamType = BlackOpsCollisionBeamFile.YenaothaExperimentalLaser02CollisionBeam,
     FxUpackingChargeEffects = EffectTemplate.SDFExperimentalPhasonProjChargeMuzzleFlash,
@@ -631,11 +669,13 @@ YenzothaExperimentalLaser02 = Class(DefaultBeamWeapon) {
     end,
 }
 
+---@class GoliathRocket02 : DefaultProjectileWeapon
 GoliathRocket02 = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = EffectTemplate.TIFCruiseMissileLaunchSmoke,
 }
 
 -- Goliath rocket script from the Nomads mod
+---@class GoliathRocket : DefaultProjectileWeapon
 GoliathRocket = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = EffectTemplate.TIFCruiseMissileLaunchSmoke,
 
@@ -728,6 +768,7 @@ GoliathRocket = Class(DefaultProjectileWeapon) {
     end,
 }
 
+---@class BasiliskAAMissile02 : DefaultProjectileWeapon
 BasiliskAAMissile02 = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = {
         '/effects/emitters/cannon_muzzle_flash_04_emit.bp',
@@ -735,6 +776,7 @@ BasiliskAAMissile02 = Class(DefaultProjectileWeapon) {
     },
 }
 
+---@class BasiliskAAMissile01 : DefaultProjectileWeapon
 BasiliskAAMissile01 = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = {
         '/effects/emitters/cannon_muzzle_flash_04_emit.bp',
@@ -830,10 +872,12 @@ BasiliskAAMissile01 = Class(DefaultProjectileWeapon) {
     end,
 }
 
+---@class ATeleWeapon : DefaultProjectileWeapon
 ATeleWeapon = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = EffectTemplate.TIFArtilleryMuzzleFlash
 }
 
+---@class JuggPlasmaGatlingCannonWeapon : DefaultProjectileWeapon
 JuggPlasmaGatlingCannonWeapon = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = BlackOpsEffectTemplate.JuggPlasmaGatlingCannonMuzzleFlash,
     FxShellEject  = BlackOpsEffectTemplate.JuggPlasmaGatlingCannonShells,
@@ -848,10 +892,12 @@ JuggPlasmaGatlingCannonWeapon = Class(DefaultProjectileWeapon) {
     end,
 }
 
+---@class CitadelHVMWeapon02 : DefaultProjectileWeapon
 CitadelHVMWeapon02 = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = EffectTemplate.TAAMissileLaunch,
 }
 
+---@class CitadelHVMWeapon : DefaultProjectileWeapon
 CitadelHVMWeapon = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = EffectTemplate.TAAMissileLaunch,
 
@@ -944,6 +990,7 @@ CitadelHVMWeapon = Class(DefaultProjectileWeapon) {
     end,
 }
 
+---@class CitadelPlasmaGatlingCannonWeapon : DefaultProjectileWeapon
 CitadelPlasmaGatlingCannonWeapon = Class(DefaultProjectileWeapon) {
     FxMuzzleFlash = BlackOpsEffectTemplate.JuggPlasmaGatlingCannonMuzzleFlash,
     FxShellEject  = BlackOpsEffectTemplate.JuggPlasmaGatlingCannonShells,
