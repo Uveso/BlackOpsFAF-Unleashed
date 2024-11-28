@@ -2,16 +2,20 @@
 -- File     :  /data/Projectiles/ADFReactonCannnon01/ADFReactonCannnon01_script.lua
 -- Author(s): Jessica St.Croix, Gordon Duclos
 -- Summary  : Aeon Reacton Cannon Area of Effect Projectile
--- Copyright © 2006 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2006 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------------------------
-
 local ArtemisCannonProjectile = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsProjectiles.lua').ArtemisCannonProjectile
 
+---@class ADFReactonCannon01 : ArtemisCannonProjectile
 ADFReactonCannon01 = Class(ArtemisCannonProjectile) {
+
+    ---@param self ADFReactonCannon01
+    ---@param TargetType string
+    ---@param TargetEntity Entity
     OnImpact = function(self, TargetType, TargetEntity)
         if not TargetEntity or not EntityCategoryContains(categories.PROJECTILE, TargetEntity) then
             -- Play the explosion sound
-            local myBlueprint = self:GetBlueprint()
+            local myBlueprint = self.Blueprint
             if myBlueprint.Audio.Explosion then
                 self:PlaySound(myBlueprint.Audio.Explosion)
             end
@@ -25,10 +29,15 @@ ADFReactonCannon01 = Class(ArtemisCannonProjectile) {
         ArtemisCannonProjectile.OnImpact(self, TargetType, TargetEntity)
     end,
 
+    ---@param self ADFReactonCannon01
+    ---@param instigator Unit
+    ---@param amount number
+    ---@param vector Vector
+    ---@param damageType DamageType
     DoTakeDamage = function(self, instigator, amount, vector, damageType)
         if self.ProjectileDamaged then
             -- Play the explosion sound
-            local myBlueprint = self:GetBlueprint()
+            local myBlueprint = self.Blueprint
             if myBlueprint.Audio.Explosion then
                 self:PlaySound(myBlueprint.Audio.Explosion)
             end
@@ -39,16 +48,16 @@ ADFReactonCannon01 = Class(ArtemisCannonProjectile) {
         ArtemisCannonProjectile.DoTakeDamage(self, instigator, amount, vector, damageType)
     end,
 
+    ---@param self ADFReactonCannon01
     OnCreate = function(self)
         ArtemisCannonProjectile.OnCreate(self)
-        local launcher = self:GetLauncher()
+        local launcher = self.Launcher
         if launcher and not launcher.Dead and launcher.EventCallbacks.ProjectileDamaged then
             self.ProjectileDamaged = {}
-            for k, v in launcher.EventCallbacks.ProjectileDamaged do
+            for _, v in launcher.EventCallbacks.ProjectileDamaged do
                 table.insert(self.ProjectileDamaged, v)
             end
         end
     end,
 }
-
 TypeClass = ADFReactonCannon01

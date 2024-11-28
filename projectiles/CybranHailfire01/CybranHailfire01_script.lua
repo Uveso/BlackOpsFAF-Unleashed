@@ -1,18 +1,21 @@
--- Cybran Anti Air Projectile
-
 local CybranHailfire02Projectile = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsProjectiles.lua').CybranHailfire02Projectile
 local EffectTemplate = import('/lua/EffectTemplates.lua')
 local RandomFloat = import('/lua/utilities.lua').GetRandomFloat
 
+-- Cybran Anti Air Projectile
+---@class CAANanoDart02 : CybranHailfire02Projectile
 CAANanoDart02 = Class(CybranHailfire02Projectile) {
+
+   ---@param self CAANanoDart02
    OnCreate = function(self)
         CybranHailfire02Projectile.OnCreate(self)
         for k, v in self.FxTrails do
-            CreateEmitterOnEntity(self,self:GetArmy(),v)
+            CreateEmitterOnEntity(self,self.Army,v)
         end
         self.MoveThread = self:ForkThread(self.MovementThread)
    end,
 
+    ---@param self CAANanoDart02
     MovementThread = function(self)
         self.WaitTime = 0.1
         WaitSeconds(0.1)
@@ -22,6 +25,7 @@ CAANanoDart02 = Class(CybranHailfire02Projectile) {
         end
     end,
 
+    ---@param self CAANanoDart02
     SetTurnRateByDist = function(self)
         local dist = VDist3(self:GetPosition(), self:GetCurrentTargetPosition())
         if dist > 0 and dist <= 15 then
@@ -31,7 +35,7 @@ CAANanoDart02 = Class(CybranHailfire02Projectile) {
 
             -- Split effects
             for k, v in FxFragEffect do
-                CreateEmitterAtEntity(self, self:GetArmy(), v)
+                CreateEmitterAtEntity(self, self.Army, v)
             end
 
             local vx, vy, vz = self:GetVelocity()
@@ -65,9 +69,11 @@ CAANanoDart02 = Class(CybranHailfire02Projectile) {
         end
     end,
 
+    ---@param self CAANanoDart02
+    ---@param damageData table
     PassDamageData = function(self, damageData)
         CybranHailfire02Projectile.PassDamageData(self,damageData)
-        local launcherbp = self:GetLauncher():GetBlueprint()
+        local launcherbp = self.Launcher.Blueprint
         self.ChildDamageData = table.copy(self.DamageData)
         self.ChildDamageData.DamageAmount = launcherbp.SplitDamage.DamageAmount or 0
         self.ChildDamageData.DamageRadius = launcherbp.SplitDamage.DamageRadius or 1

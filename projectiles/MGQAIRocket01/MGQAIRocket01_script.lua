@@ -1,16 +1,19 @@
--- Aeon Serpentine Missile
-
 local CLOATacticalMissileProjectile = import('/lua/cybranprojectiles.lua').CLOATacticalMissileProjectile
 local VizMarker = import('/lua/sim/VizMarker.lua').VizMarker
 local RandomFloat = import('/lua/utilities.lua').GetRandomFloat
 
+-- Aeon Serpentine Missile
+---@class MGQAIRocket01 : CLOATacticalMissileProjectile
 MGQAIRocket01 = Class(CLOATacticalMissileProjectile) {
+
+    ---@param self MGQAIRocket01
     OnCreate = function(self)
         CLOATacticalMissileProjectile.OnCreate(self)
         self:SetCollisionShape('Sphere', 0, 0, 0, 2)
         self:ForkThread(self.UpdateThread)
     end,
 
+    ---@param self MGQAIRocket01
     UpdateThread = function(self)
         self:SetMaxSpeed(1)
         WaitSeconds(0.1)
@@ -35,9 +38,10 @@ MGQAIRocket01 = Class(CLOATacticalMissileProjectile) {
         self:Destroy()
     end,
 
+    ---@param self MGQAIRocket01
     Takeoff = function(self)
 
-    WaitSeconds(1)
+        WaitSeconds(1)
 
         local Velx, Vely, Velz = self:GetVelocity()
         local NumberOfChildProjectiles = 1

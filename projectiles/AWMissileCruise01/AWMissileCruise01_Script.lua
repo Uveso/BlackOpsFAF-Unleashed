@@ -1,6 +1,7 @@
 local MiniRocketPRojectile = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsProjectiles.lua').MiniRocketPRojectile
 local EffectTemplate = import('/lua/EffectTemplates.lua')
 
+---@class AWMissileCruise01 : MiniRocketPRojectile
 AWMissileCruise01 = Class(MiniRocketPRojectile) {
     FxTrails = EffectTemplate.TMissileExhaust01,
     FxImpactUnit = EffectTemplate.TMissileHit01,
@@ -18,12 +19,14 @@ AWMissileCruise01 = Class(MiniRocketPRojectile) {
     FxWaterHitScale = 1,
     FxOnKilledScale = 1,
 
+    ---@param self AWMissileCruise01
     OnCreate = function(self)
         MiniRocketPRojectile.OnCreate(self)
         self:SetCollisionShape('Sphere', 0, 0, 0, 1.2)
         self:ForkThread(self.CruiseMissileThread)
     end,
 
+    ---@param self AWMissileCruise01
     CruiseMissileThread = function(self)
         self:SetTurnRate(180)
         WaitSeconds(2)

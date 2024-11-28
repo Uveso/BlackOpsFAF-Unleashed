@@ -1,8 +1,9 @@
--- Aeon Chrono Torpedo Pack
--- This will split up into 4 Chrono Torpedoes after it gets close to an enemy
 
 local ATorpedoShipProjectile = import('/lua/aeonprojectiles.lua').ATorpedoShipProjectile
 
+-- Aeon Chrono Torpedo Pack
+-- This will split up into 4 Chrono Torpedoes after it gets close to an enemy
+---@class AANTorpedoChronoPack01 : ATorpedoShipProjectile
 AANTorpedoChronoPack01 = Class(ATorpedoShipProjectile) {
     FxSplashScale = 1,
     NumberOfChildProjectiles = 4,
@@ -11,6 +12,7 @@ AANTorpedoChronoPack01 = Class(ATorpedoShipProjectile) {
     DistanceBeforeSplitRatio = 0.35,
     VelocityOnEnterWater = 3,
 
+    ---@param self AANTorpedoChronoPack01
     SplitUpThread = function(self)
         local TrackingTarget = self:GetTrackingTarget()
         local SplitWaitTime = 1.0

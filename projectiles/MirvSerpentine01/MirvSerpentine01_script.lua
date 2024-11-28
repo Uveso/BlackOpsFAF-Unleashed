@@ -1,23 +1,28 @@
--- Aeon Serpentine Missile
-
 local AMissileSerpentineProjectile = import('/lua/aeonprojectiles.lua').AMissileSerpentineProjectile
 local EffectTemplate = import('/lua/EffectTemplates.lua')
 local RandomFloat = import('/lua/utilities.lua').GetRandomFloat
 
+-- Aeon Serpentine Missile
+---@class AIFMissileSerpentine01 : AMissileSerpentineProjectile
 AIFMissileSerpentine01 = Class(AMissileSerpentineProjectile) {
+
+    ---@param self AIFMissileSerpentine01
     OnCreate = function(self)
         AMissileSerpentineProjectile.OnCreate(self)
         self:SetCollisionShape('Sphere', 0, 0, 0, 2)
         self.MoveThread = self:ForkThread(self.MovementThread)
     end,
 
+    ---@param self AIFMissileSerpentine01
+    ---@param TargetType string
+    ---@param TargetEntity Entity
     OnImpact = function(self, TargetType, TargetEntity)
         local FxFragEffect = EffectTemplate.TFragmentationSensorShellFrag
         local ChildProjectileBP = '/mods/BlackOpsFAF-Unleashed/projectiles/MirvSerpentineVChild01/MirvSerpentineVChild01_proj.bp'
 
         -- Split effects
         for k, v in FxFragEffect do
-            CreateEmitterAtEntity(self, self:GetArmy(), v)
+            CreateEmitterAtEntity(self, self.Army, v)
         end
 
         local vx, vy, vz = self:GetVelocity()
@@ -52,9 +57,8 @@ AIFMissileSerpentine01 = Class(AMissileSerpentineProjectile) {
         AMissileSerpentineProjectile.OnImpact(self, TargetType, TargetEntity)
     end,
 
+    ---@param self AIFMissileSerpentine01
     MovementThread = function(self)
-        local army = self:GetArmy()
-        local launcher = self:GetLauncher()
         self:TrackTarget(false)
         WaitTicks(8) -- Height
         self:SetCollision(true)
@@ -72,6 +76,7 @@ AIFMissileSerpentine01 = Class(AMissileSerpentineProjectile) {
         end
     end,
 
+    ---@param self AIFMissileSerpentine01
     SetTurnRateByDist = function(self)
         local dist = self:GetDistanceToTarget()
         -- Get the nuke as close to 90 deg as possible
@@ -87,6 +92,8 @@ AIFMissileSerpentine01 = Class(AMissileSerpentineProjectile) {
         end
     end,
 
+    ---@param self AIFMissileSerpentine01
+    ---@return nil
     GetDistanceToTarget = function(self)
         local tpos = self:GetCurrentTargetPosition()
         local mpos = self:GetPosition()

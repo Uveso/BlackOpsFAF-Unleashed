@@ -1,17 +1,20 @@
--- Cybran Anti Air Projectile
-
 local CybranHailfire03Projectile = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsProjectiles.lua').CybranHailfire03Projectile
 local EffectTemplate = import('/lua/EffectTemplates.lua')
 local RandomFloat = import('/lua/utilities.lua').GetRandomFloat
 
+-- Cybran Anti Air Projectile
+---@class CAANanoDart02 : CybranHailfire03Projectile
 CAANanoDart02 = Class(CybranHailfire03Projectile) {
-   OnCreate = function(self)
+
+    ---@param self CAANanoDart02
+    OnCreate = function(self)
         CybranHailfire03Projectile.OnCreate(self)
-        for k, v in self.FxTrails do
-            CreateEmitterOnEntity(self,self:GetArmy(),v)
+        for _, v in self.FxTrails do
+            CreateEmitterOnEntity(self,self.Army,v)
         end
    end,
 
+   ---@param self CAANanoDart02
     MovementThread = function(self)
         self.WaitTime = 0.1
         WaitSeconds(0.1)
@@ -21,6 +24,7 @@ CAANanoDart02 = Class(CybranHailfire03Projectile) {
         end
     end,
 
+    ---@param self CAANanoDart02
     SetTurnRateByDist = function(self)
         local dist = VDist3(self:GetPosition(), self:GetCurrentTargetPosition())
         if dist > 0 and dist <= 15 then
@@ -29,7 +33,7 @@ CAANanoDart02 = Class(CybranHailfire03Projectile) {
             local ChildProjectileBP = '/mods/BlackOpsFAF-Unleashed/projectiles/CybranHailfire01child/CybranHailfire01child_proj.bp'
 
             for k, v in FxFragEffect do
-                CreateEmitterAtEntity(self, self:GetArmy(), v)
+                CreateEmitterAtEntity(self, self.Army, v)
             end
 
             local vx, vy, vz = self:GetVelocity()
@@ -63,9 +67,11 @@ CAANanoDart02 = Class(CybranHailfire03Projectile) {
         end
     end,
 
+    ---@param self CAANanoDart02
+    ---@param damageData table
     PassDamageData = function(self, damageData)
         CybranHailfire03Projectile.PassDamageData(self,damageData)
-        local launcherbp = self:GetLauncher():GetBlueprint()
+        local launcherbp = self.Launcher.Blueprint
         self.ChildDamageData = table.copy(self.DamageData)
         self.ChildDamageData.DamageAmount = launcherbp.SplitDamage.DamageAmount or 0
         self.ChildDamageData.DamageRadius = launcherbp.SplitDamage.DamageRadius or 1

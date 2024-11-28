@@ -1,6 +1,7 @@
 local MiniRocket04PRojectile = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsProjectiles.lua').MiniRocket04PRojectile
 local EffectTemplate = import('/lua/EffectTemplates.lua')
 
+---@class AWMissileCruise01 : MiniRocket04PRojectile
 AWMissileCruise01 = Class(MiniRocket04PRojectile) {
     InitialEffects = {'/effects/emitters/nuke_munition_launch_trail_02_emit.bp',},
     LaunchEffects = {
@@ -29,12 +30,14 @@ AWMissileCruise01 = Class(MiniRocket04PRojectile) {
     FxWaterHitScale = 0.6,
     FxOnKilledScale = 0.6,
 
+    ---@param self AWMissileCruise01
     OnCreate = function(self)
         MiniRocket04PRojectile.OnCreate(self)
         self:SetCollisionShape('Sphere', 0, 0, 0, 2)
         self.MoveThread = self:ForkThread(self.MovementThread)
     end,
 
+    ---@param self AWMissileCruise01
     MovementThread = function(self)
         self.WaitTime = 0.1
         self:SetTurnRate(8)
@@ -45,14 +48,19 @@ AWMissileCruise01 = Class(MiniRocket04PRojectile) {
         end
     end,
 
+    ---@param self AWMissileCruise01
+    ---@param EffectTable table
+    ---@param army Army
+    ---@param scale number
     CreateEffects = function(self, EffectTable, army, scale)
-        for k, v in EffectTable do
+        for _, v in EffectTable do
             self.Trash:Add(CreateAttachedEmitter(self, -1, army, v):ScaleEmitter(scale))
         end
     end,
 
+    ---@param self AWMissileCruise01
     SetTurnRateByDist = function(self)
-        local army = self:GetArmy()
+        local army = self.Army
         local dist = VDist3(self:GetPosition(), self:GetCurrentTargetPosition())
         if dist > 50 then
             -- Freeze the turn rate as to prevent steep angles at long distance targets
@@ -84,6 +92,8 @@ AWMissileCruise01 = Class(MiniRocket04PRojectile) {
         end
     end,
 
+    ---@param self AWMissileCruise01
+    ---@return nil
     GetDistanceToTarget = function(self)
         local tpos = self:GetCurrentTargetPosition()
         local mpos = self:GetPosition()
@@ -91,10 +101,10 @@ AWMissileCruise01 = Class(MiniRocket04PRojectile) {
         return dist
     end,
 
+    ---@param self AWMissileCruise01
     OnEnterWater = function(self)
         MiniRocket04PRojectile.OnEnterWater(self)
         self:SetDestroyOnWater(true)
     end,
 }
-
 TypeClass = AWMissileCruise01
