@@ -11,9 +11,11 @@
 
 do
 
+
+---@param newTable table
 function hookInsert(newTable)
     for key, armorTable in armordefinition do
-        for index, str in armorTable do
+        for _, str in armorTable do
             if newTable[1] == str then
                 armordefinition[key] = newTable
                 break
