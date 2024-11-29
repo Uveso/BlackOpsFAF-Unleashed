@@ -2,17 +2,19 @@
 -- File     :  /data/projectiles/SIFLaanseTacticalMissile01/SIFLaanseTacticalMissile01_script.lua
 -- Author(s):  Gordon Duclos, Aaron Lundquist
 -- Summary  :  Laanse Tactical Missile Projectile script, /mods/BlackOpsFAF-Unleashed
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2007 Gas Powered Games, Inc.  All rights reserved.
 -------------------------------------------------------------------------------------------------
-
 local SLaanseTacticalMissile = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsProjectiles.lua').SLaanseTacticalMissile
 
+---@class SIFLaanseTacticalMissile01 : SLaanseTacticalMissile
 SIFLaanseTacticalMissile01 = Class(SLaanseTacticalMissile) {
 
+    ---@param self SIFLaanseTacticalMissile01
     OnCreate = function(self)
         SLaanseTacticalMissile.OnCreate(self)
     end,
 
+    ---@param self SIFLaanseTacticalMissile01
     MovementThread = function(self)
         self.WaitTime = 0.1
         self.Distance = self:GetDistanceToTarget()
@@ -24,6 +26,7 @@ SIFLaanseTacticalMissile01 = Class(SLaanseTacticalMissile) {
         end
     end,
 
+    ---@param self SIFLaanseTacticalMissile01
     SetTurnRateByDist = function(self)
         local dist = self:GetDistanceToTarget()
         if dist > self.Distance then
@@ -49,6 +52,8 @@ SIFLaanseTacticalMissile01 = Class(SLaanseTacticalMissile) {
         end
     end,
 
+    ---@param self SIFLaanseTacticalMissile01
+    ---@return nil
     GetDistanceToTarget = function(self)
         local tpos = self:GetCurrentTargetPosition()
         local mpos = self:GetPosition()

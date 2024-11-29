@@ -1,15 +1,18 @@
--- AA Missile for Cybrans
-
 local CAAMissileNaniteProjectile = import('/lua/cybranprojectiles.lua').CAAMissileNaniteProjectile
 local RandomFloat = import('/lua/utilities.lua').GetRandomFloat
 local EffectTemplate = import('/lua/EffectTemplates.lua')
 
+-- AA Missile for Cybrans
+---@class CAAMissileNanite02 : CAAMissileNaniteProjectile
 CAAMissileNanite02 = Class(CAAMissileNaniteProjectile) {
+
+    ---@param self CAAMissileNanite02
     OnCreate = function(self)
         CAAMissileNaniteProjectile.OnCreate(self)
         self:ForkThread(self.MovementThread)
     end,
 
+    ---@param self CAAMissileNanite02
     MovementThread = function(self)
         self.WaitTime = 0.1
         self.Distance = self:GetDistanceToTarget()
@@ -19,6 +22,7 @@ CAAMissileNanite02 = Class(CAAMissileNaniteProjectile) {
         end
     end,
 
+    ---@param self CAAMissileNanite02
     SetTurnRateByDist = function(self)
         local dist = self:GetDistanceToTarget()
         if dist > self.Distance then
@@ -30,6 +34,7 @@ CAAMissileNanite02 = Class(CAAMissileNaniteProjectile) {
         end
     end,
 
+    ---@param self CAAMissileNanite02
     GetDistanceToTarget = function(self)
         local tpos = self:GetCurrentTargetPosition()
         local mpos = self:GetPosition()
@@ -37,13 +42,14 @@ CAAMissileNanite02 = Class(CAAMissileNaniteProjectile) {
         return dist
     end,
 
+    ---@param self CAAMissileNanite02
     SplitThread = function(self)
         local FxFragEffect = EffectTemplate.TFragmentationSensorShellFrag
         local ChildProjectileBP = '/mods/BlackOpsFAF-Unleashed/projectiles/SwarmRocket02/SwarmRocket02_proj.bp'
 
         -- Split effects
-        for k, v in FxFragEffect do
-            CreateEmitterAtEntity(self, self:GetArmy(), v)
+        for _, v in FxFragEffect do
+            CreateEmitterAtEntity(self, self.Army, v)
         end
 
         local vx, vy, vz = self:GetVelocity()

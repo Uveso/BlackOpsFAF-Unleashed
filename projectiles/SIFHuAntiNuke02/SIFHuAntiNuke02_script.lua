@@ -1,27 +1,29 @@
---****************************************************************************
+----------------------------------------------------------------------------
 -- File     :  /data/projectiles/SIFHuAntiNuke01/SIFHuAntiNuke01_script.lua
 -- Author(s):  Greg Kohne, Matt Vainio
 -- Summary  : Seraphim Anti Nuke Missile
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.**************************************************************************
-
-
-
+-- Copyright ï¿½ 2007 Gas Powered Games, Inc.  All rights reserved.
+----------------------------------------------------------------------------
 local EffectTemplate = import('/lua/EffectTemplates.lua')
 local SIFHuAntiNuke = import('/lua/seraphimprojectiles.lua').SIFHuAntiNuke
 local RandomFloat = import('/lua/utilities.lua').GetRandomFloat
 local RandomInt = import('/lua/utilities.lua').GetRandomInt
+
+---@class SIFHuAntiNuke01 : SIFHuAntiNuke
 SIFHuAntiNuke01 = Class(SIFHuAntiNuke) {
 
      ------This is a custom impact to maeke the seraphim hit look really good, like some kind of tendrilled explosion.
+     ---@param self SIFHuAntiNuke01
+     ---@param TargetType string
+     ---@param TargetEntity Entity
      OnImpact = function(self, TargetType, TargetEntity)
         local FxHitEffect = EffectTemplate.SKhuAntiNukeHit
         local LargeTendrilProjectile = '/effects/Entities/SIFHuAntiNuke02/SIFHuAntiNuke02_proj.bp'
         local SmallTendrilProjectile = '/effects/Entities/SIFHuAntiNuke03/SIFHuAntiNuke03_proj.bp'
 
-
         ------Play the hit effect for the core explosion on the anti nuke.
-        for k, v in FxHitEffect do
-            CreateEmitterAtEntity(self, self:GetArmy(), v)
+        for _, v in FxHitEffect do
+            CreateEmitterAtEntity(self, self.Army, v)
         end
 
         local vx, vy, vz = self:GetVelocity()

@@ -2,12 +2,17 @@
 -- File     :  /data/projectiles/SDFTauCannon01/SDFTauCannon01_script.lua
 -- Author(s):  Gordon Duclos
 -- Summary  :  Tau Cannon Projectile script, XSL0303
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2007 Gas Powered Games, Inc.  All rights reserved.
 -------------------------------------------------------------------------
 
 local ShieldTauCannonProjectile = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsProjectiles.lua').ShieldTauCannonProjectile
 
+---@class STauCannon : ShieldTauCannonProjectile
 STauCannon = Class(ShieldTauCannonProjectile) {
+
+    ---@param self STauCannon
+    ---@param TargetType string
+    ---@param TargetEntity Entity
     OnImpact = function(self, TargetType, TargetEntity)
         ShieldTauCannonProjectile.OnImpact(self, TargetType, TargetEntity)
         if TargetType == 'Shield' then

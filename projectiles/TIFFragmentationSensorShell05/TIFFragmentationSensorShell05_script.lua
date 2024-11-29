@@ -1,18 +1,22 @@
--- Terran Fragmentation/Sensor Shells
-
 local EffectTemplate = import('/lua/EffectTemplates.lua')
 local TArtilleryProjectile = import('/lua/terranprojectiles.lua').TArtilleryProjectile
 local RandomFloat = import('/lua/utilities.lua').GetRandomFloat
 local VizMarker = import('/lua/sim/VizMarker.lua').VizMarker
 
+-- Terran Fragmentation/Sensor Shells
+---@class TIFFragmentationSensorShell01 : TArtilleryProjectile
 TIFFragmentationSensorShell01 = Class(TArtilleryProjectile) {
+
+    ---@param self TIFFragmentationSensorShell01
+    ---@param TargetType string Unused
+    ---@param TargetEntity Entity Unused
     OnImpact = function(self, TargetType, TargetEntity)
         local FxFragEffect = EffectTemplate.TFragmentationSensorShellFrag
         local ChildProjectileBP = '/projectiles/TIFFragmentationSensorShell02/TIFFragmentationSensorShell02_proj.bp'
 
         -- Split effects
-        for k, v in FxFragEffect do
-            CreateEmitterAtEntity(self, self:GetArmy(), v)
+        for _, v in FxFragEffect do
+            CreateEmitterAtEntity(self, self.Army, v)
         end
 
         local vx, vy, vz = self:GetVelocity()
@@ -43,17 +47,6 @@ TIFFragmentationSensorShell01 = Class(TArtilleryProjectile) {
             proj:SetVelocity(velocity)
             proj:PassDamageData(self.DamageData)
         end
-        local pos = self:GetPosition()
-        local spec = {
-            X = pos[1],
-            Z = pos[3],
-            Radius = self.Data.Radius,
-            LifeTime = self.Data.Lifetime,
-            Army = self.Data.Army,
-            Omni = false,
-            WaterVision = false,
-        }
-        local vizEntity = VizMarker(spec)
         self:Destroy()
     end,
 }
