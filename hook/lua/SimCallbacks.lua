@@ -2,6 +2,8 @@
 local LetterArray = {["Aeon"] = "ua", ["UEF"] = "ue", ["Cybran"] = "ur", ["Seraphim"] = "xs"}
 local BOLetterArray = {["Aeon"] = "ba", ["UEF"] = "be", ["Cybran"] = "br", ["Seraphim"] = "bs"}
 
+---@param data table
+---@param units Unit[]
 Callbacks.CapMex = function(data, units)
     local units = EntityCategoryFilterDown(categories.ENGINEER, SecureUnits(units))
     if not units[1] then return end
