@@ -47,7 +47,7 @@ PDLaserCollisionBeam = Class(HawkCollisionBeam) {
 
     ---@param self PDLaserCollisionBeam
     ---@param impactType string
-    ---@param targetEntity Unit
+    ---@param targetEntity Entity
     OnImpact = function(self, impactType, targetEntity)
         if impactType == 'Terrain' then
             if self.Scorching == nil then
@@ -80,7 +80,7 @@ PDLaserCollisionBeam = Class(HawkCollisionBeam) {
     end,
 }
 
----@class PDLaser2CollisionBeam : CollisionBeam
+---@class PDLaser2CollisionBeam : HawkCollisionBeam
 PDLaser2CollisionBeam = Class(CollisionBeam) {
     FxBeamStartPoint = EffectTemplate.TDFHiroGeneratorMuzzle01,
     FxBeam = EffectTemplate.TDFHiroGeneratorBeam,
@@ -92,7 +92,7 @@ PDLaser2CollisionBeam = Class(CollisionBeam) {
 
     ---@param self PDLaser2CollisionBeam
     ---@param impactType string
-    ---@param targetEntity Unit
+    ---@param targetEntity Entity
     OnImpact = function(self, impactType, targetEntity)
         if impactType == 'Terrain' then
             if self.Scorching == nil then
@@ -118,7 +118,7 @@ PDLaser2CollisionBeam = Class(CollisionBeam) {
 }
 
 -- SEADRAGON & REAPER BEAMS
----@class MartyrMicrowaveLaserCollisionBeam01 : HawkCollisionBeam
+---@class MiniMicrowaveLaserCollisionBeam01 : HawkCollisionBeam
 MartyrMicrowaveLaserCollisionBeam01 = Class(HawkCollisionBeam) {
     TerrainImpactType = 'LargeBeam01',
     TerrainImpactScale = 0.2,
@@ -155,7 +155,7 @@ MiniQuantumBeamGeneratorCollisionBeam = Class(HawkCollisionBeam) {
 
     ---@param self MiniQuantumBeamGeneratorCollisionBeam
     ---@param impactType string
-    ---@param targetEntity Unit
+    ---@param targetEntity Entity
     OnImpact = function(self, impactType, targetEntity)
         if impactType == 'Terrain' then
             if self.Scorching == nil then
@@ -233,7 +233,7 @@ SuperQuantumBeamGeneratorCollisionBeam = Class(HawkCollisionBeam) {
 
     ---@param self SuperQuantumBeamGeneratorCollisionBeam
     ---@param impactType string
-    ---@param targetEntity Unit
+    ---@param targetEntity Entity
     OnImpact = function(self, impactType, targetEntity)
         if impactType == 'Terrain' then
             if self.Scorching == nil then
@@ -284,6 +284,7 @@ SuperQuantumBeamGeneratorCollisionBeam = Class(HawkCollisionBeam) {
     end,
 }
 
+---@class MiniPhasonLaserCollisionBeam : HawkCollisionBeam
 MiniPhasonLaserCollisionBeam = Class(HawkCollisionBeam) {
     TerrainImpactType = 'LargeBeam01',
     TerrainImpactScale = 0.5,
@@ -295,6 +296,9 @@ MiniPhasonLaserCollisionBeam = Class(HawkCollisionBeam) {
     SplatTexture = 'czar_mark01_albedo',
     ScorchSplatDropTime = 0.25,
 
+    ---@param self MiniPhasonLaserCollisionBeam
+    ---@param impactType string
+    ---@param targetEntity Entity
     OnImpact = function(self, impactType, targetEntity)
         if impactType == 'Terrain' then
             if self.Scorching == nil then
@@ -307,6 +311,7 @@ MiniPhasonLaserCollisionBeam = Class(HawkCollisionBeam) {
         CollisionBeam.OnImpact(self, impactType, targetEntity)
     end,
 
+    ---@param self MiniPhasonLaserCollisionBeam
     OnEnable = function(self)
         CollisionBeam.OnEnable(self)
         if self.Scorching == nil then
@@ -314,12 +319,14 @@ MiniPhasonLaserCollisionBeam = Class(HawkCollisionBeam) {
         end
     end,
 
+    ---@param self MiniPhasonLaserCollisionBeam
     OnDisable = function(self)
         CollisionBeam.OnDisable(self)
         KillThread(self.Scorching)
         self.Scorching = nil
     end,
 
+    ---@param self MiniPhasonLaserCollisionBeam
     ScorchThread = function(self)
         local army = self.Army
         local size = 1.5 + (Random() * 1.5)
@@ -342,6 +349,7 @@ MiniPhasonLaserCollisionBeam = Class(HawkCollisionBeam) {
     end,
 }
 
+---@class MiniMicrowaveLaserCollisionBeam01 : HawkCollisionBeam
 MiniMicrowaveLaserCollisionBeam01 = Class(HawkCollisionBeam) {
     TerrainImpactType = 'LargeBeam01',
     TerrainImpactScale = 0.2,
@@ -353,6 +361,9 @@ MiniMicrowaveLaserCollisionBeam01 = Class(HawkCollisionBeam) {
     SplatTexture = 'czar_mark01_albedo',
     ScorchSplatDropTime = 0.25,
 
+    ---@param self MiniMicrowaveLaserCollisionBeam01
+    ---@param impactType string
+    ---@param targetEntity Entity
     OnImpact = function(self, impactType, targetEntity)
         if impactType == 'Terrain' then
             if self.Scorching == nil then
@@ -365,6 +376,7 @@ MiniMicrowaveLaserCollisionBeam01 = Class(HawkCollisionBeam) {
         CollisionBeam.OnImpact(self, impactType, targetEntity)
     end,
 
+    ---@param self MiniMicrowaveLaserCollisionBeam01
     OnEnable = function(self)
         CollisionBeam.OnEnable(self)
         if self.Scorching == nil then
@@ -372,12 +384,14 @@ MiniMicrowaveLaserCollisionBeam01 = Class(HawkCollisionBeam) {
         end
     end,
 
+    ---@param self MiniMicrowaveLaserCollisionBeam01
     OnDisable = function(self)
         CollisionBeam.OnDisable(self)
         KillThread(self.Scorching)
         self.Scorching = nil
     end,
 
+    ---@param self MiniMicrowaveLaserCollisionBeam01
     ScorchThread = function(self)
         local army = self.Army
         local size = 1.5 + (Random() * 1.5)
@@ -400,6 +414,7 @@ MiniMicrowaveLaserCollisionBeam01 = Class(HawkCollisionBeam) {
     end,
 }
 
+---@class HawkTractorClawCollisionBeam : HawkCollisionBeam
 HawkTractorClawCollisionBeam = Class(HawkCollisionBeam) {
     FxBeam = {EffectTemplate.TTransportBeam01},
     FxBeamEndPoint = {EffectTemplate.TTransportGlow01},
@@ -408,6 +423,7 @@ HawkTractorClawCollisionBeam = Class(HawkCollisionBeam) {
 }
 
 -- Juggernaut LASERS
+---@class JuggLaserCollisionBeam : HawkCollisionBeam
 JuggLaserCollisionBeam = Class(HawkCollisionBeam) {
     TerrainImpactType = 'LargeBeam02',
     TerrainImpactScale = 0.02,
@@ -428,6 +444,7 @@ JuggLaserCollisionBeam = Class(HawkCollisionBeam) {
 }
 
 -- ShadowCat beam
+---@class RailLaserCollisionBeam01 : HawkCollisionBeam
 RailLaserCollisionBeam01 = Class(HawkCollisionBeam) {
     TerrainImpactType = 'LargeBeam01',
     TerrainImpactScale = 0.2,
@@ -439,6 +456,9 @@ RailLaserCollisionBeam01 = Class(HawkCollisionBeam) {
     SplatTexture = 'czar_mark01_albedo',
     ScorchSplatDropTime = 0.25,
 
+    ---@param self RailLaserCollisionBeam01
+    ---@param targetType string
+    ---@param targetEntity Entity
     OnImpactDestroy = function(self, targetType, targetEntity)
        if targetEntity and not IsUnit(targetEntity) then
           RailLaserCollisionBeam01.OnImpactDestroy(self, targetType, targetEntity)
@@ -462,6 +482,7 @@ RailLaserCollisionBeam01 = Class(HawkCollisionBeam) {
 }
 
 -- ZAPPER STUN BEAM
+---@class EMCHPRFDisruptorBeam : HawkCollisionBeam
 EMCHPRFDisruptorBeam = Class(HawkCollisionBeam) {
     TerrainImpactType = 'LargeBeam01',
     TerrainImpactScale = 0.3,
@@ -473,6 +494,9 @@ EMCHPRFDisruptorBeam = Class(HawkCollisionBeam) {
     SplatTexture = 'czar_mark01_albedo',
     ScorchSplatDropTime = 0.25,
 
+    ---@param self EMCHPRFDisruptorBeam
+    ---@param impactType string
+    ---@param targetEntity Entity
     OnImpact = function(self, impactType, targetEntity)
         if targetEntity then
             if EntityCategoryContains(categories.TECH1, targetEntity) then
@@ -489,6 +513,7 @@ EMCHPRFDisruptorBeam = Class(HawkCollisionBeam) {
 }
 
 -- HIRO LASER COLLISION BEAM
+---@class TDFGoliathCollisionBeam : HawkCollisionBeam
 TDFGoliathCollisionBeam = Class(HawkCollisionBeam) {
     TerrainImpactType = 'LargeBeam01',
     TerrainImpactScale = 1,
@@ -516,6 +541,9 @@ TDFGoliathCollisionBeam = Class(HawkCollisionBeam) {
     SplatTexture = 'czar_mark01_albedo',
     ScorchSplatDropTime = 0.25,
 
+    ---@param self TDFGoliathCollisionBeam
+    ---@param impactType string
+    ---@param targetEntity Entity
     OnImpact = function(self, impactType, targetEntity)
         if impactType == 'Terrain' then
             if self.Scorching == nil then
@@ -528,12 +556,14 @@ TDFGoliathCollisionBeam = Class(HawkCollisionBeam) {
         CollisionBeam.OnImpact(self, impactType, targetEntity)
     end,
 
+    ---@param self TDFGoliathCollisionBeam
     OnDisable = function(self)
         CollisionBeam.OnDisable(self)
         KillThread(self.Scorching)
         self.Scorching = nil
     end,
 
+    ---@param self TDFGoliathCollisionBeam
     ScorchThread = function(self)
         local army = self.Army
         local size = 0.75 + (Random() * 0.75)
@@ -557,6 +587,7 @@ TDFGoliathCollisionBeam = Class(HawkCollisionBeam) {
 }
 
 -- MGAALaser CANNON COLLISION BEAM
+---@class MGAALaserCollisionBeam : HawkCollisionBeam
 MGAALaserCollisionBeam = Class(HawkCollisionBeam) {
     FxBeam = {
         '/mods/BlackOpsFAF-Unleashed/effects/emitters/aa_cannon_beam_01_emit.bp',
@@ -569,6 +600,7 @@ MGAALaserCollisionBeam = Class(HawkCollisionBeam) {
 }
 
 -- Aeon t4 beam
+---@class GoldenLaserCollisionBeam01 : HawkCollisionBeam
 GoldenLaserCollisionBeam01 = Class(HawkCollisionBeam) {
     TerrainImpactType = 'LargeBeam01',
     TerrainImpactScale = 0.2,
@@ -581,6 +613,7 @@ GoldenLaserCollisionBeam01 = Class(HawkCollisionBeam) {
     ScorchSplatDropTime = 0.25,
 }
 
+---@class YenaothaExperimentalLaserCollisionBeam : HawkCollisionBeam
 YenaothaExperimentalLaserCollisionBeam = Class(HawkCollisionBeam) {
     TerrainImpactType = 'LargeBeam01',
     TerrainImpactScale = 1,
@@ -590,6 +623,9 @@ YenaothaExperimentalLaserCollisionBeam = Class(HawkCollisionBeam) {
     SplatTexture = 'scorch_004_albedo',
     ScorchSplatDropTime = 0.1,
 
+    ---@param self YenaothaExperimentalLaserCollisionBeam
+    ---@param impactType string
+    ---@param targetEntity Entity
     OnImpact = function(self, impactType, targetEntity)
         if impactType == 'Terrain' then
             if self.Scorching == nil then
@@ -602,12 +638,14 @@ YenaothaExperimentalLaserCollisionBeam = Class(HawkCollisionBeam) {
         CollisionBeam.OnImpact(self, impactType, targetEntity)
     end,
 
+    ---@param self YenaothaExperimentalLaserCollisionBeam
     OnDisable = function(self)
         CollisionBeam.OnDisable(self)
         KillThread(self.Scorching)
         self.Scorching = nil
     end,
 
+    ---@param self YenaothaExperimentalLaserCollisionBeam
     ScorchThread = function(self)
         local army = self.Army
         local size = 4.0 + (Random() * 1.0)
@@ -630,6 +668,7 @@ YenaothaExperimentalLaserCollisionBeam = Class(HawkCollisionBeam) {
     end,
 }
 
+---@class YenaothaExperimentalLaser02CollisionBeam : HawkCollisionBeam
 YenaothaExperimentalLaser02CollisionBeam = Class(HawkCollisionBeam) {
     TerrainImpactType = 'LargeBeam01',
     TerrainImpactScale = 1,
@@ -641,6 +680,9 @@ YenaothaExperimentalLaser02CollisionBeam = Class(HawkCollisionBeam) {
     SplatTexture = 'scorch_004_albedo',
     ScorchSplatDropTime = 0.1,
 
+    ---@param self YenaothaExperimentalLaser02CollisionBeam
+    ---@param impactType string
+    ---@param targetEntity Entity
     OnImpact = function(self, impactType, targetEntity)
         if impactType == 'Terrain' then
             if self.Scorching == nil then
@@ -653,12 +695,14 @@ YenaothaExperimentalLaser02CollisionBeam = Class(HawkCollisionBeam) {
         CollisionBeam.OnImpact(self, impactType, targetEntity)
     end,
 
+    ---@param self YenaothaExperimentalLaser02CollisionBeam
     OnDisable = function(self)
         CollisionBeam.OnDisable(self)
         KillThread(self.Scorching)
         self.Scorching = nil
     end,
 
+    ---@param self YenaothaExperimentalLaser02CollisionBeam
     ScorchThread = function(self)
         local army = self.Army
         local size = 4.0 + (Random() * 1.0)
@@ -681,6 +725,7 @@ YenaothaExperimentalLaser02CollisionBeam = Class(HawkCollisionBeam) {
     end,
 }
 
+---@class YenaothaExperimentalChargeLaserCollisionBeam : HawkCollisionBeam
 YenaothaExperimentalChargeLaserCollisionBeam = Class(HawkCollisionBeam) {
     TerrainImpactType = 'LargeBeam01',
     TerrainImpactScale = 1,
