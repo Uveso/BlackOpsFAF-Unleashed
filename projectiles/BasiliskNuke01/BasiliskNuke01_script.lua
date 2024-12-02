@@ -2,24 +2,24 @@
 -- File     :  \data\effects\Entities\CybranNukeEffectController0101\CybranNukeEffectController0101_script.lua
 -- Author(s):  Greg Kohne
 -- Summary  :  Ohwalli Bomb effect controller script, non-damaging
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2007 Gas Powered Games, Inc.  All rights reserved.
 --------------------------------------------------------------------------------------------------------------
-
 local NullShell = import('/lua/sim/defaultprojectiles.lua').NullShell
 local RandomFloat = import('/lua/utilities.lua').GetRandomFloat
 local Util = import('/lua/utilities.lua')
 local BasiliskNukeEffect04 = '/mods/BlackOpsFAF-Unleashed/projectiles/MGQAIPlasmaArty01/MGQAIPlasmaArty01_proj.bp'
 local BasiliskNukeEffect05 = '/mods/BlackOpsFAF-Unleashed/effects/Entities/BasiliskNukeEffect05/BasiliskNukeEffect05_proj.bp'
 
+---@class BasiliskNukeEffectController01 : NullShell
 BasiliskNukeEffectController01 = Class(NullShell) {
+
     -- Create inner explosion plasma
+    ---@param self BasiliskNukeEffectController01
     CreateEffectInnerPlasma = function(self)
-        local vx, vy, vz = self:GetVelocity()
         local num_projectiles = 20
         local horizontal_angle = (2*math.pi) / num_projectiles
         local angleInitial = RandomFloat(0, horizontal_angle)
         local xVec, zVec
-        local offsetMultiple = 5
         local px, pz
 
         for i = 0, (num_projectiles -1) do
@@ -35,13 +35,13 @@ BasiliskNukeEffectController01 = Class(NullShell) {
         end
     end,
 
+    ---@param self BasiliskNukeEffectController01
     EffectThread = function(self)
         self:ForkThread(self.CreateEffectInnerPlasma)
-        local army = self:GetArmy()
         local position = self:GetPosition()
 
         WaitSeconds(1)
-        CreateLightParticle(self, -1, self:GetArmy(), 50, 100, 'beam_white_01', 'ramp_blue_16')
+        CreateLightParticle(self, -1, self.Army, 50, 100, 'beam_white_01', 'ramp_blue_16')
         self:ShakeCamera(75, 3, 0, 10)
 
         -- Knockdown force rings
@@ -169,12 +169,13 @@ BasiliskNukeEffectController01 = Class(NullShell) {
 
         WaitSeconds(0.5)
 
-        local army = self:GetArmy()
+        local army = self.Army
         CreateDecal(self:GetPosition(), RandomFloat(0,2*math.pi), 'nuke_scorch_001_albedo', '', 'Albedo', 30, 30, 500, 0, army)
 
         self:ForkThread(self.CreateHeadConvectionSpinners)
     end,
 
+    ---@param self BasiliskNukeEffectController01
     CreateHeadConvectionSpinners = function(self)
         local sides = 8
         local angle = (2*math.pi) / sides
@@ -203,5 +204,4 @@ BasiliskNukeEffectController01 = Class(NullShell) {
         end
     end,
 }
-
 TypeClass = BasiliskNukeEffectController01

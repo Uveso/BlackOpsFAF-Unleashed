@@ -2,27 +2,30 @@
 -- File     :  /data/projectiles/SIFLaanseTacticalMissile04/SIFLaanseTacticalMissile04_script.lua
 -- Author(s):  Gordon Duclos, Aaron Lundquist
 -- Summary  :  Laanse Tactical Missile Projectile script, XSB2108
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2007 Gas Powered Games, Inc.  All rights reserved.
 -------------------------------------------------------------------------------------------------
-
 local SLaanseTacticalMissile = import('/lua/seraphimprojectiles.lua').SLaanseTacticalMissile
 local EffectTemplate = import('/lua/EffectTemplates.lua')
 local BlackOpsEffectTemplate = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsEffectTemplates.lua')
 local RandomFloat = import('/lua/utilities.lua').GetRandomFloat
-local VizMarker = import('/lua/sim/VizMarker.lua').VizMarker
 
+---@class SIFLaanseTacticalMissile04 : SLaanseTacticalMissile
 SIFLaanseTacticalMissile04 = Class(SLaanseTacticalMissile) {
     FxImpactUnit = BlackOpsEffectTemplate.MGHeadshotHit01,
     FxImpactAirUnit = BlackOpsEffectTemplate.MGHeadshotHit01,
     FxImpactProp = BlackOpsEffectTemplate.MGHeadshotHit01,
     FxImpactLand = BlackOpsEffectTemplate.MGHeadshotHit01,
 
+    ---@param self SIFLaanseTacticalMissile04
     OnCreate = function(self)
         SLaanseTacticalMissile.OnCreate(self)
         self:SetCollisionShape('Sphere', 0, 0, 0, 2.0)
         self:ForkThread(self.MovementThread)
     end,
 
+    ---@param self SIFLaanseTacticalMissile04
+    ---@param TargetType string
+    ---@param TargetEntity Entity
     OnImpact = function(self, TargetType, TargetEntity)
 
         local FxFragEffect = EffectTemplate.SThunderStormCannonProjectileSplitFx
@@ -30,7 +33,7 @@ SIFLaanseTacticalMissile04 = Class(SLaanseTacticalMissile) {
 
         -- Split effects
         for k, v in FxFragEffect do
-            CreateEmitterAtEntity(self, self:GetArmy(), v)
+            CreateEmitterAtEntity(self, self.Army, v)
         end
 
         local vx, vy, vz = self:GetVelocity()
@@ -65,9 +68,8 @@ SIFLaanseTacticalMissile04 = Class(SLaanseTacticalMissile) {
         SLaanseTacticalMissile.OnImpact(self, TargetType, TargetEntity)
     end,
 
+    ---@param self SIFLaanseTacticalMissile04
     MovementThread = function(self)
-        local army = self:GetArmy()
-        local launcher = self:GetLauncher()
         self:TrackTarget(false)
         self:SetCollision(true)
         WaitSeconds(1)
@@ -84,6 +86,7 @@ SIFLaanseTacticalMissile04 = Class(SLaanseTacticalMissile) {
         end
     end,
 
+    ---@param self SIFLaanseTacticalMissile04
     SetTurnRateByDist = function(self)
         local dist = self:GetDistanceToTarget()
         -- Get the nuke as close to 90 deg as possible
@@ -99,6 +102,8 @@ SIFLaanseTacticalMissile04 = Class(SLaanseTacticalMissile) {
         end
     end,
 
+    ---@param self SIFLaanseTacticalMissile04
+    ---@return nil
     GetDistanceToTarget = function(self)
         local tpos = self:GetCurrentTargetPosition()
         local mpos = self:GetPosition()

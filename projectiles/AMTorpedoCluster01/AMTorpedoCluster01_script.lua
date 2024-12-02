@@ -2,24 +2,27 @@
 -- File     :  /data/projectiles/AANTorpedoCluster01/AANTorpedoCluster01_script.lua
 -- Author(s):  Gordon Duclos
 -- Summary  :  Aeon Torpedo Cluster Projectile script, XAA0306
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2007 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------------------------
-
 local AMTorpedoCluster = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsProjectiles.lua').AMTorpedoCluster
 local VizMarker = import('/lua/sim/VizMarker.lua').VizMarker
 local RandomFloat = import('/lua/utilities.lua').GetRandomFloat
 
+---@class AANTorpedoCluster01 : AMTorpedoCluster
 AANTorpedoCluster01 = Class(AMTorpedoCluster) {
-    FxEnterWater= {'/effects/emitters/water_splash_ripples_ring_01_emit.bp',
-                    '/effects/emitters/water_splash_plume_01_emit.bp',
-                },
+    FxEnterWater= {
+        '/effects/emitters/water_splash_ripples_ring_01_emit.bp',
+        '/effects/emitters/water_splash_plume_01_emit.bp',
+    },
 
+    ---@param self AANTorpedoCluster01
     OnCreate = function(self)
         AMTorpedoCluster.OnCreate(self)
         self.HasImpacted = false
-        CreateTrail(self, -1, self:GetArmy(), import('/lua/EffectTemplates.lua').ATorpedoPolyTrails01)
+        CreateTrail(self, -1, self.Army, import('/lua/EffectTemplates.lua').ATorpedoPolyTrails01)
     end,
 
+    ---@param self AANTorpedoCluster01
     OnEnterWater = function(self)
         local Velx, Vely, Velz = self:GetVelocity()
         local NumberOfChildProjectiles = 1
@@ -52,11 +55,13 @@ AANTorpedoCluster01 = Class(AMTorpedoCluster) {
             Vision = false,
             Army = self:GetArmy(),
         }
-        local vizEntity = VizMarker(spec)
         AMTorpedoCluster.OnEnterWater(self)
         self:Destroy()
     end,
 
+    ---@param self AANTorpedoCluster01
+    ---@param TargetType string
+    ---@param TargetEntity Entity
     OnImpact = function(self, TargetType, TargetEntity)
         if (TargetEntity == nil) and (TargetType == "Air") then
             return
@@ -64,9 +69,9 @@ AANTorpedoCluster01 = Class(AMTorpedoCluster) {
         AMTorpedoCluster.OnImpact(self, TargetType, TargetEntity)
     end,
 
+    ---@param self AANTorpedoCluster01
     OnLostTarget = function(self)
         self:Destroy()
     end,
 }
-
 TypeClass = AANTorpedoCluster01

@@ -1,18 +1,22 @@
--- Cybran Anti Air Projectile
-
 CAANanoDartProjectile = import('/lua/cybranprojectiles.lua').CAANanoDartProjectile
 
+-- Cybran Anti Air Projectile
+---@class CAANanoDart01 : CAANanoDartProjectile
 CAANanoDart01 = Class(CAANanoDartProjectile) {
+
+    ---@param self CAANanoDart01
     OnCreate = function(self)
         CAANanoDartProjectile.OnCreate(self)
         self:ForkThread(self.UpdateThread)
     end,
 
+    ---@param self CAANanoDart01
     UpdateThread = function(self)
+        local army = self.Army
+
         WaitSeconds(0.35)
         self:SetMaxSpeed(8)
         self:SetBallisticAcceleration(-0.5)
-        local army = self:GetArmy()
 
         for i in self.FxTrails do
             CreateEmitterOnEntity(self,army,self.FxTrails[i])
@@ -28,5 +32,4 @@ CAANanoDart01 = Class(CAANanoDartProjectile) {
 
     end,
 }
-
 TypeClass = CAANanoDart01

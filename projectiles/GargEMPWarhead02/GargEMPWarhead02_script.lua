@@ -2,12 +2,11 @@
 -- File     :  /projectiles/CIFEMPFluxWarhead02/CIFEMPFluxWarhead02_script.lua
 -- Author(s):  Gordon Duclos
 -- Summary  :  EMP Flux Warhead Impact effects projectile
--- Copyright © 2005,2006 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005,2006 Gas Powered Games, Inc.  All rights reserved.
 ------------------------------------------------------------------------------
-
 local NullShell = import('/lua/sim/defaultprojectiles.lua').NullShell
-local RandomFloat = import('/lua/utilities.lua').GetRandomFloat
 
+---@class GargEMPWarhead02 : NullShell
 GargEMPWarhead02 = Class(NullShell) {
 
     NukeMeshScale = 8.5725,
@@ -19,6 +18,7 @@ GargEMPWarhead02 = Class(NullShell) {
     -- Effects not attached but created at the position of CIFEMPFluxWarhead02
     NormalEffects = {'/effects/emitters/empfluxwarhead_fallout_01_emit.bp'},
 
+    ---@param self GargEMPWarhead02
     EffectThread = function(self)
         -- Mesh effects
         self.Plumeproj = self:CreateProjectile('/mods/BlackOpsFAF-Unleashed/effects/GargEMPWarHead/GargEMPWarHeadEffect01_proj.bp')
@@ -27,14 +27,16 @@ GargEMPWarhead02 = Class(NullShell) {
         self:ForkThread(self.EmitterEffectsThread, self.Plumeproj)
     end,
 
+    ---@param self GargEMPWarhead02
+    ---@param plume string
     EmitterEffectsThread = function(self, plume)
-        local army = self:GetArmy()
+        local army = self.Army
 
-        for k, v in self.PlumeEffects do
+        for _, v in self.PlumeEffects do
             CreateAttachedEmitter(plume, -1, army, v)
         end
 
-        for k, v in self.NormalEffects do
+        for _, v in self.NormalEffects do
             CreateEmitterAtEntity(self, army, v)
         end
     end,

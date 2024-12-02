@@ -1,5 +1,6 @@
+local TShellPhalanxProjectile = import('/lua/kirvesprojectiles.lua').TShellPhalanxProjectile
+
 -- Terran AA Phalanx projectile
-
-TDPhalanx01 = Class(import('/lua/kirvesprojectiles.lua').TShellPhalanxProjectile) {}
-
+---@class TDPhalanx01 : TShellPhalanxProjectile
+TDPhalanx01 = Class(TShellPhalanxProjectile) {}
 TypeClass = TDPhalanx01

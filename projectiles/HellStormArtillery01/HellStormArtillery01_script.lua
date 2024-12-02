@@ -1,7 +1,8 @@
--- Terran Artillery Projectile
-
 local EffectTemplate = import('/lua/EffectTemplates.lua')
 local TArtilleryProjectilePolytrail = import('/lua/terranprojectiles.lua').TArtilleryProjectilePolytrail
+
+-- Terran Artillery Projectile
+---@class HellStormArtillery01 : TArtilleryProjectilePolytrail
 HellStormArtillery01 = Class(TArtilleryProjectilePolytrail) {
     FxImpactTrajectoryAligned = false,
     PolyTrail = '/effects/emitters/default_polytrail_04_emit.bp',

@@ -2,24 +2,26 @@
 -- File     :  /data/projectiles/GoldAA01/GoldAA01_script.lua
 -- Author(s):  Matt Vainio, Gordon Duclos
 -- Summary  :  Aeon Guided Missile, DAA0206
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2007 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
-
 local GoldAAProjectile = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsProjectiles.lua').GoldAAProjectile
 local RandF = import('/lua/utilities.lua').GetRandomFloat
 local EffectTemplate = import('/lua/EffectTemplates.lua')
 
+---@class GoldAA : GoldAAProjectile
 GoldAA = Class(GoldAAProjectile) {
+    
+    ---@param self GoldAA
     OnCreate = function(self)
         GoldAAProjectile.OnCreate(self)
         self:ForkThread(self.SplitThread)
     end,
 
+    ---@param self GoldAA
     SplitThread = function(self)
-        for k, v in EffectTemplate.AMercyGuidedMissileSplit do
-            CreateEmitterOnEntity(self,self:GetArmy(),v)
+        for _, v in EffectTemplate.AMercyGuidedMissileSplit do
+            CreateEmitterOnEntity(self,self.Army,v)
         end
-
 
         WaitSeconds(0.1)
         -- Create several other projectiles in a dispersal pattern

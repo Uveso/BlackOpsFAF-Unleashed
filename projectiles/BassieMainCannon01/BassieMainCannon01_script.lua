@@ -2,12 +2,12 @@
 -- File     :  /data/projectiles/CDFProtonCannon05/CDFProtonCannon05_script.lua
 -- Author(s):  Gordon Duclos, Matt Vainio
 -- Summary  :  Cybran Proton Artillery projectile script, XRL0403
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2007 Gas Powered Games, Inc.  All rights reserved.
 -------------------------------------------------------------------------------
-
 local CDFHvyProtonCannonProjectile = import('/lua/cybranprojectiles.lua').CDFHvyProtonCannonProjectile
 local BlackOpsEffectTemplate = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsEffectTemplates.lua')
 
+---@class CDFProtonCannon05 : CDFHvyProtonCannonProjectile
 CDFProtonCannon05 = Class(CDFHvyProtonCannonProjectile) {
     PolyTrails = {
         BlackOpsEffectTemplate.BassieCannonPolyTrail,
@@ -26,6 +26,9 @@ CDFProtonCannon05 = Class(CDFHvyProtonCannonProjectile) {
     FxUnderWarerHitScale = 1.5,
     FxWaterHitScale = 1.5,
 
+    ---@param self CDFProtonCannon05
+    ---@param TargetType string
+    ---@param TargetEntity Entity
     OnImpact = function(self, TargetType, TargetEntity)
         self:ShakeCamera(15, 0.25, 0, 0.2)
         CDFHvyProtonCannonProjectile.OnImpact (self, TargetType, TargetEntity)
