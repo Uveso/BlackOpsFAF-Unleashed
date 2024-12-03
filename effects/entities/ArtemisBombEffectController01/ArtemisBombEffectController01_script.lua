@@ -2,18 +2,23 @@
 -- File     :  \data\effects\Entities\ArtemisBombEffectController0101\ArtemisBombEffectController0101_script.lua
 -- Author(s):  Greg Kohne
 -- Summary  :  Ohwalli Bomb effect controller script, non-damaging
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2007 Gas Powered Games, Inc.  All rights reserved.
 ----------------------------------------------------------------------------------------------------------------
 
 local NullShell = import('/lua/sim/defaultprojectiles.lua').NullShell
 local RandomFloat = import('/lua/utilities.lua').GetRandomFloat
-local RandomInt = import('/lua/utilities.lua').GetRandomInt
-local EffectTemplate = import('/lua/EffectTemplates.lua')
 local BlackOpsEffectTemplate = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsEffectTemplates.lua')
 local ArtemisBombEffect04 = '/mods/BlackOpsFAF-Unleashed/effects/Entities/ArtemisBombEffect04/ArtemisBombEffect04_proj.bp'
 local ArtemisBombEffect05 = '/mods/BlackOpsFAF-Unleashed/effects/Entities/ArtemisBombEffect05/ArtemisBombEffect05_proj.bp'
 local ArtemisBombEffect06 = '/mods/BlackOpsFAF-Unleashed/effects/Entities/ArtemisBombEffect06/ArtemisBombEffect06_proj.bp'
 
+-- Upvalue for performance
+local TrashBagAdd = TrashBag.Add
+local MathPi = math.pi
+local MathSin = math.sin
+local MathCos = math.cos
+
+---@class ArtemisBombEffectController01 : NullShell
 ArtemisBombEffectController01 = Class(NullShell) {
     NukeInnerRingDamage = 70000,
     NukeInnerRingRadius = 15,
@@ -24,6 +29,8 @@ ArtemisBombEffectController01 = Class(NullShell) {
     NukeOuterRingTicks = 20,
     NukeOuterRingTotalTime = 0,
 
+    ---@param self ArtemisBombEffectController01
+    ---@param Data table
     PassData = function(self, Data)
         if Data.NukeOuterRingDamage then self.NukeOuterRingDamage = Data.NukeOuterRingDamage end
         if Data.NukeOuterRingRadius then self.NukeOuterRingRadius = Data.NukeOuterRingRadius end
@@ -37,78 +44,86 @@ ArtemisBombEffectController01 = Class(NullShell) {
         self:CreateNuclearExplosion()
     end,
 
+    ---@param self ArtemisBombEffectController01
     CreateNuclearExplosion = function(self)
-        local myBlueprint = self:GetBlueprint()
+        local bp = self.Blueprint
+        local trash = self.Trash
 
         -- Play the "NukeExplosion" sound
-        if myBlueprint.Audio.NukeExplosion then
-            self:PlaySound(myBlueprint.Audio.NukeExplosion)
+        if bp.Audio.NukeExplosion then
+            self:PlaySound(bp.Audio.NukeExplosion)
         end
 
         -- Create Damage Threads only if damage is being delivered (prevents DamageArea script error for passing in 0 value)
         if (self.NukeInnerRingDamage ~= 0) then
-            self:ForkThread(self.InnerRingDamage)
+            TrashBagAdd(trash, ForkThread(self.InnerRingDamage, self))
         end
         if (self.NukeOuterRingDamage ~= 0) then
-            self:ForkThread(self.OuterRingDamage)
+            TrashBagAdd(trash, ForkThread(self.OuterRingDamage, self))
         end
 
         -- Create thread that spawns and controls effects
-        self:ForkThread(self.EffectThread)
-        self:ForkThread(self.CreateEffectInnerPlasma)
-        self:ForkThread(self.CreateEffectElectricity)
+        TrashBagAdd(trash, ForkThread(self.EffectThread, self))
+        TrashBagAdd(trash, ForkThread(self.CreateEffectInnerPlasma, self))
+        TrashBagAdd(trash, ForkThread(self.CreateEffectElectricity, self))
     end,
 
+    ---@param self ArtemisBombEffectController01
     OuterRingDamage = function(self)
         local myPos = self:GetPosition()
+        local launcher = self.Launcher
+
         if self.NukeOuterRingTotalTime == 0 then
-            DamageArea(self:GetLauncher(), myPos, self.NukeOuterRingRadius, self.NukeOuterRingDamage, 'Normal', true, true)
+            DamageArea(launcher, myPos, self.NukeOuterRingRadius, self.NukeOuterRingDamage, 'Normal', true, true)
         else
             local ringWidth = (self.NukeOuterRingRadius / self.NukeOuterRingTicks)
             local tickLength = (self.NukeOuterRingTotalTime / self.NukeOuterRingTicks)
             -- Since we're not allowed to have an inner radius of 0 in the DamageRing function,
             -- I'm manually executing the first tick of damage with a DamageArea function.
-            DamageArea(self:GetLauncher(), myPos, ringWidth, self.NukeOuterRingDamage, 'Normal', true, true)
+            DamageArea(launcher, myPos, ringWidth, self.NukeOuterRingDamage, 'Normal', true, true)
             WaitSeconds(tickLength)
             for i = 2, self.NukeOuterRingTicks do
-                DamageRing(self:GetLauncher(), myPos, ringWidth * (i - 1), ringWidth * i, self.NukeOuterRingDamage, 'Normal', true, true)
+                DamageRing(launcher, myPos, ringWidth * (i - 1), ringWidth * i, self.NukeOuterRingDamage, 'Normal', true, true)
                 WaitSeconds(tickLength)
             end
         end
     end,
 
+    ---@param self ArtemisBombEffectController01
     InnerRingDamage = function(self)
         local myPos = self:GetPosition()
+        local launcher = self.Launcher
+
         if self.NukeInnerRingTotalTime == 0 then
-            DamageArea(self:GetLauncher(), myPos, self.NukeInnerRingRadius, self.NukeInnerRingDamage, 'Normal', true, true)
+            DamageArea(launcher, myPos, self.NukeInnerRingRadius, self.NukeInnerRingDamage, 'Normal', true, true)
         else
             local ringWidth = (self.NukeInnerRingRadius / self.NukeInnerRingTicks)
             local tickLength = (self.NukeInnerRingTotalTime / self.NukeInnerRingTicks)
 
             -- Since we're not allowed to have an inner radius of 0 in the DamageRing function,
             -- I'm manually executing the first tick of damage with a DamageArea function.
-            DamageArea(self:GetLauncher(), myPos, ringWidth, self.NukeInnerRingDamage, 'Normal', true, true)
+            DamageArea(launcher, myPos, ringWidth, self.NukeInnerRingDamage, 'Normal', true, true)
             WaitSeconds(tickLength)
             for i = 2, self.NukeInnerRingTicks do
-                DamageRing(self:GetLauncher(), myPos, ringWidth * (i - 1), ringWidth * i, self.NukeInnerRingDamage, 'Normal', true, true)
+                DamageRing(launcher, myPos, ringWidth * (i - 1), ringWidth * i, self.NukeInnerRingDamage, 'Normal', true, true)
                 WaitSeconds(tickLength)
             end
         end
     end,
 
     -- Create inner explosion plasma
+    ---@param self ArtemisBombEffectController01
     CreateEffectInnerPlasma = function(self)
-        local vx, vy, vz = self:GetVelocity()
         local num_projectiles = 10
-        local horizontal_angle = (2*math.pi) / num_projectiles
+        local horizontal_angle = (2*MathPi) / num_projectiles
         local angleInitial = RandomFloat(0, horizontal_angle)
         local xVec, zVec
         local offsetMultiple = 10.0
         local px, pz
 
         for i = 0, (num_projectiles -1) do
-            xVec = (math.sin(angleInitial + (i*horizontal_angle)))
-            zVec = (math.cos(angleInitial + (i*horizontal_angle)))
+            xVec = (MathSin(angleInitial + (i*horizontal_angle)))
+            zVec = (MathCos(angleInitial + (i*horizontal_angle)))
             px = (offsetMultiple*xVec)
             pz = (offsetMultiple*zVec)
 
@@ -120,18 +135,18 @@ ArtemisBombEffectController01 = Class(NullShell) {
     end,
 
     -- Create random wavy electricity lines
+    ---@param self ArtemisBombEffectController01
     CreateEffectElectricity = function(self)
-        local vx, vy, vz = self:GetVelocity()
         local num_projectiles = 12
-        local horizontal_angle = (2*math.pi) / num_projectiles
+        local horizontal_angle = (2*MathPi) / num_projectiles
         local angleInitial = RandomFloat(0, horizontal_angle)
         local xVec, zVec
         local offsetMultiple = 0.0
         local px, pz
 
         for i = 0, (num_projectiles -1) do
-            xVec = (math.sin(angleInitial + (i*horizontal_angle)))
-            zVec = (math.cos(angleInitial + (i*horizontal_angle)))
+            xVec = (MathSin(angleInitial + (i*horizontal_angle)))
+            zVec = (MathCos(angleInitial + (i*horizontal_angle)))
             px = (offsetMultiple*xVec)
             pz = (offsetMultiple*zVec)
 
@@ -142,13 +157,13 @@ ArtemisBombEffectController01 = Class(NullShell) {
         end
     end,
 
-
+    ---@param self ArtemisBombEffectController01
     EffectThread = function(self)
-        local army = self:GetArmy()
+        local army = self.Army
         local position = self:GetPosition()
 
         -- Create a light for this thing's flash.
-        CreateLightParticle(self, -1, self:GetArmy(), 80, 14, 'flare_lens_add_03', 'ramp_white_07')
+        CreateLightParticle(self, -1, army, 80, 14, 'flare_lens_add_03', 'ramp_white_07')
 
         -- Create ground decals
         local orientation = RandomFloat(0,2*math.pi)
@@ -156,19 +171,19 @@ ArtemisBombEffectController01 = Class(NullShell) {
         CreateDecal(position, orientation, 'Crater01_normals', '', 'Normals', 100, 100, 1200, 0, army)
 
         -- Knockdown force rings
-        DamageRing(self, position, 0.1, 35, 1, 'Force', true)
+        DamageRing(self, position, 0.1, 35, 1, 'Force', true, true)
         WaitSeconds(0.1)
-        DamageRing(self, position, 0.1, 35, 1, 'Force', true)
+        DamageRing(self, position, 0.1, 35, 1, 'Force', true, true)
 
         -- Create explosion effects
-        for k, v in BlackOpsEffectTemplate.GoldLaserBombDetonate01 do
-            emit = CreateEmitterAtEntity(self,army,v):ScaleEmitter(1.5)
+        for _, v in BlackOpsEffectTemplate.GoldLaserBombDetonate01 do
+            CreateEmitterAtEntity(self,army,v):ScaleEmitter(1.5)
         end
 
 
         -- Create explosion effects
-        for k, v in BlackOpsEffectTemplate.ArtemisBombHit01 do
-            emit = CreateEmitterAtEntity(self,army,v):ScaleEmitter(0.3)
+        for _, v in BlackOpsEffectTemplate.ArtemisBombHit01 do
+            CreateEmitterAtEntity(self,army,v):ScaleEmitter(0.3)
         end
 
         self:ShakeCamera(15, 5, 0, 1.5)
@@ -177,16 +192,16 @@ ArtemisBombEffectController01 = Class(NullShell) {
 
         -- Create fireball plumes to accentuate the explosive detonation
         local num_projectiles = 25
-        local horizontal_angle = (2*math.pi) / num_projectiles
+        local horizontal_angle = (2*MathPi) / num_projectiles
         local angleInitial = RandomFloat(0, horizontal_angle)
         local xVec, yVec, zVec
         local angleVariation = 0.5
         local px, py, pz
 
         for i = 0, (num_projectiles -1) do
-            xVec = math.sin(angleInitial + (i*horizontal_angle) + RandomFloat(-angleVariation, angleVariation))
+            xVec = MathSin(angleInitial + (i*horizontal_angle) + RandomFloat(-angleVariation, angleVariation))
             yVec = RandomFloat(0.3, 1.5) + 1.2
-            zVec = math.cos(angleInitial + (i*horizontal_angle) + RandomFloat(-angleVariation, angleVariation))
+            zVec = MathCos(angleInitial + (i*horizontal_angle) + RandomFloat(-angleVariation, angleVariation))
             px = RandomFloat(0.5, 1.0) * xVec
             py = RandomFloat(0.5, 1.0) * yVec
             pz = RandomFloat(0.5, 1.0) * zVec
@@ -196,7 +211,6 @@ ArtemisBombEffectController01 = Class(NullShell) {
             proj:SetBallisticAcceleration(-9.8)
         end
     end,
-
 }
 
 TypeClass = ArtemisBombEffectController01

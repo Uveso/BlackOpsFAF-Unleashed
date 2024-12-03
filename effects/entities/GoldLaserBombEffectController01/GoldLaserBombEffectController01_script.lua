@@ -2,23 +2,21 @@
 -- File     :  \data\effects\Entities\GoldLaserBombEffectController01\GoldLaserBombEffectController01_script.lua
 -- Author(s):  Greg Kohne
 -- Summary  :  Ohwalli Bomb effect controller script, non-damaging
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2007 Gas Powered Games, Inc.  All rights reserved.
 ----------------------------------------------------------------------------------------------------------------
 
 local NullShell = import('/lua/sim/defaultprojectiles.lua').NullShell
 local RandomFloat = import('/lua/utilities.lua').GetRandomFloat
-local RandomInt = import('/lua/utilities.lua').GetRandomInt
-local EffectTemplate = import('/lua/EffectTemplates.lua')
 local BlackOpsEffectTemplate = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsEffectTemplates.lua')
 local GoldLaserBombEffect01 = '/mods/BlackOpsFAF-Unleashed/effects/Entities/GoldLaserBombEffect01/GoldLaserBombEffect01_proj.bp'
-local GoldLaserBombEffect06 = '/mods/BlackOpsFAF-Unleashed/effects/Entities/GoldLaserBombEffect06/GoldLaserBombEffect06_proj.bp'
 
-local BaseRingRiftEffects = {
-    '/mods/BlackOpsFAF-Unleashed/effects/Entities/GoldLaserBombEffect03/GoldLaserBombEffect03_proj.bp',
-    '/mods/BlackOpsFAF-Unleashed/effects/Entities/GoldLaserBombEffect04/GoldLaserBombEffect04_proj.bp',
-    '/mods/BlackOpsFAF-Unleashed/effects/Entities/GoldLaserBombEffect05/GoldLaserBombEffect05_proj.bp',
-}
+-- upvale for performance
+local TrashBagAdd = TrashBag.Add
+local MathPi = math.pi
+local MathSin = math.sin
+local MathCos = math.cos
 
+---@class GoldLaserBombEffectController01 : NullShell
 GoldLaserBombEffectController01 = Class(NullShell) {
     NukeInnerRingDamage = 2000,
     NukeInnerRingRadius = 2,
@@ -29,15 +27,19 @@ GoldLaserBombEffectController01 = Class(NullShell) {
     NukeOuterRingTicks = 1,
     NukeOuterRingTotalTime = 0,
 
+    ---@param self GoldLaserBombEffectController01
     OnCreate = function(self)
         NullShell.OnCreate(self)
-        local army = self:GetArmy()
+        local army = self.Army
+        local trash = self.Trash
 
-        self:ForkThread(self.MainBlast, army)
-        self:ForkThread(self.InnerRingDamage)
-        self:ForkThread(self.OuterRingDamage)
+        TrashBagAdd(trash, ForkThread(self.MainBlast, self, army))
+        TrashBagAdd(trash, ForkThread(self.InnerRingDamage, self))
+        TrashBagAdd(trash, ForkThread(self.OuterRingDamage, self))
     end,
 
+    ---@param self GoldLaserBombEffectController01
+    ---@param Data table
     PassData = function(self, Data)
         if Data.NukeOuterRingDamage then self.NukeOuterRingDamage = Data.NukeOuterRingDamage end
         if Data.NukeOuterRingRadius then self.NukeOuterRingRadius = Data.NukeOuterRingRadius end
@@ -49,54 +51,62 @@ GoldLaserBombEffectController01 = Class(NullShell) {
         if Data.NukeInnerRingTotalTime then self.NukeInnerRingTotalTime = Data.NukeInnerRingTotalTime end
     end,
 
+    ---@param self GoldLaserBombEffectController01
     OuterRingDamage = function(self)
         local myPos = self:GetPosition()
+        local launcher = self.Launcher
+
         if self.NukeOuterRingTotalTime == 0 then
-            DamageArea(self:GetLauncher(), myPos, self.NukeOuterRingRadius, self.NukeOuterRingDamage, 'Normal', true, true)
+            DamageArea(launcher, myPos, self.NukeOuterRingRadius, self.NukeOuterRingDamage, 'Normal', true, true)
         else
             local ringWidth = (self.NukeOuterRingRadius / self.NukeOuterRingTicks)
             local tickLength = (self.NukeOuterRingTotalTime / self.NukeOuterRingTicks)
 
             -- Since we're not allowed to have an inner radius of 0 in the DamageRing function,
             -- I'm manually executing the first tick of damage with a DamageArea function.
-            DamageArea(self:GetLauncher(), myPos, ringWidth, self.NukeOuterRingDamage, 'Normal', true, true)
+            DamageArea(launcher, myPos, ringWidth, self.NukeOuterRingDamage, 'Normal', true, true)
             WaitSeconds(tickLength)
             for i = 2, self.NukeOuterRingTicks do
-                DamageRing(self:GetLauncher(), myPos, ringWidth * (i - 1), ringWidth * i, self.NukeOuterRingDamage, 'Normal', true, true)
+                DamageRing(launcher, myPos, ringWidth * (i - 1), ringWidth * i, self.NukeOuterRingDamage, 'Normal', true, true)
                 WaitSeconds(tickLength)
             end
         end
     end,
 
+    ---@param self GoldLaserBombEffectController01
     InnerRingDamage = function(self)
         local myPos = self:GetPosition()
+        local launcher = self.Launcher
+
         if self.NukeInnerRingTotalTime == 0 then
-            DamageArea(self:GetLauncher(), myPos, self.NukeInnerRingRadius, self.NukeInnerRingDamage, 'Normal', true, true)
+            DamageArea(launcher, myPos, self.NukeInnerRingRadius, self.NukeInnerRingDamage, 'Normal', true, true)
         else
             local ringWidth = (self.NukeInnerRingRadius / self.NukeInnerRingTicks)
             local tickLength = (self.NukeInnerRingTotalTime / self.NukeInnerRingTicks)
 
             -- Since we're not allowed to have an inner radius of 0 in the DamageRing function,
             -- I'm manually executing the first tick of damage with a DamageArea function.
-            DamageArea(self:GetLauncher(), myPos, ringWidth, self.NukeInnerRingDamage, 'Normal', true, true)
+            DamageArea(launcher, myPos, ringWidth, self.NukeInnerRingDamage, 'Normal', true, true)
             WaitSeconds(tickLength)
             for i = 2, self.NukeInnerRingTicks do
-                DamageRing(self:GetLauncher(), myPos, ringWidth * (i - 1), ringWidth * i, self.NukeInnerRingDamage, 'Normal', true, true)
+                DamageRing(launcher, myPos, ringWidth * (i - 1), ringWidth * i, self.NukeInnerRingDamage, 'Normal', true, true)
                 WaitSeconds(tickLength)
             end
         end
     end,
 
+    ---@param self GoldLaserBombEffectController01
+    ---@param army Army
     MainBlast = function(self, army)
         -- Create a light for this thing's flash.
-        CreateLightParticle(self, -1, self:GetArmy(), 40, 7, 'flare_lens_add_03', 'ramp_white_07')
+        CreateLightParticle(self, -1, army, 40, 7, 'flare_lens_add_03', 'ramp_white_07')
 
         -- Create our decals
-        CreateDecal(self:GetPosition(), RandomFloat(0.0,6.28), 'Scorch_012_albedo', '', 'Albedo', 30, 30, 500, 0, self:GetArmy())
+        CreateDecal(self:GetPosition(), RandomFloat(0.0,6.28), 'Scorch_012_albedo', '', 'Albedo', 30, 30, 500, 0, army)
 
         -- Create explosion effects
-        for k, v in BlackOpsEffectTemplate.GoldLaserBombDetonate01 do
-            emit = CreateEmitterAtEntity(self,army,v):ScaleEmitter(0.2)
+        for _, v in BlackOpsEffectTemplate.GoldLaserBombDetonate01 do
+            CreateEmitterAtEntity(self,army,v):ScaleEmitter(0.2)
         end
 
         self:CreatePlumes()
@@ -105,19 +115,20 @@ GoldLaserBombEffectController01 = Class(NullShell) {
         WaitSeconds(0.3)
     end,
 
+    ---@param self GoldLaserBombEffectController01
     CreatePlumes = function(self)
         -- Create fireball plumes to accentuate the explosive detonation
         local num_projectiles = 12
-        local horizontal_angle = (2*math.pi) / num_projectiles
+        local horizontal_angle = (2*MathPi) / num_projectiles
         local angleInitial = RandomFloat(0, horizontal_angle)
         local xVec, yVec, zVec
         local angleVariation = 0.5
         local px, py, pz
 
         for i = 0, (num_projectiles -1) do
-            xVec = math.sin(angleInitial + (i*horizontal_angle) + RandomFloat(-angleVariation, angleVariation))
+            xVec = MathSin(angleInitial + (i*horizontal_angle) + RandomFloat(-angleVariation, angleVariation))
             yVec = RandomFloat(0.7, 2.8) + 2.0
-            zVec = math.cos(angleInitial + (i*horizontal_angle) + RandomFloat(-angleVariation, angleVariation))
+            zVec = MathCos(angleInitial + (i*horizontal_angle) + RandomFloat(-angleVariation, angleVariation))
             px = RandomFloat(0.5, 1.0) * xVec
             py = RandomFloat(0.5, 1.0) * yVec
             pz = RandomFloat(0.5, 1.0) * zVec

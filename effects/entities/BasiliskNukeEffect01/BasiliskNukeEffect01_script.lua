@@ -2,20 +2,28 @@
 -- File     :  /effects/Entities/CybranNukeEffect011/CybranNukeEffect01_script.lua
 -- Author(s):  Gordon Duclos
 -- Summary  :  Nuclear explosion script
--- Copyright © 2005,2006 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005,2006 Gas Powered Games, Inc.  All rights reserved.
 ----------------------------------------------------------------------------------
 
 local NullShell = import('/lua/sim/defaultprojectiles.lua').NullShell
 
+-- Upvalue for performance
+local TrashBagAdd = TrashBag.Add
+
+---@class BasiliskNukeEffect01 : NullShell
 BasiliskNukeEffect01 = Class(NullShell) {
 
+    ---@param self BasiliskNukeEffect01
     OnCreate = function(self)
         NullShell.OnCreate(self)
-        self:ForkThread(self.EffectThread)
+        local trash = self.Trash
+
+        TrashBagAdd(trash, ForkThread(self.EffectThread, self))
     end,
 
+    ---@param self BasiliskNukeEffect01
     EffectThread = function(self)
-        local scale = self:GetBlueprint().Display.UniformScale
+        local scale = self.Blueprint.Display.UniformScale
         local scaleChange = 0.30 * scale
 
         self:SetScaleVelocity(scaleChange,scaleChange,scaleChange)
