@@ -2,13 +2,17 @@
 -- File     :  /cdimage/units/BAB5205/BAB5205_script.lua
 -- Author(s):  John Comes, David Tomandl
 -- Summary  :  Aeon Air Staging Platform
--- Copyright © 1005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 1005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local AAirFactoryUnit = import('/lua/aeonunits.lua').AAirFactoryUnit
 local AAATemporalFizzWeapon = import('/lua/aeonweapons.lua').AAATemporalFizzWeapon
 local AANChronoTorpedoWeapon = import('/lua/aeonweapons.lua').AANChronoTorpedoWeapon
 
+-- upvalue of performance
+local TrashBagAdd = TrashBag.Add
+
+---@class BAB5205 : AAirFactoryUnit
 BAB5205 = Class(AAirFactoryUnit) {
     Weapons = {
         AAGun01 = Class(AAATemporalFizzWeapon) {
@@ -173,8 +177,10 @@ BAB5205 = Class(AAirFactoryUnit) {
         Turret04 = Class(AANChronoTorpedoWeapon) {},
     },
 
+    ---@param self BAB5205
     OnCreate = function(self)
         AAirFactoryUnit.OnCreate(self)
+        local trash = self.Trash
 
         self.DomeEntity1 = import('/lua/sim/Entity.lua').Entity({Owner = self,})
         self.DomeEntity1:AttachBoneTo(-1, self, 'Torp_Turret01')
@@ -207,10 +213,10 @@ BAB5205 = Class(AAirFactoryUnit) {
         self.DomeEntity4:SetVizToAllies('Intel')
         self.DomeEntity4:SetVizToNeutrals('Intel')
         self.DomeEntity4:SetVizToEnemies('Intel')
-        self.Trash:Add(self.DomeEntity1)
-        self.Trash:Add(self.DomeEntity2)
-        self.Trash:Add(self.DomeEntity3)
-        self.Trash:Add(self.DomeEntity4)
+        TrashBagAdd(trash, self.DomeEntity1)
+        TrashBagAdd(trash, self.DomeEntity2)
+        TrashBagAdd(trash, self.DomeEntity3)
+        TrashBagAdd(trash, self.DomeEntity4)
     end,
 }
 

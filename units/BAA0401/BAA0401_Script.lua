@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/BAA0401/BAA0401_script.lua
 -- Author(s):  John Comes, David Tomandl, Jessica St. Croix
 -- Summary  :  Aeon Long Range Artillery Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local AAirUnit = import('/lua/aeonunits.lua').AAirUnit
@@ -10,10 +10,13 @@ local ArtemisLaserGenerator = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsWe
 local TDFMachineGunWeapon = import('/lua/terranweapons.lua').TDFMachineGunWeapon
 local BlackOpsEffectTemplate = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsEffectTemplates.lua')
 local explosion = import('/lua/defaultexplosions.lua')
-local Effects = import('/lua/effecttemplates.lua')
 local EffectTemplate = import('/lua/EffectTemplates.lua')
 local CreateDeathExplosion = explosion.CreateDefaultHitExplosionAtBone
 
+-- Upvaule for perfomacne
+local TrashBagAdd = TrashBag.Add
+
+---@class BAA0401 : AAirUnit
 BAA0401 = Class(AAirUnit) {
     DestroyNoFallRandomChance = 1.1,
     ChargeEffects01 = BlackOpsEffectTemplate.ArtemisMuzzleChargeFlash,
@@ -240,6 +243,9 @@ BAA0401 = Class(AAirUnit) {
         ArtemisCannon = Class(TDFMachineGunWeapon) {},
     },
 
+    ---@param self BAA0401
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self, builder, layer)
         self.ChargeEffects01Bag = {}
         self.ChargeEffects02Bag = {}
@@ -247,34 +253,37 @@ BAA0401 = Class(AAirUnit) {
         AAirUnit.OnStopBeingBuilt(self, builder, layer)
     end,
 
-    OpenState = State() {
-        Main = function(self)
-            self.OpenAnim = CreateAnimator(self)
-            WaitSeconds(6)
-
-            self.OpenAnim:PlayAnim('/units/BAA0401/BAA0401_Aopen.sca')
-        end,
-    },
-
+    ---@param self BAA0401
+    ---@param bone Bone
+    ---@param army Army
     CreateDamageEffects = function(self, bone, army)
-        for k, v in BlackOpsEffectTemplate.ArtemisDamageFireSmoke01 do
+        for _, v in BlackOpsEffectTemplate.ArtemisDamageFireSmoke01 do
             CreateAttachedEmitter(self, bone, army, v):ScaleEmitter(6)
         end
     end,
 
+    ---@param self BAA0401
+    ---@param bone Bone
+    ---@param army Army
     CreateExplosionDebris = function(self, bone, army)
-        for k, v in EffectTemplate.ExplosionDebrisLrg01 do
+        for _, v in EffectTemplate.ExplosionDebrisLrg01 do
             CreateAttachedEmitter(self, bone, army, v)
         end
     end,
 
+    ---@param self BAA0401
+    ---@param instigator Unit
+    ---@param type string
+    ---@param overkillRatio number
     OnKilled = function(self, instigator, type, overkillRatio)
-        self:ForkThread(self.DeathEffectsThread)
+        local trash = self.Trash
+        TrashBagAdd(trash, ForkThread(self.DeathThread, self))
         AAirUnit.OnKilled(self, instigator, type, overkillRatio)
     end,
 
+    ---@param self BAA0401
     DeathEffectsThread = function(self)
-        local army = self:GetArmy()
+        local army = self.Army
         explosion.CreateFlash(self, 'BAA0401', 4.5, army)
         CreateAttachedEmitter(self, 'Turret', army, '/effects/emitters/destruction_explosion_concussion_ring_03_emit.bp'):OffsetEmitter(0, 5, 0)
         CreateAttachedEmitter(self,'Turret', army, '/effects/emitters/explosion_fire_sparks_02_emit.bp'):OffsetEmitter(0, 5, 0)
@@ -318,6 +327,9 @@ BAA0401 = Class(AAirUnit) {
         WaitSeconds(0.5)
     end,
 
+    ---@param self BAA0401
+    ---@param bone Bone unused
+    ---@param army Army unused
     CreateSCUEffects = function(self, bone, army)
         local sides = 1
         local angle = (1*math.pi) / sides
@@ -334,9 +346,10 @@ BAA0401 = Class(AAirUnit) {
         end
     end,
 
+    ---@param self BAA0401
     DeathThread = function(self)
-        local bp = self:GetBlueprint()
-        local army = self:GetArmy()
+        local bp = self.Blueprint
+        local army = self.Army
         WaitSeconds(0.4)
         CreateDeathExplosion(self, 'DamageBone03', 1)
         WaitSeconds(0.4)
@@ -364,6 +377,15 @@ BAA0401 = Class(AAirUnit) {
             self.Parent:NotifyOfDroneDeath()
         end
     end,
+
+    OpenState = State() {
+        Main = function(self)
+            self.OpenAnim = CreateAnimator(self)
+            WaitSeconds(6)
+
+            self.OpenAnim:PlayAnim('/units/BAA0401/BAA0401_Aopen.sca')
+        end,
+    },
 }
 
 TypeClass = BAA0401

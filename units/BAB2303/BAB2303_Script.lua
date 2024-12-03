@@ -2,12 +2,13 @@
 -- File     :  /cdimage/units/UAB2303/UAB2303_script.lua
 -- Author(s):  John Comes, David Tomandl, Jessica St. Croix
 -- Summary  :  Aeon Light Artillery Installation Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local AStructureUnit = import('/lua/aeonunits.lua').AStructureUnit
 local AIFArtilleryMiasmaShellWeapon = import('/lua/aeonweapons.lua').AIFArtilleryMiasmaShellWeapon
 
+---@class BAB2303 : AStructureUnit
 BAB2303 = Class(AStructureUnit) {
     Weapons = {
         MainGun = Class(AIFArtilleryMiasmaShellWeapon) {
@@ -22,6 +23,8 @@ BAB2303 = Class(AStructureUnit) {
             end,
 
             PlayFxWeaponUnpackSequence = function(self)
+                local trash = self.Trash
+
                 if not self.SpinManip then
                     self.SpinManip = CreateRotator(self.unit, 'Rotator1', 'y', nil, 270, 180, 60)
                     self.unit.Trash:Add(self.SpinManip)
