@@ -2,22 +2,32 @@
 -- File     :  /cdimage/units/BAB2306/BAB2306_script.lua
 -- Author(s):  John Comes, David Tomandl, Jessica St. Croix
 -- Summary  :  Aeon Light Artillery Installation Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local AStructureUnit = import('/lua/aeonunits.lua').AStructureUnit
 local MiniPhasonLaser = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsWeapons.lua').MiniPhasonLaser
 
+-- upvalue for performance
+local TrashBagAdd = TrashBag.Add
+
+---@class BAB2306 : AStructureUnit
 BAB2306 = Class(AStructureUnit) {
     Weapons = {
         MainGun = Class(MiniPhasonLaser){},
     },
 
+    ---@param self BAB2306
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         AStructureUnit.OnStopBeingBuilt(self,builder,layer)
+
+        local trash = self.Trash
+
         if not self.SpinManip then
             self.SpinManip = CreateRotator(self, 'Rotator', 'y', nil, 50, 50, 50)
-            self.Trash:Add(self.SpinManip)
+            TrashBagAdd(trash, self.SpinManip)
         end
 
         if self.SpinManip then

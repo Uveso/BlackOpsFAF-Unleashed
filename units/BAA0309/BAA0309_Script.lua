@@ -11,6 +11,7 @@ local util = import('/lua/utilities.lua')
 local aWeapons = import('/lua/aeonweapons.lua')
 local AAASonicPulseBatteryWeapon = aWeapons.AAASonicPulseBatteryWeapon
 
+---@class BAA0309 : AirTransport
 BAA0309 = Class(AirTransport) {
     AirDestructionEffectBones = {'Exhaust', 'Wing_Right', 'Wing_Left', 'Turret_Right01', 'Turret_Left',
         'Slots_Left01', 'Slots_Left02', 'Slots_Right01', 'Slots_Right02',
@@ -25,6 +26,7 @@ BAA0309 = Class(AirTransport) {
         SonicPulseBattery4 = Class(AAASonicPulseBatteryWeapon) {},
     },
 
+    ---@param self BAA0309
     OnCreate = function(self)
         AirTransport.OnCreate(self)
 
@@ -33,10 +35,13 @@ BAA0309 = Class(AirTransport) {
     end,
 
     -- Override air destruction effects so we can do something custom here
+    ---@param self BAA0309
+    ---@param scale number
     CreateUnitAirDestructionEffects = function(self, scale)
         self:ForkThread(self.AirDestructionEffectsThread, self)
     end,
 
+    ---@param self BAA0309
     AirDestructionEffectsThread = function(self)
         local numExplosions = math.floor(table.getn(self.AirDestructionEffectBones) * 0.5)
         for i = 0, numExplosions do
@@ -45,6 +50,9 @@ BAA0309 = Class(AirTransport) {
         end
     end,
 
+    ---@param self BAA0309
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         AirTransport.OnStopBeingBuilt(self,builder,layer)
 

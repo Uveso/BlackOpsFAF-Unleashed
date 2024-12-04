@@ -7,6 +7,10 @@
 
 local AStructureUnit = import('/lua/aeonunits.lua').AStructureUnit
 
+-- upvalue for performance
+local TrashBagAdd = TrashBag.Add
+
+---@class BAB4309 : AStructureUnit
 BAB4309 = Class(AStructureUnit) {
 
     AntiTeleportEffects = {
@@ -18,6 +22,9 @@ BAB4309 = Class(AStructureUnit) {
         '/effects/emitters/aeon_shield_generator_t3_04_emit.bp',
     },
 
+    ---@param self BAB4309
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         AStructureUnit.OnStopBeingBuilt(self,builder,layer)
         self:SetScriptBit('RULEUTC_ShieldToggle', true)
@@ -26,96 +33,102 @@ BAB4309 = Class(AStructureUnit) {
         self.AntiTeleportEffectsBag = {}
         self.AmbientEffectsBag = {}
         self.antiteleportEmitterTable = {}
-        self:ForkThread(self.ResourceThread)
+        local trash = self.Trash
 
-        self.Trash:Add(CreateRotator(self, 'Sphere', 'x', nil, 0, 15, 80 + Random(0, 20)))
-        self.Trash:Add(CreateRotator(self, 'Sphere', 'y', nil, 0, 15, 80 + Random(0, 20)))
-        self.Trash:Add(CreateRotator(self, 'Sphere', 'z', nil, 0, 15, 80 + Random(0, 20)))
+        TrashBagAdd(trash, ForkThread(self.ResourceThread, self))
 
-        self.Trash:Add(CreateRotator(self, 'Sphere01', 'x', nil, 0, 40, 120 + Random(0, 20)))
-        self.Trash:Add(CreateRotator(self, 'Sphere01', 'y', nil, 0, 40, 120 + Random(0, 20)))
-        self.Trash:Add(CreateRotator(self, 'Sphere01', 'z', nil, 0, 40, 120 + Random(0, 20)))
-
-        self.Trash:Add(CreateRotator(self, 'Sphere02', 'x', nil, 0, 40, 120 + Random(0, 20)))
-        self.Trash:Add(CreateRotator(self, 'Sphere02', 'y', nil, 0, 40, 120 + Random(0, 20)))
-        self.Trash:Add(CreateRotator(self, 'Sphere02', 'z', nil, 0, 40, 120 + Random(0, 20)))
-
-        self.Trash:Add(CreateRotator(self, 'Sphere03', 'x', nil, 0, 40, 120 + Random(0, 20)))
-        self.Trash:Add(CreateRotator(self, 'Sphere03', 'y', nil, 0, 40, 120 + Random(0, 20)))
-        self.Trash:Add(CreateRotator(self, 'Sphere03', 'z', nil, 0, 40, 120 + Random(0, 20)))
-
-        self.Trash:Add(CreateRotator(self, 'Sphere04', 'x', nil, 0, 40, 120 + Random(0, 20)))
-        self.Trash:Add(CreateRotator(self, 'Sphere04', 'y', nil, 0, 40, 120 + Random(0, 20)))
-        self.Trash:Add(CreateRotator(self, 'Sphere04', 'z', nil, 0, 40, 120 + Random(0, 20)))
-
-        self.Trash:Add(CreateRotator(self, 'Sphere05', 'x', nil, 0, 40, 120 + Random(0, 20)))
-        self.Trash:Add(CreateRotator(self, 'Sphere05', 'y', nil, 0, 40, 120 + Random(0, 20)))
-        self.Trash:Add(CreateRotator(self, 'Sphere05', 'z', nil, 0, 40, 120 + Random(0, 20)))
-
-        self.Trash:Add(CreateRotator(self, 'Sphere06', 'x', nil, 0, 40, 120 + Random(0, 20)))
-        self.Trash:Add(CreateRotator(self, 'Sphere06', 'y', nil, 0, 40, 120 + Random(0, 20)))
-        self.Trash:Add(CreateRotator(self, 'Sphere06', 'z', nil, 0, 40, 120 + Random(0, 20)))
-
-        self.Trash:Add(CreateRotator(self, 'Sphere07', 'x', nil, 0, 40, 120 + Random(0, 20)))
-        self.Trash:Add(CreateRotator(self, 'Sphere07', 'y', nil, 0, 40, 120 + Random(0, 20)))
-        self.Trash:Add(CreateRotator(self, 'Sphere07', 'z', nil, 0, 40, 120 + Random(0, 20)))
-
-        self.Trash:Add(CreateRotator(self, 'Sphere08', 'x', nil, 0, 40, 120 + Random(0, 20)))
-        self.Trash:Add(CreateRotator(self, 'Sphere08', 'y', nil, 0, 40, 120 + Random(0, 20)))
-        self.Trash:Add(CreateRotator(self, 'Sphere08', 'z', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere', 'x', nil, 0, 15, 80 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere', 'y', nil, 0, 15, 80 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere', 'z', nil, 0, 15, 80 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere01', 'x', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere01', 'y', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere01', 'z', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere02', 'x', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere02', 'y', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere02', 'z', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere03', 'x', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere03', 'y', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere03', 'z', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere04', 'x', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere04', 'y', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere04', 'z', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere05', 'x', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere05', 'y', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere05', 'z', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere06', 'x', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere06', 'y', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere06', 'z', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere07', 'x', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere07', 'y', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere07', 'z', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere08', 'x', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere08', 'y', nil, 0, 40, 120 + Random(0, 20)))
+        TrashBagAdd(trash, CreateRotator(self, 'Sphere08', 'z', nil, 0, 40, 120 + Random(0, 20)))
     end,
 
+    ---@param self BAB4309
+    ---@param bit number
     OnScriptBitSet = function(self, bit)
         AStructureUnit.OnScriptBitSet(self, bit)
-        if bit == 0 then
-            self:ForkThread(self.antiteleportEmitter)
-            self:ForkThread(self.AntiteleportEffects)
-            self:SetMaintenanceConsumptionActive()
+        local trash = self.Trash
 
+        if bit == 0 then
+            TrashBagAdd(trash, ForkThread(self.antiteleportEmitter, self))
+            TrashBagAdd(trash, ForkThread(self.AntiteleportEffects, self))
+            self:SetMaintenanceConsumptionActive()
         end
     end,
 
+    ---@param self BAB4309
     AntiteleportEffects = function(self)
+
+        local army = self.Army
+
         if self.AntiTeleportEffectsBag then
-            for k, v in self.AntiTeleportEffectsBag do
+            for _, v in self.AntiTeleportEffectsBag do
                 v:Destroy()
             end
             self.AntiTeleportEffectsBag = {}
         end
-        for k, v in self.AntiTeleportEffects do
-            table.insert(self.AntiTeleportEffectsBag, CreateAttachedEmitter(self, 'Effect01', self:GetArmy(), v):ScaleEmitter(0.3))
-            table.insert(self.AntiTeleportEffectsBag, CreateAttachedEmitter(self, 'Effect02', self:GetArmy(), v):ScaleEmitter(0.3))
-            table.insert(self.AntiTeleportEffectsBag, CreateAttachedEmitter(self, 'Effect03', self:GetArmy(), v):ScaleEmitter(0.3))
-            table.insert(self.AntiTeleportEffectsBag, CreateAttachedEmitter(self, 'Effect04', self:GetArmy(), v):ScaleEmitter(0.3))
-            table.insert(self.AntiTeleportEffectsBag, CreateAttachedEmitter(self, 'Effect05', self:GetArmy(), v):ScaleEmitter(0.3))
-            table.insert(self.AntiTeleportEffectsBag, CreateAttachedEmitter(self, 'Effect06', self:GetArmy(), v):ScaleEmitter(0.3))
-            table.insert(self.AntiTeleportEffectsBag, CreateAttachedEmitter(self, 'Effect07', self:GetArmy(), v):ScaleEmitter(0.3))
-            table.insert(self.AntiTeleportEffectsBag, CreateAttachedEmitter(self, 'Effect08', self:GetArmy(), v):ScaleEmitter(0.3))
+        for _, v in self.AntiTeleportEffects do
+            table.insert(self.AntiTeleportEffectsBag, CreateAttachedEmitter(self, 'Effect01', army, v):ScaleEmitter(0.3))
+            table.insert(self.AntiTeleportEffectsBag, CreateAttachedEmitter(self, 'Effect02', army, v):ScaleEmitter(0.3))
+            table.insert(self.AntiTeleportEffectsBag, CreateAttachedEmitter(self, 'Effect03', army, v):ScaleEmitter(0.3))
+            table.insert(self.AntiTeleportEffectsBag, CreateAttachedEmitter(self, 'Effect04', army, v):ScaleEmitter(0.3))
+            table.insert(self.AntiTeleportEffectsBag, CreateAttachedEmitter(self, 'Effect05', army, v):ScaleEmitter(0.3))
+            table.insert(self.AntiTeleportEffectsBag, CreateAttachedEmitter(self, 'Effect06', army, v):ScaleEmitter(0.3))
+            table.insert(self.AntiTeleportEffectsBag, CreateAttachedEmitter(self, 'Effect07', army, v):ScaleEmitter(0.3))
+            table.insert(self.AntiTeleportEffectsBag, CreateAttachedEmitter(self, 'Effect08', army, v):ScaleEmitter(0.3))
         end
         if self.AmbientEffectsBag then
-            for k, v in self.AmbientEffectsBag do
+            for _, v in self.AmbientEffectsBag do
                 v:Destroy()
             end
             self.AmbientEffectsBag = {}
         end
-        for k, v in self.AmbientEffects do
-            table.insert(self.AmbientEffectsBag, CreateAttachedEmitter(self, 'XAB4309', self:GetArmy(), v):ScaleEmitter(0.4))
+        for _, v in self.AmbientEffects do
+            table.insert(self.AmbientEffectsBag, CreateAttachedEmitter(self, 'XAB4309', army, v):ScaleEmitter(0.4))
         end
     end,
 
+    ---@param self BAB4309
+    ---@param bit number
     OnScriptBitClear = function(self, bit)
         AStructureUnit.OnScriptBitClear(self, bit)
+
+        local trash = self.Trash
+
         if bit == 0 then
-            self:ForkThread(self.KillantiteleportEmitter)
+            TrashBagAdd(trash, ForkThread(self.KillantiteleportEmitter, self))
             self:SetMaintenanceConsumptionInactive()
             if self.AntiTeleportEffectsBag then
-                for k, v in self.AntiTeleportEffectsBag do
+                for _, v in self.AntiTeleportEffectsBag do
                     v:Destroy()
                 end
                 self.AntiTeleportEffectsBag = {}
             end
             if self.AmbientEffectsBag then
-                for k, v in self.AmbientEffectsBag do
+                for _, v in self.AmbientEffectsBag do
                     v:Destroy()
                 end
                 self.AmbientEffectsBag = {}
@@ -123,6 +136,8 @@ BAB4309 = Class(AStructureUnit) {
         end
     end,
 
+
+    ---@param self BAB4309
     antiteleportEmitter = function(self)
         -- Are we dead yet, if not then wait 0.5 second
         if not self.Dead then
@@ -137,7 +152,7 @@ BAB4309 = Class(AStructureUnit) {
                 local location = self:GetPosition('XAB4309')
 
                 -- Creates our antiteleportEmitter over the platform with a ranomly generated Orientation
-                local antiteleportEmitter = CreateUnit('bab0003', self:GetArmy(), location[1], location[2], location[3], platOrient[1], platOrient[2], platOrient[3], platOrient[4], 'Land')
+                local antiteleportEmitter = CreateUnit('bab0003', self.Army, location[1], location[2], location[3], platOrient[1], platOrient[2], platOrient[3], platOrient[4], 'Land')
 
                 -- Adds the newly created antiteleportEmitter to the parent platforms antiteleportEmitter table
                 table.insert (self.antiteleportEmitterTable, antiteleportEmitter)
@@ -150,54 +165,68 @@ BAB4309 = Class(AStructureUnit) {
         end
     end,
 
+    ---@param self BAB4309
+    ---@param instigator Unit unused
+    ---@param type string unused
+    ---@param overkillRatio number unused
     KillantiteleportEmitter = function(self, instigator, type, overkillRatio)
         -- Small bit of table manipulation to sort thru all of the avalible rebulder bots and remove them after the platform is dead
         if table.getn({self.antiteleportEmitterTable}) > 0 then
-            for k, v in self.antiteleportEmitterTable do
+            for k, _ in self.antiteleportEmitterTable do
                 IssueClearCommands({self.antiteleportEmitterTable[k]})
                 IssueKillSelf({self.antiteleportEmitterTable[k]})
             end
         end
     end,
 
+    ---@param self BAB4309
     ResourceThread = function(self)
+        local trash = self.Trash
+
         if not self.Dead then
-            local energy = self:GetAIBrain():GetEconomyStored('Energy')
+            local energy = self.AIBrain.GetEconomyStored('Energy')
             if  energy <= 10 then
                 self:SetScriptBit('RULEUTC_ShieldToggle', false)
-                self:ForkThread(self.ResourceThread2)
+                TrashBagAdd(trash, ForkThread(self.ResourceThread2, self))
             else
-                self:ForkThread(self.EconomyWaitUnit)
+                TrashBagAdd(trash, ForkThread(self.EconomyWaitUnit, self))
             end
         end
     end,
 
+    ---@param self BAB4309
     EconomyWaitUnit = function(self)
+        local trash = self.Trash
+
         if not self.Dead then
         WaitSeconds(2)
             if not self.Dead then
-                self:ForkThread(self.ResourceThread)
+                TrashBagAdd(trash, ForkThread(self.ResourceThread, self))
             end
         end
     end,
 
+    ---@param self BAB4309
     ResourceThread2 = function(self)
+        local trash = self.Trash
+
         if not self.Dead then
-            local energy = self:GetAIBrain():GetEconomyStored('Energy')
+            local energy = self.AIBrain.GetEconomyStored('Energy')
             if  energy >= 3000 then
                 self:SetScriptBit('RULEUTC_ShieldToggle', true)
-                self:ForkThread(self.ResourceThread)
+                TrashBagAdd(trash, ForkThread(self.ResourceThread, self))
             else
-                self:ForkThread(self.EconomyWaitUnit2)
+                TrashBagAdd(trash, ForkThread(self.EconomyWaitUnit2, self))
             end
         end
     end,
 
+    ---@param self BAB4309
     EconomyWaitUnit2 = function(self)
         if not self.Dead then
         WaitSeconds(2)
             if not self.Dead then
-                self:ForkThread(self.ResourceThread2)
+                TrashBagAdd(self.Trash, ForkThread(self.ResourceThread2, self))
             end
         end
     end,

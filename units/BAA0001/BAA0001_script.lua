@@ -1,11 +1,13 @@
--- Tempest Drone
-
 local AirDroneUnit = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsunits.lua').AirDroneUnit
 local WeaponsFile = import('/lua/aeonweapons.lua')
-local ADFCannonOblivionWeapon = WeaponsFile.ADFCannonOblivionWeapon02
 local AANDepthChargeBombWeapon = WeaponsFile.AANDepthChargeBombWeapon
 local ADFQuantumAutogunWeapon = WeaponsFile.ADFQuantumAutogunWeapon
 
+-- Upvalue for performance
+local TrashBagAdd = TrashBag.Add
+
+-- Tempest Drone
+---@class BAA0001 : AirDroneUnit
 BAA0001 = Class(AirDroneUnit) {
 
     Weapons = {
@@ -20,26 +22,40 @@ BAA0001 = Class(AirDroneUnit) {
         Depthcharge = Class(AANDepthChargeBombWeapon) {},
     },
 
+    ---@param self BAA0001
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self, builder, layer)
         AirDroneUnit.OnStopBeingBuilt(self, builder, layer)
+
+        local trash = self.Trash
+
         self.AnimManip = CreateAnimator(self)
-        self.Trash:Add(self.AnimManip)
-        self.AnimManip:PlayAnim(self:GetBlueprint().Display.AnimationTakeOff, false):SetRate(1)
+
+        TrashBagAdd(trash, self.AnimManip)
+
+        self.AnimManip:PlayAnim(self.Blueprint.Display.AnimationTakeOff, false):SetRate(1)
         if not self.OpenAnim then
             self.OpenAnim = CreateAnimator(self)
-            self.Trash:Add(self.OpenAnim)
+            TrashBagAdd(trash, self.OpenAnim)
         end
     end,
 
+    ---@param self BAA0001
+    ---@param new VerticalMovementState
+    ---@param old VerticalMovementState
     OnMotionVertEventChange = function(self, new, old)
         AirDroneUnit.OnMotionVertEventChange(self, new, old)
+
+        local bp = self.Blueprint
+
         -- Aborting a landing
         if ((new == 'Top' or new == 'Up') and old == 'Down') then
             self.AnimManip:SetRate(-1)
         elseif (new == 'Down') then
-            self.AnimManip:PlayAnim(self:GetBlueprint().Display.AnimationLand, false):SetRate(1)
+            self.AnimManip:PlayAnim(bp).Display.AnimationLand, false):SetRate(1)
         elseif (new == 'Up') then
-            self.AnimManip:PlayAnim(self:GetBlueprint().Display.AnimationTakeOff, false):SetRate(1)
+            self.AnimManip:PlayAnim(bp.Display.AnimationTakeOff, false):SetRate(1)
         end
     end,
 
