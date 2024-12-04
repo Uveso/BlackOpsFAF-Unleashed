@@ -2,11 +2,12 @@
 -- File     :  /cdimage/units/UEB1102/UEB1102_script.lua
 -- Author(s):  Jessica St. Croix
 -- Summary  :  UEF Hydrocarbon Power Plant Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local TEnergyCreationUnit = import('/lua/terranunits.lua').TEnergyCreationUnit
 
+---@class BEB1202 : TEnergyCreationUnit
 BEB1202 = Class(TEnergyCreationUnit) {
     DestructionPartsHighToss = {'Exhaust01',},
     DestructionPartsLowToss = {'Exhaust01','Exhaust02','Exhaust03','Exhaust04','Exhaust05',},
@@ -16,6 +17,9 @@ BEB1202 = Class(TEnergyCreationUnit) {
     WaterEffects = {'/effects/emitters/underwater_idle_bubbles_01_emit.bp',},
     WaterEffectsBones = {'Exhaust01'},
 
+    ---@param self BEB1202
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         TEnergyCreationUnit.OnStopBeingBuilt(self,builder,layer)
         self.EffectsBag = {}
@@ -25,13 +29,15 @@ BEB1202 = Class(TEnergyCreationUnit) {
     ActiveState = State {
         Main = function(self)
             -- Play the "activate" sound
-            local myBlueprint = self:GetBlueprint()
-            if myBlueprint.Audio.Activate then
-                self:PlaySound(myBlueprint.Audio.Activate)
-            end
+            local bp = self.Blueprint
             local effects = {}
             local bones = {}
             local scale = 1
+
+            if bp.Audio.Activate then
+                self:PlaySound(bp.Audio.Activate)
+            end
+
             if self:GetCurrentLayer() == 'Land' then
                 effects = self.AirEffects
                 bones = self.AirEffectsBones
@@ -41,9 +47,9 @@ BEB1202 = Class(TEnergyCreationUnit) {
                 scale = 3
             end
 
-            for keys,values in effects do
-                for keysbones,valuesbones in bones do
-                    table.insert(self.EffectsBag, CreateAttachedEmitter(self,valuesbones,self:GetArmy(), values):ScaleEmitter(scale):OffsetEmitter(0,-.1,0))
+            for values in effects do
+                for valuesbones in bones do
+                    table.insert(self.EffectsBag, CreateAttachedEmitter(self,valuesbones,self.Army, values):ScaleEmitter(scale):OffsetEmitter(0,-.1,0))
                 end
             end
         end,
@@ -56,7 +62,7 @@ BEB1202 = Class(TEnergyCreationUnit) {
     InActiveState = State {
         Main = function(self)
             if self.EffectsBag then
-                for keys,values in self.EffectsBag do
+                for values in self.EffectsBag do
                     values:Destroy()
                 end
                 self.EffectsBag = {}
