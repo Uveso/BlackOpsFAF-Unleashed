@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/BAL0401/BAL0401_script.lua
 -- Author(s):  John Comes, David Tomandl, Jessica St. Croix
 -- Summary  :  Aeon Long Range Artillery Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local AWalkingLandUnit = import('/lua/aeonunits.lua').AWalkingLandUnit
@@ -11,8 +11,11 @@ local GoldenLaserGenerator = WeaponsFile.GoldenLaserGenerator
 local cWeapons = import('/lua/cybranweapons.lua')
 local CDFLaserHeavyWeapon = cWeapons.CDFLaserHeavyWeapon
 local explosion = import('/lua/defaultexplosions.lua')
-local BlackOpsEffectTemplate = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsEffectTemplates.lua')
 
+-- Up value for perfomance
+local TrashBagAdd = TrashBag.Add
+
+---@class BAL0401 : AWalkingLandUnit
 BAL0401 = Class(AWalkingLandUnit) {
     ChargeEffects01 = {
         '/mods/BlackOpsFAF-Unleashed/effects/emitters/g_laser_flash_01_emit.bp',
@@ -98,39 +101,57 @@ BAL0401 = Class(AWalkingLandUnit) {
          DefenseGun01 = Class(GoldenLaserGenerator) {},
     },
 
+    ---@param self BAL0401
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         AWalkingLandUnit.OnStopBeingBuilt(self,builder,layer)
-        self.Trash:Add(CreateRotator(self, 'Spinner_Ball', 'x', nil, 0, 100, 200))
-        self.Trash:Add(CreateRotator(self, 'Spinner_Ball', 'y', nil, 0, 100, 200))
-        self.Trash:Add(CreateRotator(self, 'Spinner_Ball', 'z', nil, 0, 100, 200))
+        local trash = self.Trash
+        local army = self.Army
+
+        TrashBagAdd(trash, CreateRotator(self, 'Spinner_Ball', 'x', nil, 0, 100, 200))
+        TrashBagAdd(trash, CreateRotator(self, 'Spinner_Ball', 'y', nil, 0, 100, 200))
+        TrashBagAdd(trash, CreateRotator(self, 'Spinner_Ball', 'z', nil, 0, 100, 200))
+
         self.MaelstromEffects01 = {}
+
         if self.MaelstromEffects01 then
-                for k, v in self.MaelstromEffects01 do
+                for _, v in self.MaelstromEffects01 do
                     v:Destroy()
                 end
             self.MaelstromEffects01 = {}
         end
-        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Spinner_Rack', self:GetArmy(), '/mods/BlackOpsFAF-Unleashed/effects/emitters/inqu_glow_effect03.bp'):ScaleEmitter(0.7):OffsetEmitter(0, -2.1, 0))
-        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Spinner_Rack', self:GetArmy(), '/mods/BlackOpsFAF-Unleashed/effects/emitters/inqu_glow_effect01.bp'):ScaleEmitter(3):OffsetEmitter(0, 0, 0))
-        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Spinner_Rack', self:GetArmy(), '/mods/BlackOpsFAF-Unleashed/effects/emitters/inqu_glow_effect02.bp'):ScaleEmitter(3):OffsetEmitter(0, 0, 0))
+
+        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Spinner_Rack', army, '/mods/BlackOpsFAF-Unleashed/effects/emitters/inqu_glow_effect03.bp'):ScaleEmitter(0.7):OffsetEmitter(0, -2.1, 0))
+        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Spinner_Rack', army, '/mods/BlackOpsFAF-Unleashed/effects/emitters/inqu_glow_effect01.bp'):ScaleEmitter(3):OffsetEmitter(0, 0, 0))
+        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Spinner_Rack', army, '/mods/BlackOpsFAF-Unleashed/effects/emitters/inqu_glow_effect02.bp'):ScaleEmitter(3):OffsetEmitter(0, 0, 0))
     end,
 
+    ---@param self BAL0401
+    ---@param instigator Unit
+    ---@param type string
+    ---@param overkillRatio number
     OnKilled = function(self, instigator, type, overkillRatio)
         local wep = self:GetWeaponByLabel('DefenseGun01')
-        local bp = wep:GetBlueprint()
+        local bp = wep.Blueprint
+
         if bp.Audio.BeamStop then
             wep:PlaySound(bp.Audio.BeamStop)
         end
         if bp.Audio.BeamLoop and wep.Beams[1].Beam then
             wep.Beams[1].Beam:SetAmbientSound(nil, nil)
         end
-        for k, v in wep.Beams do
+        for _, v in wep.Beams do
             v.Beam:Disable()
         end
         AWalkingLandUnit.OnKilled(self, instigator, type, overkillRatio)
     end,
 
-    DeathThread = function(self, overkillRatio , instigator)
+    ---@param self BAL0401
+    ---@param overkillRatio number
+    DeathThread = function(self, overkillRatio)
+        local bp = self.Blueprint
+
         explosion.CreateDefaultHitExplosionAtBone(self, 'Spinner_Ball', 5.0)
         explosion.CreateDebrisProjectiles(self, explosion.GetAverageBoundingXYZRadius(self), {self:GetUnitSizes()})
         WaitSeconds(2)
@@ -153,8 +174,7 @@ BAL0401 = Class(AWalkingLandUnit) {
 
         self:CreateProjectileAtBone('/mods/BlackOpsFAF-Unleashed/effects/entities/InqDeathEffectController01/InqDeathEffectController01_proj.bp', 'Body'):SetCollision(false)
 
-        local bp = self:GetBlueprint()
-        for i, numWeapons in bp.Weapon do
+        for i in bp.Weapon do
             if(bp.Weapon[i].Label == 'CollossusDeath') then
                 DamageArea(self, self:GetPosition(), bp.Weapon[i].DamageRadius, bp.Weapon[i].Damage, bp.Weapon[i].DamageType, bp.Weapon[i].DamageFriendly)
                 break
