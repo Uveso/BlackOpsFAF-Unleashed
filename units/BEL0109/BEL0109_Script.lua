@@ -2,12 +2,13 @@
 -- File     :  /cdimage/units/BEL0109/BEL0109_script.lua
 -- Author(s):  John Comes, David Tomandl, Jessica St. Croix
 -- Summary  :  UEF Tank Hunter/PD tank, initial Tank mode
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local TLandUnit = import('/lua/terranunits.lua').TLandUnit
 local TIFArtilleryWeapon = import('/lua/terranweapons.lua').TIFArtilleryWeapon
 
+---@class BEL0109 : TLandUnit
 BEL0109 = Class(TLandUnit) {
     Weapons = {
         MainGun = Class(TIFArtilleryWeapon) {
@@ -23,6 +24,8 @@ BEL0109 = Class(TLandUnit) {
         },
     },
 
+    ---@param self BEL0109
+    ---@param bit number
     OnScriptBitSet = function(self, bit)
         if bit == 7 then
             self:RemoveCommandCap('RULEUCC_Move')
@@ -33,6 +36,8 @@ BEL0109 = Class(TLandUnit) {
         TLandUnit.OnScriptBitSet(self, bit)
     end,
 
+    ---@param self BEL0109
+    ---@param bit number
     OnScriptBitClear = function(self, bit)
         if bit == 7 then
             self:AddCommandCap('RULEUCC_Move')
