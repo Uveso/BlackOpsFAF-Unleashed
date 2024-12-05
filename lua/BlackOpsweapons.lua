@@ -123,7 +123,7 @@ MiniHeavyMicrowaveLaserGenerator = Class(DefaultBeamWeapon) {
         self.SliderManip:SetPrecedence(11)
         self.SliderManip:SetGoal(0, 0, -1)
         self.SliderManip:SetSpeed(-1)
-        DefaultBeamWeapon.CreateProjectileAtMuzzle(self, muzzle)
+        return DefaultBeamWeapon.CreateProjectileAtMuzzle(self, muzzle)
     end,
 
     ---@param self MiniHeavyMicrowaveLaserGenerator
