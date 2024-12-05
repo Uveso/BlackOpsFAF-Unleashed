@@ -20,6 +20,7 @@ BSA0310 = Class(SAirUnit) {
                 if proj and not proj:BeenDestroyed() then
                     proj:PassData(data)
                 end
+                return proj
             end,
         },
 
@@ -30,6 +31,7 @@ BSA0310 = Class(SAirUnit) {
                 if proj and not proj:BeenDestroyed() then
                     proj:PassData(data)
                 end
+                return proj
             end,
         },
 
