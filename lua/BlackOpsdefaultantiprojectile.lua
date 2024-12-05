@@ -24,6 +24,7 @@ SeraLambdaFieldDestroyer = Class(Entity) {
         self:AttachTo(spec.Owner, spec.AttachBone)
         ChangeState(self, self.WaitingState)
         self.LambdaEffectsBag = {}
+        self.Army = self:GetArmy()
     end,
 
     ---@param self SeraLambdaFieldDestroyer
@@ -49,7 +50,6 @@ SeraLambdaFieldDestroyer = Class(Entity) {
             if not EntityCategoryContains(categories.PROJECTILE, other) or EntityCategoryContains(categories.STRATEGIC, other) or EntityCategoryContains(categories.ANTINAVY, other) then
                 return false
             end
-
             if not IsEnemy(army, other.Army) then return false end -- Don't affect non-enemies
             if other.LambdaDetect[self] then return false end
 
