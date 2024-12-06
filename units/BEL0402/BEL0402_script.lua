@@ -3,7 +3,6 @@ local TWalkingLandUnit = import('/lua/terranunits.lua').TWalkingLandUnit
 local BaseTransport = import('/lua/defaultunits.lua').BaseTransport
 local AirDroneCarrier = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsunits.lua').AirDroneCarrier
 local Weapons2 = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsweapons.lua')
-local TDFMachineGunWeapon = import('/lua/terranweapons.lua').TDFMachineGunWeapon
 local HawkGaussCannonWeapon = Weapons2.HawkGaussCannonWeapon
 local GoliathTMDGun = Weapons2.GoliathTMDGun
 local DeathNukeWeapon = import('/lua/sim/defaultweapons.lua').DeathNukeWeapon
@@ -16,6 +15,9 @@ local EffectTemplate = import('/lua/EffectTemplates.lua')
 local explosion = import('/lua/defaultexplosions.lua')
 local CreateDeathExplosion = explosion.CreateDefaultHitExplosionAtBone
 
+local TrashBagAdd = TrashBag.Add
+
+---@class BEL0402 : BaseTransport, TWalkingLandUnit, AirDroneCarrier
 BEL0402 = Class(BaseTransport, TWalkingLandUnit, AirDroneCarrier) {
     FlamerEffects = '/mods/BlackOpsFAF-Unleashed/effects/emitters/ex_flamer_torch_01.bp',
 
@@ -27,20 +29,27 @@ BEL0402 = Class(BaseTransport, TWalkingLandUnit, AirDroneCarrier) {
         GoliathDeathNuke = Class(DeathNukeWeapon) {},
     },
 
+    ---@param self BEL0402
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
+        local bp = self.Blueprint
+        local trash = self.Trash
+        local army = self.Army
+
         -- First, animate to stand up, and wait for it
         if not self.AnimationManipulator then
             self.AnimationManipulator = CreateAnimator(self)
-            self.Trash:Add(self.AnimationManipulator)
+            TrashBagAdd(self ,self.AnimationManipulator)
         end
 
         self:SetUnSelectable(true)
-        self.AnimationManipulator:PlayAnim(self:GetBlueprint().Display.AnimationActivate, false):SetRate(1)
-        self:ForkThread(function()
+        self.AnimationManipulator:PlayAnim(bp.Display.AnimationActivate, false):SetRate(1)
+        TrashBagAdd(trash, self:ForkThread(function()
             WaitSeconds(self.AnimationManipulator:GetAnimationDuration())
             self:SetUnSelectable(false)
             self.AnimationManipulator:Destroy()
-        end)
+        end))
 
         -- Create drones
         AirDroneCarrier.InitDrones(self)
@@ -50,14 +59,18 @@ BEL0402 = Class(BaseTransport, TWalkingLandUnit, AirDroneCarrier) {
 
         -- Turn on flamethrower pilot lights
         self.FlamerEffectsBag = {}
-        table.insert(self.FlamerEffectsBag, CreateAttachedEmitter(self, 'Right_Pilot_Light', self:GetArmy(), self.FlamerEffects):ScaleEmitter(0.0625))
-        table.insert(self.FlamerEffectsBag, CreateAttachedEmitter(self, 'Left_Pilot_Light', self:GetArmy(), self.FlamerEffects):ScaleEmitter(0.0625))
+        table.insert(self.FlamerEffectsBag, CreateAttachedEmitter(self, 'Right_Pilot_Light', army, self.FlamerEffects):ScaleEmitter(0.0625))
+        table.insert(self.FlamerEffectsBag, CreateAttachedEmitter(self, 'Left_Pilot_Light', army, self.FlamerEffects):ScaleEmitter(0.0625))
 
         TWalkingLandUnit.OnStopBeingBuilt(self,builder,layer)
     end,
 
-
     -- Places the Goliath's first drone-targetable attacker into a global
+    ---@param self BEL0402
+    ---@param instigator Unit
+    ---@param amount number
+    ---@param vector Vector
+    ---@param damagetype DamageType
     OnDamage = function(self, instigator, amount, vector, damagetype)
         if not self.Dead and self.DroneTarget == nil and self:IsValidDroneTarget(instigator) then
             AirDroneCarrier.SetAttacker(self, instigator)
@@ -66,6 +79,8 @@ BEL0402 = Class(BaseTransport, TWalkingLandUnit, AirDroneCarrier) {
     end,
 
     -- Drone control buttons
+    ---@param self BEL0402
+    ---@param bit number
     OnScriptBitSet = function(self, bit)
         -- Drone assist toggle, on
         if bit == 1 then
@@ -84,6 +99,8 @@ BEL0402 = Class(BaseTransport, TWalkingLandUnit, AirDroneCarrier) {
         end
     end,
 
+    ---@param self BEL0402
+    ---@param bit number
     OnScriptBitClear = function(self, bit)
         -- Drone assist toggle, off
         if bit == 1 then
@@ -101,6 +118,10 @@ BEL0402 = Class(BaseTransport, TWalkingLandUnit, AirDroneCarrier) {
     end,
 
     -- Cleans up threads and drones on death
+    ---@param self BEL0402
+    ---@param instigator Unit
+    ---@param type string
+    ---@param overkillRatio number
     OnKilled = function(self, instigator, type, overkillRatio)
         if self:GetFractionComplete() == 1 then
             -- Kill our heartbeat thread
@@ -122,47 +143,50 @@ BEL0402 = Class(BaseTransport, TWalkingLandUnit, AirDroneCarrier) {
         end,
     },
 
-
-
-
-
-
-
     DestructionEffectBones = {
         'Left_Arm_Muzzle',
     },
 
+    ---@param self BEL0402
+    ---@param bone Bone
+    ---@param army Army
     CreateDamageEffects = function(self, bone, army)
-        for k, v in EffectTemplate.DamageFireSmoke01 do
+        for _, v in EffectTemplate.DamageFireSmoke01 do
             CreateAttachedEmitter(self, bone, army, v):ScaleEmitter(3.0)
         end
     end,
 
+    ---@param self BEL0402
+    ---@param bone Bone
+    ---@param Army Army
     CreateExplosionDebris = function(self, bone, Army)
-        for k, v in EffectTemplate.ExplosionEffectsSml01 do
+        for _, v in EffectTemplate.ExplosionEffectsSml01 do
             CreateAttachedEmitter(self, bone, Army, v):ScaleEmitter(2.0)
         end
     end,
 
+    ---@param self BEL0402
     CreateDeathExplosionDustRing = function(self)
         local blanketSides = 18
         local blanketAngle = (2*math.pi) / blanketSides
-        local blanketStrength = 1
         local blanketVelocity = 2.8
 
         for i = 0, (blanketSides-1) do
             local blanketX = math.sin(i*blanketAngle)
             local blanketZ = math.cos(i*blanketAngle)
 
-            local Blanketparts = self:CreateProjectile('/effects/entities/DestructionDust01/DestructionDust01_proj.bp', blanketX, 1.5, blanketZ + 4, blanketX, 0, blanketZ)
-                :SetVelocity(blanketVelocity):SetAcceleration(-0.3)
+            self:CreateProjectile('/effects/entities/DestructionDust01/DestructionDust01_proj.bp', blanketX, 1.5, blanketZ + 4, blanketX, 0, blanketZ):SetVelocity(blanketVelocity):SetAcceleration(-0.3)
         end
     end,
 
-    CreateAmmoCookOff = function(self, Army, bones, yBoneOffset)
+    ---@param self BEL0402
+    ---@param bones Bone[]
+    ---@param yBoneOffset number
+    CreateAmmoCookOff = function(self, bones, yBoneOffset)
         -- Fire plume effects
         local basePosition = self:GetPosition()
-        for k, vBone in bones do
+        local trash = self.Trash
+        for _, vBone in bones do
             local position = self:GetPosition(vBone)
             local offset = utilities.GetDifferenceVector(position, basePosition)
             velocity = utilities.GetDirectionVector(position, basePosition)
@@ -186,39 +210,38 @@ BEL0402 = Class(BaseTransport, TWalkingLandUnit, AirDroneCarrier) {
             ammocookoff:SetVelocity(Random(2,5))
             ammocookoff:SetLifetime(20)
             ammocookoff:PassDamageData(self.DamageData)
-            self.Trash:Add(ammocookoff)
+            TrashBagAdd(self, ammocookoff)
         end
     end,
 
+    ---@param self BEL0402
+    ---@param army Army
     CreateGroundPlumeConvectionEffects = function(self,army)
-    for k, v in EffectTemplate.TNukeGroundConvectionEffects01 do
-          CreateEmitterAtEntity(self, army, v)
-    end
+        for _, v in EffectTemplate.TNukeGroundConvectionEffects01 do
+              CreateEmitterAtEntity(self, army, v)
+        end
 
-    local sides = 10
-    local angle = (2*math.pi) / sides
-    local inner_lower_limit = 2
+        local sides = 10
+        local angle = (2*math.pi) / sides
         local outer_lower_limit = 2
         local outer_upper_limit = 2
+        local outer_lower_height = 2
+        local outer_upper_height = 3
 
-    local inner_lower_height = 1
-    local inner_upper_height = 3
-    local outer_lower_height = 2
-    local outer_upper_height = 3
-
-    sides = 8
-    angle = (2*math.pi) / sides
-    for i = 0, (sides-1)
-    do
-        local magnitude = RandomFloat(outer_lower_limit, outer_upper_limit)
-        local x = math.sin(i*angle+RandomFloat(-angle/2, angle/4)) * magnitude
-        local z = math.cos(i*angle+RandomFloat(-angle/2, angle/4)) * magnitude
-        local velocity = RandomFloat(1, 3) * 3
-        self:CreateProjectile('/effects/entities/UEFNukeEffect05/UEFNukeEffect05_proj.bp', x, RandomFloat(outer_lower_height, outer_upper_height), z, x, 0, z)
-            :SetVelocity(x * velocity, 0, z * velocity)
-    end
+        sides = 8
+        angle = (2*math.pi) / sides
+        for i = 0, (sides-1)
+        do
+            local magnitude = RandomFloat(outer_lower_limit, outer_upper_limit)
+            local x = math.sin(i*angle+RandomFloat(-angle/2, angle/4)) * magnitude
+            local z = math.cos(i*angle+RandomFloat(-angle/2, angle/4)) * magnitude
+            local velocity = RandomFloat(1, 3) * 3
+            self:CreateProjectile('/effects/entities/UEFNukeEffect05/UEFNukeEffect05_proj.bp', x, RandomFloat(outer_lower_height, outer_upper_height), z, x, 0, z)
+                :SetVelocity(x * velocity, 0, z * velocity)
+        end
     end,
 
+    ---@param self BEL0402
     CreateInitialFireballSmokeRing = function(self)
         local sides = 12
         local angle = (2*math.pi) / sides
@@ -233,6 +256,7 @@ BEL0402 = Class(BaseTransport, TWalkingLandUnit, AirDroneCarrier) {
         end
     end,
 
+    ---@param self BEL0402 
     CreateOuterRingWaveSmokeRing = function(self)
         local sides = 32
         local angle = (2*math.pi) / sides
@@ -255,6 +279,7 @@ BEL0402 = Class(BaseTransport, TWalkingLandUnit, AirDroneCarrier) {
         end
     end,
 
+    ---@param self BEL0402
     CreateFlavorPlumes = function(self)
         local numProjectiles = 8
         local angle = (2*math.pi) / numProjectiles
@@ -280,11 +305,12 @@ BEL0402 = Class(BaseTransport, TWalkingLandUnit, AirDroneCarrier) {
         WaitSeconds(3)
 
         -- Slow projectiles down to normal speed
-        for k, v in projectiles do
+        for _, v in projectiles do
             v:SetVelocity(2):SetBallisticAcceleration(-0.15)
         end
     end,
 
+    ---@param self BEL0402
     CreateHeadConvectionSpinners = function(self)
         local sides = 8
         local angle = (2*math.pi) / sides
@@ -313,9 +339,10 @@ BEL0402 = Class(BaseTransport, TWalkingLandUnit, AirDroneCarrier) {
         end
     end,
 
-    DeathThread = function(self, overkillRatio , instigator)
+    ---@param self BEL0402
+    DeathThread = function(self)
         self:PlayUnitSound('Destroyed')
-        local army = self:GetArmy()
+        local army = self.Army
         local position = self:GetPosition()
         local numExplosions =  math.floor(table.getn(self.DestructionEffectBones) * Random(0.4, 1.0))
 
@@ -427,6 +454,9 @@ BEL0402 = Class(BaseTransport, TWalkingLandUnit, AirDroneCarrier) {
     end,
 
     -- Handles drone docking
+    ---@param self BEL0402
+    ---@param bone Bone
+    ---@param unit Unit
     OnTransportAttach = function(self, bone, unit)
         BaseTransport.OnTransportAttach(self, bone, unit)
         TWalkingLandUnit.OnTransportAttach(self, bone, unit)
@@ -436,6 +466,9 @@ BEL0402 = Class(BaseTransport, TWalkingLandUnit, AirDroneCarrier) {
     end,
 
     -- Handles drone undocking, also called when docked drones die
+    ---@param self BEL0402
+    ---@param bone Bone
+    ---@param unit Unit
     OnTransportDetach = function(self, bone, unit)
         BaseTransport.OnTransportDetach(self, bone, unit)
         TWalkingLandUnit.OnTransportDetach(self, bone, unit)
@@ -447,21 +480,26 @@ BEL0402 = Class(BaseTransport, TWalkingLandUnit, AirDroneCarrier) {
         end
     end,
 
+    ---@param self BEL0402
+    ---@param attached Unit
     OnAttachedKilled = function(self, attached)
         BaseTransport.OnAttachedKilled(self, attached)
         TWalkingLandUnit.OnAttachedKilled(self, attached)
     end,
 
+    ---@param self BEL0402
     OnStartTransportLoading = function(self)
         BaseTransport.OnStartTransportLoading(self)
         TWalkingLandUnit.OnStartTransportLoading(self)
     end,
 
+    ---@param self BEL0402
     OnStopTransportLoading = function(self)
         BaseTransport.OnStopTransportLoading(self)
         TWalkingLandUnit.OnStopTransportLoading(self)
     end,
 
+    ---@param self BEL0402
     DestroyedOnTransport = function(self)
         BaseTransport.DestroyedOnTransport(self)
         TWalkingLandUnit.DestroyedOnTransport(self)

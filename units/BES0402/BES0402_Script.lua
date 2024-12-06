@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/XES0402/XES0402_script.lua
 -- Author(s):  John Comes, David Tomandl, Jessica St. Croix
 -- Summary  :  UEF Battleship Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local TSeaUnit = import('/lua/terranunits.lua').TSeaUnit
@@ -13,6 +13,9 @@ local ZCannonWeapon = WeaponsFile2.ZCannonWeapon
 local TDFShipGaussCannonWeapon = WeaponsFile.TDFShipGaussCannonWeapon
 local BlackOpsEffectTemplate = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsEffectTemplates.lua')
 
+local TrashBagAdd = TrashBag.Add
+
+---@class BES0402 : TSeaUnit
 BES0402 = Class(TSeaUnit) {
     SteamEffects = BlackOpsEffectTemplate.WeaponSteam02,
 
@@ -47,10 +50,14 @@ BES0402 = Class(TSeaUnit) {
         RightDeckgun03 = Class(TDFShipGaussCannonWeapon) {},
     },
 
+    ---@param self BES0402
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         TSeaUnit.OnStopBeingBuilt(self,builder,layer)
-        self.Trash:Add(CreateRotator(self, 'Spinner01', 'y', nil, -45))
-        self.Trash:Add(CreateRotator(self, 'Spinner02', 'y', nil, 90))
+        local trash = self.Trash
+        TrashBagAdd(trash, CreateRotator(self, 'Spinner01', 'y', nil, -45))
+        TrashBagAdd(trash, CreateRotator(self, 'Spinner02', 'y', nil, 90))
         self.SteamEffectsBag = {}
     end,
 }

@@ -6,8 +6,8 @@
 -----------------------------------------------------------------
 
 local CStructureUnit = import('/lua/cybranunits.lua').CStructureUnit
-local Shield = import('/lua/shield.lua').Shield
 
+---@class 
 BRB4309 = Class(CStructureUnit) {
     OnCreate = function(self)
         CStructureUnit.OnCreate(self)

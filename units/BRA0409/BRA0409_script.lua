@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/XRA0409/XRA0409_script.lua
 -- Author(s):  John Comes, David Tomandl
 -- Summary  :  Cybran T2 Air Transport Script
--- Copyright © 2006 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2006 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local AirTransport = import('/lua/defaultunits.lua').AirTransport
@@ -14,6 +14,9 @@ local RedHeavyTurboLaserWeapon = weaponfile2.RedHeavyTurboLaserWeapon
 local util = import('/lua/utilities.lua')
 local fxutil = import('/lua/effectutilities.lua')
 
+local TrashBagAdd = TrashBag.Add
+
+---@class BRA0409 : AirTransport
 BRA0409 = Class(AirTransport) {
     DestroyNoFallRandomChance = 1.1,
     Weapons = {
@@ -39,7 +42,8 @@ BRA0409 = Class(AirTransport) {
                                   'Attachpoint08', 'Attachpoint09', 'Attachpoint10', 'Attachpoint11',
                                   'Attachpoint12', 'Attachpoint13', 'Attachpoint14', 'Attachpoint15',
                                   'Attachpoint16', 'Attachpoint17',
-                                  'Attachpoint18', 'Attachpoint19', 'Attachpoint20'},
+                                  'Attachpoint18', 'Attachpoint19', 'Attachpoint20'
+    },
 
     BeamExhaustIdle = '/effects/emitters/missile_exhaust_fire_beam_05_emit.bp',
     BeamExhaustCruise = '/effects/emitters/missile_exhaust_fire_beam_04_emit.bp',
@@ -56,30 +60,43 @@ BRA0409 = Class(AirTransport) {
     },
 
     -- When one of our attached units gets killed, detach it
-    OnAttachedKilled = function(self, attached)
+    ---@param attached Unit
+    OnAttachedKilled = function(attached)
         attached:DetachFrom()
     end,
 
+    ---@param self BRA0409
+    ---@param instigator Unit
+    ---@param type string
+    ---@param overkillRatio number
     OnKilled = function(self, instigator, type, overkillRatio)
         self:TransportDetachAllUnits(true)
         AirTransport.OnKilled(self, instigator, type, overkillRatio)
     end,
 
+    ---@param self BRA0409
+    ---@param attachBone string
+    ---@param unit Unit
     OnTransportAttach = function(self, attachBone, unit)
         AirTransport.OnTransportAttach(self, attachBone, unit)
         unit:SetCanTakeDamage(false)
     end,
 
+    ---@param self BRA0409
+    ---@param attachBone string
+    ---@param unit Unit
     OnTransportDetach = function(self, attachBone, unit)
         unit:SetCanTakeDamage(true)
         AirTransport.OnTransportDetach(self, attachBone, unit)
     end,
 
     -- Override air destruction effects so we can do something custom here
-    CreateUnitAirDestructionEffects = function(self, scale)
-        self:ForkThread(self.AirDestructionEffectsThread, self)
+    ---@param self BRA0409
+    CreateUnitAirDestructionEffects = function(self)
+        TrashBagAdd(self.Trash, self:ForkThread(self.AirDestructionEffectsThread, self))
     end,
 
+    ---@param self BRA0409
     AirDestructionEffectsThread = function(self)
         local numExplosions = math.floor(table.getn(self.AirDestructionEffectBones) * 3)
         for i = 0, numExplosions do
@@ -88,25 +105,35 @@ BRA0409 = Class(AirTransport) {
         end
     end,
 
+    ---@param self BRA0409
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         AirTransport.OnStopBeingBuilt(self,builder,layer)
+        local trash = self.Trash
 
         self.AnimManip = CreateAnimator(self)
-        self.Trash:Add(self.AnimManip)
+
+        TrashBagAdd(trash, self.AnimManip)
 
         self:SetMaintenanceConsumptionInactive()
         self:SetScriptBit('RULEUTC_IntelToggle', true)
     end,
 
+    ---@param self BRA0409
+    ---@param new HorizontalMovementState
+    ---@param old HorizontalMovementState
     OnMotionHorzEventChange = function(self, new, old)
         AirTransport.OnMotionHorzEventChange(self, new, old)
+        local trash = self.Trash
+
         if self.ThrustExhaustTT1 == nil then
             if self.MovementAmbientExhaustEffectsBag then
                 fxutil.CleanupEffectBag(self,'MovementAmbientExhaustEffectsBag')
             else
                 self.MovementAmbientExhaustEffectsBag = {}
             end
-            self.ThrustExhaustTT1 = self:ForkThread(self.MovementAmbientExhaustThread)
+            self.ThrustExhaustTT1 = TrashBagAdd(trash, ForkThread(self.MovementAmbientExhaustThread, self))
         end
 
         -- We've changed flight speed too soon to open
@@ -117,11 +144,11 @@ BRA0409 = Class(AirTransport) {
 
         if new == 'TopSpeed' then
             -- Only open after 2 seconds of top-speed flight
-            self.OpenThread = self:ForkThread(self.OpenAnimation)
+            self.OpenThread = TrashBagAdd(trash, ForkThread(self.OpenAnimation , self))
         elseif new == 'Stopping' then
             -- Only close if opened
             if self.open then
-                self.CloseThread = self:ForkThread(self.CloseAnimation)
+                self.CloseThread = TrashBagAdd(trash ,ForkThread(self.CloseAnimation , self))
             end
         elseif new == 'Stopped' and self.ThrustExhaustTT1 ~= nil then
             KillThread(self.ThrustExhaustTT1)
@@ -130,18 +157,21 @@ BRA0409 = Class(AirTransport) {
         end
     end,
 
+    ---@param self BRA0409
     OpenAnimation = function(self)
         WaitSeconds(1.5)
-        self.AnimManip:PlayAnim(self:GetBlueprint().Display.AnimationOpen, false):SetRate(2)
+        self.AnimManip:PlayAnim(self.Blueprint.Display.AnimationOpen, false):SetRate(2)
         self.open = true
     end,
 
+    ---@param self BRA0409
     CloseAnimation = function(self)
         WaitSeconds(1.5)
-        self.AnimManip:PlayAnim(self:GetBlueprint().Display.AnimationClose, false):SetRate(2)
+        self.AnimManip:PlayAnim(self.Blueprint.Display.AnimationClose, false):SetRate(2)
         self.open = false
     end,
 
+    ---@param self BRA0409
     MovementAmbientExhaustThread = function(self)
         while not self.Dead do
             local ExhaustEffects = {
@@ -150,14 +180,14 @@ BRA0409 = Class(AirTransport) {
             }
             local ExhaustBeamLarge = '/mods/BlackOpsFAF-Unleashed/effects/emitters/missile_exhaust_fire_beam_10_emit.bp'
             local ExhaustBeamSmall = '/effects/emitters/missile_exhaust_fire_beam_03_emit.bp'
-            local army = self:GetArmy()
+            local army = self.Army
 
-            for kE, vE in ExhaustEffects do
-                for kB, vB in self.MovementAmbientExhaustBones do
+            for _, vE in ExhaustEffects do
+                for _, vB in self.MovementAmbientExhaustBones do
                     table.insert(self.MovementAmbientExhaustEffectsBag, CreateAttachedEmitter(self, vB, army, vE):ScaleEmitter(2))
                     table.insert(self.MovementAmbientExhaustEffectsBag, CreateBeamEmitterOnEntity(self, vB, army, ExhaustBeamLarge))
                 end
-                for kB, vB in self.MovementAmbientExhaustBones2 do
+                for _, vB in self.MovementAmbientExhaustBones2 do
                     table.insert(self.MovementAmbientExhaustEffectsBag, CreateAttachedEmitter(self, vB, army, vE):ScaleEmitter(1))
                     table.insert(self.MovementAmbientExhaustEffectsBag, CreateBeamEmitterOnEntity(self, vB, army, ExhaustBeamSmall))
                 end
