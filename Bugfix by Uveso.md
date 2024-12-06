@@ -1,13 +1,13 @@
-*************************************************************************************************************************************
-v26 (not released)
+--- 
+## v26 (not released)
 
 - Added Annotations (MrRowey)
 - Speed up functions (MrRowey)
 - Fixed CreateProjectileAtMuzzle hooks by returning the projectile to parent function
 
+---
 
-*************************************************************************************************************************************
-v25 (02.Nov.2024)
+## v25 (02.Nov.2024)
 
 Fixes by Basilisk3:
 - Unit bes0402 (Experimental Dreadnaught) Hitbox enlarged downwards so that torpedoes can hit the unit more effectively
@@ -23,8 +23,9 @@ Fixes by Uveso:
 - Unit bal0206 (Medium Assault Tank) fix collision box
 - Unit bel9010 (Jammer Crystal) fix collision box
 
-*************************************************************************************************************************************
-v24 (21.Aug.2023)
+---
+
+## v24 (21.Aug.2023)
 
 Fixes by Uveso:
 - fixed an issue where drones where able to target non unit entities
@@ -40,20 +41,23 @@ Fixes by Balthazar:
 - Unit uab1102 (Hydrocarbon Power Plant) was not buildable on tech 1
 - Unit ueb1102 (Hydrocarbon Power Plant) was not buildable on tech 1
 
-*************************************************************************************************************************************
-v23 (05.May.2023)
+---
+
+## v23 (05.May.2023)
 
 - fixed a incompatibility with BrewLAN (Thanks to Balthazar)
 - fixed a bug in case a air weapon has no RangeCategory UWRC_AntiAir
 
-*************************************************************************************************************************************
-v22 (03.May.2023)
+---
+
+## v22 (03.May.2023)
 Thanks to Balthazar who provided this patch.
 
 - fixed a incompatibility with BrewLAN (missing SizeZ on units)
 
-*************************************************************************************************************************************
-v21 (24.Apr.2023)
+---
+
+## v21 (24.Apr.2023)
 Thanks to Jip who provided this patch.
 
 - Unit baa0309 Illuminate - (T3 Air Transport) fix for cloak
@@ -67,8 +71,9 @@ Thanks to Jip who provided this patch.
 - Unit bab4209 Quantum Wake Generator - (Anti-Teleport Generator) fix for cloak
 - drones no longer checks for target.Dead ~= nil; (it is sometimes false, not nil)
 
-*************************************************************************************************************************************
-v20 (21.Aug.2022)
+---
+
+## v20 (21.Aug.2022)
 
 - added missing translation tags in tooltip.lua
 - added german translation (translation by John kobo)
@@ -86,13 +91,12 @@ v20 (21.Aug.2022)
 - Unit baa0309 (T3 Air Transport) Added missing transport capacity variable (Class1Capacity = 24,)
 - Unit bab2308 (Tactical Missile Launcher) fixed no damage on AMissileSerpentineProjectile
 
-*************************************************************************************************************************************
-v19 (22.Dec.2020)
+---
+
+## v19 (22.Dec.2020)
 
 - Unit UAA0310 Added VeteranMassMult = 0.5, to blueprint for propper veterancy calculation
 - Unit UAS0401 Added VeteranMassMult = 0.5, to blueprint for propper veterancy calculation
 
 - Unit BAA0309 Added TeleportDelay = 10, to blueprint to match FAF patch
 - Unit BSB4209 Added TeleportDelay = 10, to blueprint to match FAF patch
-
-*************************************************************************************************************************************
