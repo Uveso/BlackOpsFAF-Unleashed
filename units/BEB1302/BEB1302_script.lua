@@ -47,8 +47,8 @@ BEB1302 = Class(TEnergyCreationUnit) {
                 scale = 3
             end
 
-            for values in effects do
-                for valuesbones in bones do
+            for _, values in effects do
+                for _, valuesbones in bones do
                     table.insert(self.EffectsBag, CreateAttachedEmitter(self,valuesbones,self.Army, values):ScaleEmitter(scale):OffsetEmitter(0,-.1,0))
                 end
             end
@@ -62,7 +62,7 @@ BEB1302 = Class(TEnergyCreationUnit) {
     InActiveState = State {
         Main = function(self)
             if self.EffectsBag then
-                for values in self.EffectsBag do
+                for _, values in self.EffectsBag do
                     values:Destroy()
                 end
                 self.EffectsBag = {}
