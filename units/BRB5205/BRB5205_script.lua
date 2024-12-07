@@ -2,14 +2,16 @@
 -- File     :  /cdimage/units/XRB5205/XRB5205_script.lua
 -- Author(s):  John Comes, David Tomandl
 -- Summary  :  Cybran Air Staging Platform
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local CWeapons = import('/lua/cybranweapons.lua')
 local CAirStagingPlatformUnit = import('/lua/cybranunits.lua').CAirStagingPlatformUnit
 local CAABurstCloudFlakArtilleryWeapon = CWeapons.CAABurstCloudFlakArtilleryWeapon
 local CANNaniteTorpedoWeapon = CWeapons.CANNaniteTorpedoWeapon
+local TrashBadAdd = TrashBad.Add
 
+---@class BRB5205 : CAirStagingPlatformUnit
 BRB5205 = Class(CAirStagingPlatformUnit) {
     Weapons = {
         TorpedoTurret01 = Class(CANNaniteTorpedoWeapon) {},
@@ -22,13 +24,17 @@ BRB5205 = Class(CAirStagingPlatformUnit) {
         FlakGun04 = Class(CAABurstCloudFlakArtilleryWeapon) {},
     },
 
+    ---@param self BRB5205
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         CAirStagingPlatformUnit.OnStopBeingBuilt(self,builder,layer)
         local layer = self:GetCurrentLayer()
+        local trash = self.Trash
         -- Drone Globals
         self.Side = 0
         self.DroneTable = {}
-        self:ForkThread(self.InitialDroneSpawn)
+        TrashBadAdd(trash, ForkThread(self.InitialDroneSpawn ,self))
         -- If created with F2 on land
         if layer == 'Land' then
             -- Disable Naval weapons
@@ -45,9 +51,10 @@ BRB5205 = Class(CAirStagingPlatformUnit) {
         end
 
         CAirStagingPlatformUnit.OnStopBeingBuilt(self)
-        self.DelayedCloakThread = self:ForkThread(self.CloakDelayed)
+        self.DelayedCloakThread = TrashBadAdd(trash, ForkThread(self.CloakDelayed,self))
     end,
 
+    ---@param self BRB5205
     CloakDelayed = function(self)
         if not self.Dead then
             WaitSeconds(2)
@@ -60,8 +67,10 @@ BRB5205 = Class(CAirStagingPlatformUnit) {
         self.DelayedCloakThread = nil
     end,
 
+    ---@param self BRB5205
     InitialDroneSpawn = function(self)
         local numcreate = 4
+        local trash = self.Trash
 
         -- Randomly determines which launch bay will be the first to spawn a drone
         self.Side = Random(1,4)
@@ -70,15 +79,16 @@ BRB5205 = Class(CAirStagingPlatformUnit) {
         WaitSeconds(2)
 
         for i = 0, (numcreate -1) do
-            self:ForkThread(self.SpawnDrone)
+            TrashBadAdd(trash, ForkThread(self.SpawnDrone, self))
             -- Short delay between spawns to spread them out
             WaitSeconds(2)
         end
     end,
 
+    ---@param self BRB5205
     SpawnDrone = function(self)
+        local trash = self.Trash
         -- Sets up local Variables used and spawns a drone at the parents location
-        local myOrientation = self:GetOrientation()
         if self.Side == 1 then
             -- Gets the current position of the carrier launch bay in the game world
             local position = self:GetPosition('xrb01')
@@ -98,7 +108,7 @@ BRB5205 = Class(CAirStagingPlatformUnit) {
             self:HideBone('xrb01', true)
 
             -- Drone clean up scripts
-            self.Trash:Add(drone)
+            TrashBadAdd(trash, drone)
         elseif self.Side == 2 then
             -- Gets the current position of the carrier launch bay in the game world
             local position = self:GetPosition('xrb02')
@@ -119,7 +129,7 @@ BRB5205 = Class(CAirStagingPlatformUnit) {
             self:HideBone('xrb02', true)
 
             -- Drone clean up scripts
-            self.Trash:Add(drone)
+            TrashBadAdd(trash, drone)
         elseif self.Side == 3 then
             -- Gets the current position of the carrier launch bay in the game world
             local position = self:GetPosition('xrb03')
@@ -140,7 +150,7 @@ BRB5205 = Class(CAirStagingPlatformUnit) {
             self:HideBone('xrb03', true)
 
             -- Drone clean up scripts
-            self.Trash:Add(drone)
+            TrashBadAdd(trash, drone)
         elseif self.Side == 4 then
             -- Gets the current position of the carrier launch bay in the game world
             local position = self:GetPosition('xrb04')
@@ -161,17 +171,21 @@ BRB5205 = Class(CAirStagingPlatformUnit) {
             self:HideBone('xrb04', true)
 
             -- Drone clean up scripts
-            self.Trash:Add(drone)
+            TrashBadAdd(trash, drone)
         end
     end,
 
+    ---@param self BRB5205
+    ---@param instigator Unit
+    ---@param damagetype DamageType
+    ---@param overkillRatio number
     OnKilled = function(self, instigator, damagetype, overkillRatio)
         self:HideBone('xrb01', false)
         self:HideBone('xrb02', false)
         self:HideBone('xrb03', false)
         self:HideBone('xrb04', false)
         if table.getn({self.DroneTable}) > 0 then
-            for k, v in self.DroneTable do
+            for k, _ in self.DroneTable do
                 IssueClearCommands({self.DroneTable[k]})
                 IssueKillSelf({self.DroneTable[k]})
             end

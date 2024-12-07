@@ -3,13 +3,16 @@
 -- Author   :  Greg Kohne
 -- Summary  :  Jamming Crystal
 --
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2007 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local SLandUnit = import('/lua/seraphimunits.lua').SLandUnit
 
+--@class BEL9010 : SLandUnit
 BEL9010 = Class(SLandUnit) {
-    OnCreate = function(self, builder, layer)
+
+    ---@param self BEL9010
+    OnCreate = function(self)
         SLandUnit.OnCreate(self)
     end,
 }
