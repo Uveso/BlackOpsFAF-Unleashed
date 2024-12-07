@@ -2,19 +2,20 @@
 -- File     :  /cdimage/units/XRL0110/XRL0110_script.lua
 -- Author(s):  John Comes, David Tomandl
 -- Summary  :  Cybran Mobile Mortar Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local CWalkingLandUnit = import('/lua/cybranunits.lua').CWalkingLandUnit
 local CybranWeaponsFile = import('/lua/cybranweapons.lua')
 local CIFGrenadeWeapon = CybranWeaponsFile.CIFGrenadeWeapon
-local CMobileKamikazeBombWeapon = import('/lua/cybranweapons.lua').CMobileKamikazeBombWeapon
 local CDFLaserHeavyWeapon = CybranWeaponsFile.CDFLaserHeavyWeapon
 local CAANanoDartWeapon = CybranWeaponsFile.CAANanoDartWeapon
 local EffectUtils = import('/lua/effectutilities.lua')
 local CDFParticleCannonWeapon = import('/lua/cybranweapons.lua').CDFParticleCannonWeapon
 local Effects = import('/lua/effecttemplates.lua')
+local TrashBadAdd = TrashBag.Add
 
+---@class BRL0110 : CWalkingLandUnit
 BRL0110 = Class(CWalkingLandUnit) {
     DestructionTicks = 400,
     WeaponList = {'FlameGun', 'RPG', 'GatlingCannon', 'LaserGun'},
@@ -48,8 +49,12 @@ BRL0110 = Class(CWalkingLandUnit) {
         },
     },
 
+    ---@param self BRL0110
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
-        self:ForkThread(self.WeaponSetup)
+        local trash = self.Trash
+        TrashBadAdd(trash, ForkThread(self.WeaponSetup))
         self:SetWeaponEnabledByLabel('FlameGun', false)
         self:SetWeaponEnabledByLabel('RPG', false)
         self:SetWeaponEnabledByLabel('GatlingCannon', false)
@@ -59,17 +64,23 @@ BRL0110 = Class(CWalkingLandUnit) {
         CWalkingLandUnit.OnStopBeingBuilt(self, builder, layer)
     end,
 
+    ---@param self BRL0110
     WeaponCheckThread = function(self)
-        for k, v in self.WeaponList do
+        for k, _ in self.WeaponList do
             self:SetWeaponEnabledByLabel(self.WeaponList[k], k == self.WeaponCheck)
         end
     end,
 
+    ---@param self BRL0110
+    ---@param attachBone Bone
+    ---@param unit Unit
     OnTransportDetach = function(self, attachBone, unit)
         CWalkingLandUnit.OnTransportDetach(self, attachBone, unit)
-        self:ForkThread(self.WeaponCheckThread)
+        local trash = self.Trash
+        TrashBadAdd(trash, ForkThread(self.WeaponCheckThread, self))
     end,
 
+    ---@param self BRL0110
     WeaponSetup = function(self)
         if not self.Dead then
             self.WeaponCheck = Random(1, 4)
@@ -89,8 +100,8 @@ BRL0110 = Class(CWalkingLandUnit) {
                 self:HideBone('Gat_Exhaust', true)
                 self:HideBone('Eye_Laser_Muzzle', true)
                 local wep = self:GetWeaponByLabel('FlameGun')
-                maxradius = wep:GetBlueprint().MaxRadius
-                minradius = wep:GetBlueprint().MinRadius or 0
+                maxradius = wep.Blueprint.MaxRadius
+                minradius = wep.Blueprint.MinRadius or 0
             elseif check == 2 then
                 self:HideBone('Flamer', true)
                 self:HideBone('Flamer_Muzzle', true)
@@ -100,8 +111,8 @@ BRL0110 = Class(CWalkingLandUnit) {
                 self:HideBone('Gat_Exhaust', true)
                 self:HideBone('Eye_Laser_Muzzle', true)
                 local wep = self:GetWeaponByLabel('RPG')
-                maxradius = wep:GetBlueprint().MaxRadius
-                minradius = wep:GetBlueprint().MinRadius or 0
+                maxradius = wep.Blueprint.MaxRadius
+                minradius = wep.Blueprint.MinRadius or 0
             elseif check == 3 then
                 self:HideBone('Flamer', true)
                 self:HideBone('Flamer_Muzzle', true)
@@ -111,8 +122,8 @@ BRL0110 = Class(CWalkingLandUnit) {
                 self:HideBone('RPG_Muzzle02', true)
                 self:HideBone('Eye_Laser_Muzzle', true)
                 local wep = self:GetWeaponByLabel('GatlingCannon')
-                maxradius = wep:GetBlueprint().MaxRadius
-                minradius = wep:GetBlueprint().MinRadius or 0
+                maxradius = wep.Blueprint.MaxRadius
+                minradius = wep.Blueprint.MinRadius or 0
             elseif check == 4 then
                 self:HideBone('RPG_Barrel01', true)
                 self:HideBone('RPG_Barrel02', true)
@@ -125,8 +136,8 @@ BRL0110 = Class(CWalkingLandUnit) {
                 self:HideBone('Flamer', true)
                 self:HideBone('Flamer_Muzzle', true)
                 local wep = self:GetWeaponByLabel('LaserGun')
-                maxradius = wep:GetBlueprint().MaxRadius
-                minradius = wep:GetBlueprint().MinRadius or 0
+                maxradius = wep.Blueprint.MaxRadius
+                minradius = wep.Blueprint.MinRadius or 0
             end
             -- Configure dummy weapon radius, enable main weapon
             dummywep:ChangeMaxRadius(maxradius)

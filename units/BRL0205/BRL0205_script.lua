@@ -7,6 +7,7 @@ local CDFLaserHeavyWeapon = CybranWeaponsFile.CDFLaserHeavyWeapon
 local ScorpDisintegratorWeapon = CybranWeaponsFile2.ScorpDisintegratorWeapon
 local EffectUtil = import('/lua/EffectUtilities.lua')
 
+---@class XRL0205 : CWalkingLandUnit
 XRL0205 = Class(CWalkingLandUnit) {
 
     -- While cloaked, weapons fire immediately decloaks; while waiting to recloak, it resets the timer.
@@ -42,6 +43,9 @@ XRL0205 = Class(CWalkingLandUnit) {
         },
     },
 
+    ---@param self XRL0205
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self, builder, layer)
         CWalkingLandUnit.OnStopBeingBuilt(self, builder, layer)
         -- Intel effects start on, added/removed by cloak toggle button

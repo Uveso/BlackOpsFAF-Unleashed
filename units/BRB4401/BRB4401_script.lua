@@ -2,11 +2,13 @@
 -- File     :  /cdimage/units/URB4203/URB4203_script.lua
 -- Author(s):  David Tomandl, Jessica St. Croix
 -- Summary  :  Cybran Radar Jammer Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local CRadarJammerUnit = import('/lua/cybranunits.lua').CRadarJammerUnit
+local TrashBadAdd = TrashBad.Add
 
+---@class BRB4401 : CRadarJammerUnit
 BRB4401 = Class(CRadarJammerUnit) {
     IntelEffects = {
         {
@@ -22,13 +24,18 @@ BRB4401 = Class(CRadarJammerUnit) {
         },
     },
 
+    ---@param self BRB4401
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         CRadarJammerUnit.OnStopBeingBuilt(self,builder,layer)
+        local trash = self.Trash
         self.AnimManip = CreateAnimator(self)
-        self.Trash:Add(self.AnimManip)
-        self.DelayedCloakThread = self:ForkThread(self.CloakDelayed)
+        TrashBadAdd(trash,self.AnimManip)
+        self.DelayedCloakThread = TrashBadAdd(trash, ForkThread(self.CloakDelayed,self))
     end,
 
+    ---@param self BRB4401
     CloakDelayed = function(self)
         if not self.Dead then
             WaitSeconds(2)
