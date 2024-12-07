@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/UAS0302/UAS0302_script.lua
 -- Author(s):  John Comes, David Tomandl, Jessica St. Croix
 -- Summary  :  Aeon Battleship Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local AHoverLandUnit = import('/lua/aeonunits.lua').AHoverLandUnit
@@ -13,14 +13,15 @@ local AAMWillOWisp = AeonWep.AAMWillOWisp
 local explosion = import('/lua/defaultexplosions.lua')
 local Weapon = import('/lua/sim/Weapon.lua').Weapon
 
-local GenesisMaelstromWeapon = Class(Weapon) {
+---@class GenesisMaelstromWeapon : Weapon
+GenesisMaelstromWeapon = Class(Weapon) {
     OnFire = function(self)
-        local blueprint = self:GetBlueprint()
-        DamageArea(self.unit, self.unit:GetPosition(), blueprint.DamageRadius,
-            blueprint.Damage, blueprint.DamageType, blueprint.DamageFriendly)
+        local bp = self.Blueprint
+        DamageArea(self.unit, self.unit:GetPosition(), bp.DamageRadius, bp.Damage, bp.DamageType, bp.DamageFriendly)
     end,
 }
 
+---@class BAL0402 : AHoverLandUnit
 BAL0402 = Class(AHoverLandUnit) {
     FxDamageScale = 2,
     DestructionTicks = 400,
@@ -68,33 +69,44 @@ BAL0402 = Class(AHoverLandUnit) {
         GenesisMaelstrom01 = Class(GenesisMaelstromWeapon) {},
     },
 
+    ---@param self BAL0402
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
+        local army = self.Army
+
         self.MaelstromEffects01 = {}
         self.weaponCounter = 0
+
         if self.MaelstromEffects01 then
-                for k, v in self.MaelstromEffects01 do
+                for _, v in self.MaelstromEffects01 do
                     v:Destroy()
                 end
             self.MaelstromEffects01 = {}
         end
-            table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Maelstrom', self:GetArmy(), '/mods/BlackOpsFAF-Unleashed/effects/emitters/genmaelstrom_aura_01_emit.bp'):ScaleEmitter(1):OffsetEmitter(0, -2, 0))
-            table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Maelstrom', self:GetArmy(), '/mods/BlackOpsFAF-Unleashed/effects/emitters/genmaelstrom_aura_02_emit.bp'):ScaleEmitter(1):OffsetEmitter(0, -2.75, 0))
-            table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect01', self:GetArmy(), '/effects/emitters/seraphim_being_built_ambient_02_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
-            table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect01', self:GetArmy(), '/effects/emitters/seraphim_being_built_ambient_03_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
-            table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect01', self:GetArmy(), '/effects/emitters/seraphim_being_built_ambient_04_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
-            table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect02', self:GetArmy(), '/effects/emitters/seraphim_being_built_ambient_02_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
-            table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect02', self:GetArmy(), '/effects/emitters/seraphim_being_built_ambient_03_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
-            table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect02', self:GetArmy(), '/effects/emitters/seraphim_being_built_ambient_04_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
-            table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect03', self:GetArmy(), '/effects/emitters/seraphim_being_built_ambient_02_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
-            table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect03', self:GetArmy(), '/effects/emitters/seraphim_being_built_ambient_03_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
-            table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect03', self:GetArmy(), '/effects/emitters/seraphim_being_built_ambient_04_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
-            table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect04', self:GetArmy(), '/effects/emitters/seraphim_being_built_ambient_02_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
-            table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect04', self:GetArmy(), '/effects/emitters/seraphim_being_built_ambient_03_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
-            table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect04', self:GetArmy(), '/effects/emitters/seraphim_being_built_ambient_04_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
+
+        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Maelstrom', army, '/mods/BlackOpsFAF-Unleashed/effects/emitters/genmaelstrom_aura_01_emit.bp'):ScaleEmitter(1):OffsetEmitter(0, -2, 0))
+        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Maelstrom', army, '/mods/BlackOpsFAF-Unleashed/effects/emitters/genmaelstrom_aura_02_emit.bp'):ScaleEmitter(1):OffsetEmitter(0, -2.75, 0))
+        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect01', army, '/effects/emitters/seraphim_being_built_ambient_02_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
+        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect01', army, '/effects/emitters/seraphim_being_built_ambient_03_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
+        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect01', army, '/effects/emitters/seraphim_being_built_ambient_04_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
+        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect02', army, '/effects/emitters/seraphim_being_built_ambient_02_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
+        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect02', army, '/effects/emitters/seraphim_being_built_ambient_03_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
+        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect02', army, '/effects/emitters/seraphim_being_built_ambient_04_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
+        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect03', army, '/effects/emitters/seraphim_being_built_ambient_02_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
+        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect03', army, '/effects/emitters/seraphim_being_built_ambient_03_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
+        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect03', army, '/effects/emitters/seraphim_being_built_ambient_04_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
+        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect04', army, '/effects/emitters/seraphim_being_built_ambient_02_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
+        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect04', army, '/effects/emitters/seraphim_being_built_ambient_03_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
+        table.insert(self.MaelstromEffects01, CreateAttachedEmitter(self, 'Effect04', army, '/effects/emitters/seraphim_being_built_ambient_04_emit.bp'):ScaleEmitter(0.35):OffsetEmitter(0, -0.05, 0))
         AHoverLandUnit.OnStopBeingBuilt(self, builder, layer)
     end,
 
-    DeathThread = function(self, overkillRatio, instigator)
+    ---@param self BAL0402
+    ---@param overkillRatio number
+    DeathThread = function(self, overkillRatio)
+        local bp = self.Blueprint
+
         explosion.CreateDefaultHitExplosionAtBone(self, 'BAL0402', 4.0)
         explosion.CreateDebrisProjectiles(self, explosion.GetAverageBoundingXYZRadius(self), {self:GetUnitSizes()})
         WaitSeconds(0.8)
@@ -116,8 +128,7 @@ BAL0402 = Class(AHoverLandUnit) {
             WaitFor(self.DeathAnimManip)
         end
 
-        local bp = self:GetBlueprint()
-        for i, numWeapons in bp.Weapon do
+        for i in bp.Weapon do
             if(bp.Weapon[i].Label == 'CollossusDeath') then
                 DamageArea(self, self:GetPosition(), bp.Weapon[i].DamageRadius, bp.Weapon[i].Damage, bp.Weapon[i].DamageType, bp.Weapon[i].DamageFriendly)
                 break

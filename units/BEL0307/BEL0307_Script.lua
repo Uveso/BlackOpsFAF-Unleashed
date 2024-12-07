@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/UEL0202/UEL0202_script.lua
 -- Author(s):  John Comes, David Tomandl, Jessica St. Croix
 -- Summary  :  UEF Heavy Tank Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local TLandUnit = import('/lua/terranunits.lua').TLandUnit
@@ -14,7 +14,24 @@ local utilities = import('/lua/Utilities.lua')
 local EffectUtils = import('/lua/effectutilities.lua')
 local Effects = import('/lua/effecttemplates.lua')
 
+---@class BEL0307 : TLandUnit
 BEL0307 = Class(TLandUnit) {
+    AmbientExhaustBones = {
+        'Exhaust_1',
+        'Exhaust_2',
+        'Exhaust_3',
+        'Exhaust_4',
+    },
+
+    AmbientLandExhaustEffects = {
+        '/effects/emitters/dirty_exhaust_smoke_02_emit.bp',
+        '/effects/emitters/dirty_exhaust_sparks_02_emit.bp',
+    },
+
+    AmbientSeabedExhaustEffects = {
+        '/effects/emitters/underwater_vent_bubbles_02_emit.bp',
+    },
+
     Weapons = {
         MainTurret = Class(RailGunWeapon01) {},
         RightMissileRack = Class(TIFCruiseMissileUnpackingLauncher) {},
@@ -23,14 +40,16 @@ BEL0307 = Class(TLandUnit) {
         RightLaser = Class(JuggLaserweapon) {},
         GattlerTurret = Class(JuggPlasmaGatlingCannonWeapon) {
             PlayFxWeaponPackSequence = function(self)
+                local army = self.unit.Army
+
                 if self.SpinManip then
                     self.SpinManip:SetTargetSpeed(0)
                 end
                 if self.SpinManip2 then
                     self.SpinManip2:SetTargetSpeed(0)
                 end
-                self.ExhaustEffects = EffectUtils.CreateBoneEffects(self.unit, 'Gat_Muzzle_01', self.unit:GetArmy(), Effects.WeaponSteam01)
-                self.ExhaustEffects = EffectUtils.CreateBoneEffects(self.unit, 'Gat_Muzzle_02', self.unit:GetArmy(), Effects.WeaponSteam01)
+                self.ExhaustEffects = EffectUtils.CreateBoneEffects(self.unit, 'Gat_Muzzle_01', army, Effects.WeaponSteam01)
+                self.ExhaustEffects = EffectUtils.CreateBoneEffects(self.unit, 'Gat_Muzzle_02', army, Effects.WeaponSteam01)
                 JuggPlasmaGatlingCannonWeapon.PlayFxWeaponPackSequence(self)
             end,
 
@@ -68,6 +87,9 @@ BEL0307 = Class(TLandUnit) {
         }
     },
 
+    ---@param self BEL0307
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         TLandUnit.OnStopBeingBuilt(self,builder,layer)
 
@@ -81,6 +103,9 @@ BEL0307 = Class(TLandUnit) {
         self.WeaponsEnabled = true
     end,
 
+    ---@param self BEL0307
+    ---@param new string
+    ---@param old string
     OnLayerChange = function(self, new, old)
         TLandUnit.OnLayerChange(self, new, old)
         if self.WeaponsEnabled then
@@ -92,22 +117,8 @@ BEL0307 = Class(TLandUnit) {
         end
     end,
 
-    AmbientExhaustBones = {
-        'Exhaust_1',
-        'Exhaust_2',
-        'Exhaust_3',
-        'Exhaust_4',
-    },
-
-    AmbientLandExhaustEffects = {
-        '/effects/emitters/dirty_exhaust_smoke_02_emit.bp',
-        '/effects/emitters/dirty_exhaust_sparks_02_emit.bp',
-    },
-
-    AmbientSeabedExhaustEffects = {
-        '/effects/emitters/underwater_vent_bubbles_02_emit.bp',
-    },
-
+    ---@param self BEL0307
+    ---@param layer string
     CreateUnitAmbientEffect = function(self, layer)
         if(self.AmbientEffectThread ~= nil) then
            self.AmbientEffectThread:Destroy()
@@ -121,7 +132,7 @@ BEL0307 = Class(TLandUnit) {
         if layer == 'Land' then
             self.AmbientEffectThread = self:ForkThread(self.UnitLandAmbientEffectThread)
         elseif layer == 'Seabed' then
-            local army = self:GetArmy()
+            local army = self.Army
             for kE, vE in self.AmbientSeabedExhaustEffects do
                 for kB, vB in self.AmbientExhaustBones do
                     table.insert(self.AmbientExhaustEffectsBag, CreateAttachedEmitter(self, vB, army, vE):ScaleEmitter(1))
