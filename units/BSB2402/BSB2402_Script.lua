@@ -1,11 +1,16 @@
 -----------------------------------------------------------------
 -- File     :  /cdimage/units/Effect01/Effect01_script.lua
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local SLandFactoryUnit = import('/lua/seraphimunits.lua').SLandFactoryUnit
 
+---@class BSB2402 : SLandFactoryUnit
 BSB2402 = Class(SLandFactoryUnit) {
+
+    ---@param self BSB2402
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self, builder, layer)
         SLandFactoryUnit.OnStopBeingBuilt(self, builder, layer)
 
@@ -55,6 +60,9 @@ BSB2402 = Class(SLandFactoryUnit) {
         self:SpawnFactory()
     end,
 
+    ---@param self BSB2402
+    ---@param built Unit
+    ---@param order string
     OnStartBuild = function(self, built, order)
         SLandFactoryUnit.OnStartBuild(self, built, order)
 
@@ -67,12 +75,15 @@ BSB2402 = Class(SLandFactoryUnit) {
         self:SetConsumptionPerSecondEnergy(energyDrain * 3)
     end,
 
+    ---@param self BSB2402
+    ---@param built Unit
     OnStopBuild = function(self, built)
         SLandFactoryUnit.OnStopBuild(self, built)
 
         built:SetVeterancy(5)
     end,
 
+    ---@param self BSB2402
     SpawnFactory = function(self)
         if not self.Dead then
             -- Get orientation of the factory gate
@@ -97,6 +108,7 @@ BSB2402 = Class(SLandFactoryUnit) {
         end
     end,
 
+    ---@param self BSB2402
     OnFailedToBuild = function(self)
         IssueStop({self.leftDrone})
         IssueClearCommands({self.leftDrone})
@@ -108,6 +120,10 @@ BSB2402 = Class(SLandFactoryUnit) {
         SLandFactoryUnit.OnFailedToBuild(self)
     end,
 
+    ---@param self BSB2402
+    ---@param instigator Unit
+    ---@param type string
+    ---@param overkillRatio number
     OnKilled = function(self, instigator, type, overkillRatio)
         -- Kill the expansion factory spawns
         if self.leftDrone and not self.leftDrone.Dead then

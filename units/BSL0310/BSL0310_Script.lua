@@ -1,19 +1,23 @@
 -----------------------------------------------------------------
 -- File     :  /units/XSL0310/XSL0310_script.lua
 -- Summary  :  Seraphim Heavy Bot Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local SWalkingLandUnit = import('/lua/seraphimunits.lua').SWalkingLandUnit
 local SDFThauCannon = import('/lua/seraphimweapons.lua').SDFThauCannon
 local SAMElectrumMissileDefense = import('/lua/seraphimweapons.lua').SAMElectrumMissileDefense
 
+---@class BSL0310 : SWalkingLandUnit
 BSL0310 = Class(SWalkingLandUnit) {
     Weapons = {
         MainGun = Class(SDFThauCannon) {},
         AntiMissile = Class(SAMElectrumMissileDefense) {},
     },
 
+    ---@param self BSL0310
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         SWalkingLandUnit.OnStopBeingBuilt(self,builder,layer)
         self.lambdaEmitterTable = {}
@@ -21,6 +25,8 @@ BSL0310 = Class(SWalkingLandUnit) {
         self:ForkThread(self.ResourceThread)
     end,
 
+    ---@param self BSL0310
+    ---@param bit number
     OnScriptBitSet = function(self, bit)
         SWalkingLandUnit.OnScriptBitSet(self, bit)
         local army =  self:GetArmy()
@@ -30,6 +36,8 @@ BSL0310 = Class(SWalkingLandUnit) {
         end
     end,
 
+    ---@param self BSL0310
+    ---@param bit number
     OnScriptBitClear = function(self, bit)
         SWalkingLandUnit.OnScriptBitClear(self, bit)
         if bit == 0 then
@@ -38,6 +46,7 @@ BSL0310 = Class(SWalkingLandUnit) {
         end
     end,
 
+    ---@param self BSL0310
     LambdaEmitter = function(self)
         -- Are we dead yet, if not then wait 0.5 second
         if not self.Dead then
@@ -67,7 +76,8 @@ BSL0310 = Class(SWalkingLandUnit) {
         end
     end,
 
-    KillLambdaEmitter = function(self, instigator, type, overkillRatio)
+    ---@param self BSL0310
+    KillLambdaEmitter = function(self)
         -- Small bit of table manipulation to sort thru all of the avalible rebulder bots and remove them after the platform is dead
         if table.getn({self.lambdaEmitterTable}) > 0 then
             for k, v in self.lambdaEmitterTable do
@@ -76,6 +86,8 @@ BSL0310 = Class(SWalkingLandUnit) {
             end
         end
     end,
+
+    ---@param self BSL0310
     ResourceThread = function(self)
         if not self.Dead then
             local energy = self:GetAIBrain():GetEconomyStored('Energy')
@@ -88,6 +100,7 @@ BSL0310 = Class(SWalkingLandUnit) {
         end
     end,
 
+    ---@param self BSL0310
     EconomyWaitUnit = function(self)
         if not self.Dead then
         WaitSeconds(2)
@@ -97,6 +110,7 @@ BSL0310 = Class(SWalkingLandUnit) {
         end
     end,
 
+    ---@param self BSL0310
     ResourceThread2 = function(self)
         if not self.Dead then
             local energy = self:GetAIBrain():GetEconomyStored('Energy')
@@ -109,6 +123,7 @@ BSL0310 = Class(SWalkingLandUnit) {
         end
     end,
 
+    ---@param self BSL0310
     EconomyWaitUnit2 = function(self)
         if not self.Dead then
         WaitSeconds(2)
