@@ -3,23 +3,10 @@
 local SAirUnit = import('/lua/seraphimunits.lua').SAirUnit
 local SAALosaareAutoCannonWeapon = import('/lua/seraphimweapons.lua').SAALosaareAutoCannonWeaponAirUnit
 local SANHeavyCavitationTorpedo = import('/lua/seraphimweapons.lua').SANHeavyCavitationTorpedo
-local EffectTemplate = import('/lua/EffectTemplates.lua')
 local EffectUtil = import('/lua/EffectUtilities.lua')
-local util = import('/lua/utilities.lua')
 
+---@class BSA0001 : SAirUnit
 BSA0001 = Class(SAirUnit) {
-    Weapons = {
-        AutoCannon1 = Class(SAALosaareAutoCannonWeapon) {},
-        Bomb = Class(SANHeavyCavitationTorpedo) {},
-    },
-
-    -- Setsup parent call backs between drone and parent
-    Parent = nil,
-
-    SetParent = function(self, parent, droneName)
-        self.Parent = parent
-        self.Drone = droneName
-    end,
 
     -- Thrust and exhaust effect pathing
     ExhaustLaunch01 = '/effects/emitters/seraphim_inaino_launch_01_emit.bp',
@@ -33,6 +20,25 @@ BSA0001 = Class(SAirUnit) {
     BeamAfterBurner = '/effects/emitters/aeon_nuke_exhaust_beam_01_emit.bp',
     ExhaustSmoke = '/effects/emitters/missile_smoke_exhaust_02_emit.bp',
 
+    Weapons = {
+        AutoCannon1 = Class(SAALosaareAutoCannonWeapon) {},
+        Bomb = Class(SANHeavyCavitationTorpedo) {},
+    },
+
+    -- Setsup parent call backs between drone and parent
+    Parent = nil,
+
+    ---@param self BSA0001
+    ---@param parent Unit
+    ---@param droneName string
+    SetParent = function(self, parent, droneName)
+        self.Parent = parent
+        self.Drone = droneName
+    end,
+
+    ---@param self BSA0001
+    ---@param builder Unit
+    ---@param layer Layer
     OnCreate = function(self, builder, layer)
         SAirUnit. OnCreate(self,builder,layer)
         if not self.Dead then
@@ -58,6 +64,7 @@ BSA0001 = Class(SAirUnit) {
         end
     end,
 
+    ---@param self BSA0001
     LaunchEffects = function(self)
         -- Are we dead?
         if not self.Dead then
@@ -94,6 +101,7 @@ BSA0001 = Class(SAirUnit) {
         end
     end,
 
+    ---@param self BSA0001
     HeartBeatDroneCheck = function(self)
         self.CapTable = {
             'RULEUCC_Attack',
@@ -177,6 +185,9 @@ BSA0001 = Class(SAirUnit) {
         end
     end,
 
+    ---@param self BSA0001
+    ---@param new HorizontalMovementEvent
+    ---@param old HorizontalMovementEvent
     OnMotionHorzEventChange = function(self, new, old)
         if new == 'Stopped' or new == 'Stopping' and self:IsIdleState() then
             self:ForkThread(self.GuardCarrier)
@@ -184,6 +195,7 @@ BSA0001 = Class(SAirUnit) {
         SAirUnit.OnMotionHorzEventChange(self, new, old)
     end,
 
+    ---@param self BSA0001
     GuardCarrier = function(self)
         if not self.Dead and not self.Parent.Dead then
             -- Tells the drone to guard the carrier
@@ -192,6 +204,11 @@ BSA0001 = Class(SAirUnit) {
         end
     end,
 
+    ---@param self BSA0001
+    ---@param instigator Unit
+    ---@param amount number
+    ---@param vector Vector
+    ---@param damagetype DamageType
     OnDamage = function(self, instigator, amount, vector, damagetype)
         SAirUnit.OnDamage(self, instigator, amount, vector, damagetype)
         if not self.Dead and instigator and IsUnit(instigator) then
@@ -205,6 +222,7 @@ BSA0001 = Class(SAirUnit) {
         end
     end,
 
+    ---@param self BSA0001
     Afterburner = function(self)
         if not self.Dead then
             if self.BeamExhaustEffectsBag then
@@ -260,6 +278,10 @@ BSA0001 = Class(SAirUnit) {
         end
     end,
 
+    ---@param self BSA0001
+    ---@param instigator Unit
+    ---@param type string
+    ---@param overkillRatio number
     OnKilled = function(self, instigator, type, overkillRatio)
         -- Disables weapons
         self:SetWeaponEnabledByLabel('AutoCannon', false)

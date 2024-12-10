@@ -6,6 +6,7 @@ local CybranWeaponsFile2 = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsWeapo
 local CDFLaserHeavyWeapon = CybranWeaponsFile.CDFLaserHeavyWeapon
 local ScorpDisintegratorWeapon = CybranWeaponsFile2.ScorpDisintegratorWeapon
 local EffectUtil = import('/lua/EffectUtilities.lua')
+local TrashBagAdd = TrashBag.Add
 
 ---@class XRL0205 : CWalkingLandUnit
 XRL0205 = Class(CWalkingLandUnit) {
@@ -51,7 +52,7 @@ XRL0205 = Class(CWalkingLandUnit) {
         -- Intel effects start on, added/removed by cloak toggle button
         self:DoIntelEffects(false)
 
-        local bp = self:GetBlueprint()
+        local bp = self.Blueprint
         self.Moving = false
         self.Building = false
         -- Stationary re-cloak wait time
@@ -66,22 +67,28 @@ XRL0205 = Class(CWalkingLandUnit) {
         ChangeState(self, self.DecloakedState)
     end,
 
+    ---@param self XRL0205
     OnCreate = function(self)
         CWalkingLandUnit.OnCreate(self)
-        if self:GetBlueprint().General.BuildBones then
-            local bp = self:GetBlueprint()
+        local bp = self.Blueprint
+        local trash = self.Trash
+
+        if bp.General.BuildBones then
             self.BuildArmManipulator = CreateBuilderArmController(self, bp.General.BuildBones.YawBone or 0 , bp.General.BuildBones.PitchBone or 0, bp.General.BuildBones.AimBone or 0)
-            self.Trash:Add(self.BuildArmManipulator)
+            TrashBagAdd(trash, self.BuildArmManipulator)
             self:SetupBuildBones()
             -- Override default 360 degree build arm arc with laserarm weapon settings
             -- This is currently useless as I can't get the unit to call OnPrepareArmForBuild
-            local wepbp = self:GetWeaponByLabel('LaserArms'):GetBlueprint()
+            local wepbp = self:GetWeaponByLabel('LaserArms').bp
             local yawmin, yawmax, yawspeed = wepbp.TurretYawRange*-1, wepbp.TurretYawRange, wepbp.TurretYawSpeed
             local pitchmin, pitchmax, pitchspeed = wepbp.TurretPitchRange*-1, wepbp.TurretPitchRange, wepbp.TurretPitchSpeed
         end
     end,
 
     -- Decloak/reset timer when we move
+    ---@param self XRL0205
+    ---@param new HorizontalMovementEvent
+    ---@param old HorizontalMovementEvent
     OnMotionHorzEventChange = function(self, new, old)
         if new ~= 'Stopped' then
             self.Moving = true
@@ -92,36 +99,50 @@ XRL0205 = Class(CWalkingLandUnit) {
         CWalkingLandUnit.OnMotionHorzEventChange(self, new, old)
     end,
 
+    ---@param self XRL0205
+    ---@param unitBeingBuilt Unit
+    ---@param order BuildMode
     CreateBuildEffects = function(self, unitBeingBuilt, order)
        EffectUtil.SpawnBuildBots(self, unitBeingBuilt, 1, self.BuildEffectsBag)
-       EffectUtil.CreateCybranBuildBeams(self, unitBeingBuilt, self:GetBlueprint().General.BuildBones.BuildEffectBones, self.BuildEffectsBag)
+       EffectUtil.CreateCybranBuildBeams(self, unitBeingBuilt, self.Blueprint.General.BuildBones.BuildEffectBones, self.BuildEffectsBag)
     end,
 
+    ---@param self XRL0205
     OnPrepareArmToBuild = function(self)
         CWalkingLandUnit.OnPrepareArmToBuild(self)
         self:BuildPrep(true)
     end,
 
+    ---@param self XRL0205
+    ---@param target Unit
     OnStopCapture = function(self, target)
         CWalkingLandUnit.OnStopCapture(self, target)
         self:BuildPrep(true)
     end,
 
+    ---@param self XRL0205
+    ---@param target Unit
     OnFailedCapture = function(self, target)
         CWalkingLandUnit.OnFailedCapture(self, target)
         self:BuildPrep(true)
     end,
 
+    ---@param self XRL0205
+    ---@param target Unit
     OnStopReclaim = function(self, target)
         CWalkingLandUnit.OnStopReclaim(self, target)
         self:BuildPrep(true)
     end,
 
+    ---@param self XRL0205
     OnFailedToBuild = function(self)
         CWalkingLandUnit.OnFailedToBuild(self)
         self:BuildPrep(true)
     end,
 
+    ---@param self XRL0205
+    ---@param unitBeingBuilt Unit
+    ---@param order BuildMode
     OnStartBuild = function(self, unitBeingBuilt, order)
         CWalkingLandUnit.OnStartBuild(self, unitBeingBuilt, order)
         self:BuildPrep()
@@ -130,6 +151,8 @@ XRL0205 = Class(CWalkingLandUnit) {
         self.BuildingUnit = true
     end,
 
+    ---@param self XRL0205
+    ---@param unitBeingBuilt Unit
     OnStopBuild = function(self, unitBeingBuilt)
         CWalkingLandUnit.OnStopBuild(self, unitBeingBuilt)
         self:BuildPrep(true)
@@ -138,6 +161,8 @@ XRL0205 = Class(CWalkingLandUnit) {
     -- Switches between build arm and laser weapon and flips self.Building flag
     -- NOTE: Can't get the build arm manipulator working, but this is still needed for the build flag and laser disable.
     -- FWIW, OnPrepareArmForBuild is never called on any unit other than ACUs/SCUs/engineers.  I suspect it's a category thing.
+    ---@param self XRL0205
+    ---@param done boolean
     BuildPrep = function(self, done)
         if self and not self.Dead and not self:BeenDestroyed() then
             if done then
@@ -176,12 +201,18 @@ XRL0205 = Class(CWalkingLandUnit) {
 
     -- Make sure we immediately decloak/stop energy drain on death
     -- Nothing is more embarrassing than recloaking while dying!
+    ---@param self XRL0205
+    ---@param instigator Unit
+    ---@param type string
+    ---@param overkillRatio number
     OnKilled = function(self, instigator, type, overkillRatio)
         ChangeState(self, self.CloakDisabledState)
         CWalkingLandUnit.OnKilled(self, instigator, type, overkillRatio)
     end,
 
     -- Cloak toggle off: stealth and cloak both disabled
+    ---@param self XRL0205
+    ---@param bit number
     OnScriptBitSet = function(self, bit)
         if bit == 8 then
             self:DoIntelEffects(true)
@@ -190,6 +221,8 @@ XRL0205 = Class(CWalkingLandUnit) {
     end,
 
     -- Cloak toggle on: stealth enabled, cloak on-stop
+    ---@param self XRL0205
+    ---@param bit number
     OnScriptBitClear = function(self, bit)
         if bit == 8 then
             self:DoIntelEffects(false)
@@ -198,6 +231,8 @@ XRL0205 = Class(CWalkingLandUnit) {
     end,
 
     -- Enables/disables intel effects on stealth/cloak toggle
+    ---@param self XRL0205
+    ---@param cleanup boolean
     DoIntelEffects = function(self, cleanup)
         if cleanup then
             if self.IntelEffectsBag then
@@ -214,7 +249,7 @@ XRL0205 = Class(CWalkingLandUnit) {
         end
     end,
 
-    RequestDecloak = function(self, addtime)
+    RequestDecloak = function()
         -- Does nothing outside of states
     end,
 

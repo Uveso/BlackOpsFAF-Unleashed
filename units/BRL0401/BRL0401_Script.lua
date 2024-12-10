@@ -2,11 +2,10 @@
 -- File     :  /cdimage/units/XRL0308/XRL0308_script.lua
 -- Author(s):  John Comes, David Tomandl, Jessica St. Croix
 -- Summary  :  Cybran Siege Assault Bot Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local CWalkingLandUnit = import('/lua/cybranunits.lua').CWalkingLandUnit
-local Weapon = import('/lua/sim/Weapon.lua').Weapon
 local cWeapons = import('/lua/cybranweapons.lua')
 local CybranWeaponsFile2 = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsWeapons.lua')
 local CDFLaserHeavyWeapon = cWeapons.CDFLaserHeavyWeapon
@@ -28,6 +27,7 @@ local EffectTemplate = import('/lua/EffectTemplates.lua')
 local BlacOpsEffectTemplate = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsEffectTemplates.lua')
 local CreateDeathExplosion = explosion.CreateDefaultHitExplosionAtBone
 
+---@class BRL0401 : CWalkingLandUnit
 BRL0401 = Class(CWalkingLandUnit) {
     PlayEndAnimDestructionEffects = false,
 
@@ -111,6 +111,9 @@ BRL0401 = Class(CWalkingLandUnit) {
         },
     },
 
+    ---@param self BRL0401
+    ---@param builder Unit
+    ---@param layer Layer
     OnCreate = function(self,builder,layer)
         CWalkingLandUnit.OnCreate(self,builder,layer)
         if self:GetAIBrain().BrainType ~= 'Human' then
@@ -125,6 +128,9 @@ BRL0401 = Class(CWalkingLandUnit) {
         missilewep:ChangeMaxRadius(0)
     end,
 
+    ---@param self BRL0401
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         self.weaponCounter = 0
         self.mobileWeapons = 1
@@ -167,6 +173,8 @@ BRL0401 = Class(CWalkingLandUnit) {
         CWalkingLandUnit.OnStopBeingBuilt(self,builder,layer)
     end,
 
+    ---@param self BRL0401
+    ---@param bit number
     OnScriptBitSet = function(self, bit)
         CWalkingLandUnit.OnScriptBitSet(self, bit)
         if bit == 1 then
@@ -217,7 +225,8 @@ BRL0401 = Class(CWalkingLandUnit) {
         end
     end,
 
-
+    ---@param self BRL0401
+    ---@param bit number
     OnScriptBitClear = function(self, bit)
         CWalkingLandUnit.OnScriptBitSet(self, bit)
         if bit == 1 then
@@ -265,6 +274,7 @@ BRL0401 = Class(CWalkingLandUnit) {
         end
     end,
 
+    ---@param self BRL0401
     CreateDeathExplosionDustRing = function(self)
         local blanketSides = 18
         local blanketAngle = (2*math.pi) / blanketSides
@@ -280,6 +290,7 @@ BRL0401 = Class(CWalkingLandUnit) {
         end
     end,
 
+    ---@param self BRL0401
     CreateLightning = function(self)
         local vx, vy, vz = self:GetVelocity()
         local num_projectiles = 20
@@ -302,6 +313,7 @@ BRL0401 = Class(CWalkingLandUnit) {
         end
     end,
 
+    ---@param self BRL0401
     CreateFireBalls = function(self)
         local num_projectiles = 2
         local horizontal_angle = (2*math.pi) / num_projectiles
@@ -324,6 +336,7 @@ BRL0401 = Class(CWalkingLandUnit) {
         end
     end,
 
+    ---@param self BRL0401
     CreateHeadConvectionSpinners = function(self)
         local sides = 8
         local angle = (2*math.pi) / sides
@@ -352,18 +365,25 @@ BRL0401 = Class(CWalkingLandUnit) {
         end
     end,
 
+    ---@param self BRL0401
+    ---@param bone Bone
+    ---@param army Army
     CreateDamageEffects = function(self, bone, army)
         for k, v in EffectTemplate.DamageFireSmoke01 do
             CreateAttachedEmitter(self, bone, army, v):ScaleEmitter(5)
         end
     end,
 
+    ---@param self BRL0401
+    ---@param bone Bone
+    ---@param army Army
     CreateBlueFireDamageEffects = function(self, bone, army)
         for k, v in BlacOpsEffectTemplate.DamageBlueFire do
             CreateAttachedEmitter(self, bone, army, v):ScaleEmitter(3)
         end
     end,
 
+    ---@param self BRL0401
     DeathThread = function(self)
         self:PlayUnitSound('Destroyed')
         local army = self:GetArmy()

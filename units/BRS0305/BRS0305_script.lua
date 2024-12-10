@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/XRS0305/XRS0305_script.lua
 -- Author(s):  John Comes, David Tomandl, Jessica St. Croix
 -- Summary  :  Cybran Attack Sub Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local CSubUnit = import('/lua/cybranunits.lua').CSubUnit
@@ -21,6 +21,10 @@ BRS0305 = Class(CSubUnit) {
         Torpedo01 = Class(CANNaniteTorpedoWeapon) {},
         Torpedo02 = Class(CKrilTorpedoLauncherWeapon) {},
     },
+
+    ---@param self BRS0305
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self, builder, layer)
         CSubUnit.OnStopBeingBuilt(self,builder,layer)
         if layer == 'Water' then
@@ -39,6 +43,9 @@ BRS0305 = Class(CSubUnit) {
         self.UnitComplete = true
     end,
 
+    ---@param self BRS0305
+    ---@param new string
+    ---@param old string
     OnLayerChange = function(self, new, old)
         CSubUnit.OnLayerChange(self, new, old)
         if new == 'Water' then

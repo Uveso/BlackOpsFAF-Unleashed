@@ -3,6 +3,7 @@
 local AirDroneUnit = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsunits.lua').AirDroneUnit
 local YenzothaExperimentalLaser02 = import ('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsWeapons.lua').YenzothaExperimentalLaser02
 
+---@class BSA0004 : AirDroneUnit
 BSA0004 = Class(AirDroneUnit) {
 
     Weapons = {

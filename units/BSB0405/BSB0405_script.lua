@@ -2,7 +2,7 @@
 -- File     :  /data/units/XSB0405/XSB0405_script.lua
 -- Author(s):  Jessica St. Croix, Greg Kohne
 -- Summary  :  Seraphim T3 Power Generator Script
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2007 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local SShieldStructureUnit = import('/lua/seraphimunits.lua').SShieldStructureUnit
@@ -12,6 +12,7 @@ local SSeraphimSubCommanderGateway01 = import('/lua/EffectTemplates.lua').Seraph
 local SSeraphimSubCommanderGateway02 = import('/lua/EffectTemplates.lua').SeraphimSubCommanderGateway02
 local explosion = import('/lua/defaultexplosions.lua')
 
+---@class BSB0405 : SShieldStructureUnit
 BSB0405 = Class(SShieldStructureUnit) {
     SpawnEffects = {
         '/effects/emitters/seraphim_othuy_spawn_01_emit.bp',
@@ -31,6 +32,9 @@ BSB0405 = Class(SShieldStructureUnit) {
         Eye02 = Class(LambdaWeapon) {},
     },
 
+    ---@param self BSB0405
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self, builder, layer)
         for k, v in SSeraphimSubCommanderGateway01 do
             CreateAttachedEmitter(self, 'Spinner', self:GetArmy(), v)
@@ -54,6 +58,8 @@ BSB0405 = Class(SShieldStructureUnit) {
         self:ForkThread(self.ResourceThread)
     end,
 
+    ---@param self BSB0405
+    ---@param bit number
     OnScriptBitSet = function(self, bit)
         SShieldStructureUnit.OnScriptBitSet(self, bit)
         local army =  self:GetArmy()
@@ -77,6 +83,8 @@ BSB0405 = Class(SShieldStructureUnit) {
         end
     end,
 
+    ---@param self BSB0405
+    ---@param bit number
     OnScriptBitClear = function(self, bit)
         SShieldStructureUnit.OnScriptBitClear(self, bit)
         if bit == 0 then
@@ -92,6 +100,7 @@ BSB0405 = Class(SShieldStructureUnit) {
         end
     end,
 
+    ---@param self BSB0405
     LambdaEmitter = function(self)
         if not self.Dead then
             WaitSeconds(0.5)
@@ -118,7 +127,9 @@ BSB0405 = Class(SShieldStructureUnit) {
         end
     end,
 
-    DeathThread = function(self, overkillRatio , instigator)
+    ---@param self BSB0405
+    ---@param overkillRatio number
+    DeathThread = function(self, overkillRatio)
         if self.Rotator1 then
             self.Rotator1:SetTargetSpeed(40)
         end
@@ -177,6 +188,11 @@ BSB0405 = Class(SShieldStructureUnit) {
         self:Destroy()
     end,
 
+    ---@param self BSB0405
+    ---@param instigator Unit
+    ---@param amount number
+    ---@param vector Vector
+    ---@param damagetype DamageType
     OnDamage = function(self, instigator, amount, vector, damagetype)
         if not self.Dead then
             -- Base script for this script function was developed by Gilbot_x
@@ -187,7 +203,8 @@ BSB0405 = Class(SShieldStructureUnit) {
         SShieldStructureUnit.OnDamage(self, instigator, amount, vector, damagetype)
     end,
 
-    KillLambdaEmitter = function(self, instigator, type, overkillRatio)
+    ---@param self BSB0405
+    KillLambdaEmitter = function(self)
         -- Small bit of table manipulation to sort thru all of the avalible rebulder bots and remove them after the platform is dead
         if table.getn({self.lambdaEmitterTable}) > 0 then
             for k, v in self.lambdaEmitterTable do
@@ -197,6 +214,7 @@ BSB0405 = Class(SShieldStructureUnit) {
         end
     end,
 
+    ---@param self BSB0405
     ResourceThread = function(self)
         if not self.Dead then
             local energy = self:GetAIBrain():GetEconomyStored('Energy')
@@ -212,6 +230,7 @@ BSB0405 = Class(SShieldStructureUnit) {
         end
     end,
 
+    ---@param self BSB0405
     EconomyWaitUnit = function(self)
         if not self.Dead then
         WaitSeconds(2)
@@ -221,6 +240,7 @@ BSB0405 = Class(SShieldStructureUnit) {
         end
     end,
 
+    ---@param self BSB0405
     ResourceThread2 = function(self)
         if not self.Dead then
             local energy = self:GetAIBrain():GetEconomyStored('Energy')
@@ -236,6 +256,7 @@ BSB0405 = Class(SShieldStructureUnit) {
         end
     end,
 
+    ---@param self BSB0405
     EconomyWaitUnit2 = function(self)
         if not self.Dead then
         WaitSeconds(2)
