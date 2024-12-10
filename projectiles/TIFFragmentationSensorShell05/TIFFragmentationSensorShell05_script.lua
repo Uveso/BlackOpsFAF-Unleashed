@@ -8,9 +8,7 @@ local VizMarker = import('/lua/sim/VizMarker.lua').VizMarker
 TIFFragmentationSensorShell01 = Class(TArtilleryProjectile) {
 
     ---@param self TIFFragmentationSensorShell01
-    ---@param TargetType string Unused
-    ---@param TargetEntity Entity Unused
-    OnImpact = function(self, TargetType, TargetEntity)
+    OnImpact = function(self)
         local FxFragEffect = EffectTemplate.TFragmentationSensorShellFrag
         local ChildProjectileBP = '/projectiles/TIFFragmentationSensorShell02/TIFFragmentationSensorShell02_proj.bp'
 
