@@ -7,12 +7,16 @@
 
 local SStructureUnit = import('/lua/seraphimunits.lua').SStructureUnit
 
+---@class BSB4209 : SStructureUnit
 BSB4209 = Class(SStructureUnit) {
 
     AntiTeleport = {
        '/effects/emitters/op_seraphim_quantum_jammer_tower_emit.bp',
     },
 
+    ---@param self BSB4209
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         SStructureUnit.OnStopBeingBuilt(self,builder,layer)
         self:SetScriptBit('RULEUTC_ShieldToggle', true)
@@ -23,6 +27,8 @@ BSB4209 = Class(SStructureUnit) {
         self:ForkThread(self.ResourceThread)
     end,
 
+    ---@param self BSB4209
+    ---@param bit number
     OnScriptBitSet = function(self, bit)
         SStructureUnit.OnScriptBitSet(self, bit)
         if bit == 0 then
@@ -40,6 +46,7 @@ BSB4209 = Class(SStructureUnit) {
         end
     end,
 
+    ---@param self BSB4209
     AntiteleportEffects = function(self)
         if self.AntiTeleportBag then
             for k, v in self.AntiTeleportBag do
@@ -52,6 +59,8 @@ BSB4209 = Class(SStructureUnit) {
         end
     end,
 
+    ---@param self BSB4209
+    ---@param bit number
     OnScriptBitClear = function(self, bit)
         SStructureUnit.OnScriptBitClear(self, bit)
         if bit == 0 then
@@ -75,6 +84,7 @@ BSB4209 = Class(SStructureUnit) {
         end
     end,
 
+    ---@param self BSB4209
     antiteleportEmitter = function(self)
         if not self.Dead then
             WaitSeconds(0.5)
@@ -97,7 +107,8 @@ BSB4209 = Class(SStructureUnit) {
         end
     end,
 
-    KillantiteleportEmitter = function(self, instigator, type, overkillRatio)
+    ---@param self BSB4209
+    KillantiteleportEmitter = function(self)
         -- Small bit of table manipulation to sort thru all of the avalible rebulder bots and remove them after the platform is dead
         if table.getn({self.antiteleportEmitterTable}) > 0 then
             for k, v in self.antiteleportEmitterTable do
@@ -107,6 +118,7 @@ BSB4209 = Class(SStructureUnit) {
         end
     end,
 
+    ---@param self BSB4209
     ResourceThread = function(self)
         if not self.Dead then
             local energy = self:GetAIBrain():GetEconomyStored('Energy')
@@ -122,6 +134,7 @@ BSB4209 = Class(SStructureUnit) {
         end
     end,
 
+    ---@param self BSB4209
     EconomyWaitUnit = function(self)
         if not self.Dead then
         WaitSeconds(2)
@@ -131,6 +144,7 @@ BSB4209 = Class(SStructureUnit) {
         end
     end,
 
+    ---@param self BSB4209
     ResourceThread2 = function(self)
         if not self.Dead then
             local energy = self:GetAIBrain():GetEconomyStored('Energy')
@@ -145,6 +159,7 @@ BSB4209 = Class(SStructureUnit) {
         end
     end,
 
+    ---@param self BSB4209
     EconomyWaitUnit2 = function(self)
         if not self.Dead then
         WaitSeconds(2)

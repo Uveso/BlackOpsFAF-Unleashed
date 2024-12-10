@@ -2,14 +2,19 @@
 -- File     :  /cdimage/units/UAB5202/UAB5202_script.lua
 -- Author(s):  John Comes, David Tomandl
 -- Summary  :  Aeon Air Staging Platform
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local SAirStagingPlatformUnit = import('/lua/seraphimunits.lua').SAirStagingPlatformUnit
 local SeraphimAirStagePlat02 = import('/lua/EffectTemplates.lua').SeraphimAirStagePlat02
 local SeraphimAirStagePlat01 = import('/lua/EffectTemplates.lua').SeraphimAirStagePlat01
 
+---@class BSB5104 : SAirStagingPlatformUnit
 BSB5104 = Class(SAirStagingPlatformUnit) {
+
+    ---@param self BSB5104
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         for k, v in SeraphimAirStagePlat02 do
             CreateAttachedEmitter(self, 'XSB5104', self:GetArmy(), v)

@@ -4,6 +4,7 @@ local SAirStagingPlatformUnit = import('/lua/seraphimunits.lua').SAirStagingPlat
 local SeraphimAirStagePlat02 = import('/lua/EffectTemplates.lua').SeraphimAirStagePlat02
 local SeraphimAirStagePlat01 = import('/lua/EffectTemplates.lua').SeraphimAirStagePlat01
 
+---@class BSB5205 : SAirStagingPlatformUnit
 BSB5205 = Class(SAirStagingPlatformUnit) {
     Weapons = {
         TorpedoTurret01 = Class(import('/lua/seraphimweapons.lua').SANHeavyCavitationTorpedo) {},
@@ -18,7 +19,9 @@ BSB5205 = Class(SAirStagingPlatformUnit) {
         '/effects/emitters/seraphim_shield_generator_t2_03_emit.bp',
     },
 
-    OnStopBeingBuilt = function(self,builder,layer)
+    ---@param self BSB5205
+    ---@param builder Unit
+    OnStopBeingBuilt = function(self,builder)
         self:ForkThread(self.InitialDroneSpawn)
         self:ForkThread(self.InitialRepairDroneSpawn)
         self:RequestRefreshUI()
@@ -81,6 +84,7 @@ BSB5205 = Class(SAirStagingPlatformUnit) {
         SAirStagingPlatformUnit.OnStopBeingBuilt(self, builder, layer)
     end,
 
+    ---@param self BSB5205
     OnShieldEnabled = function(self)
         SAirStagingPlatformUnit.OnShieldEnabled(self)
         if self.Rotator1 then
@@ -99,6 +103,7 @@ BSB5205 = Class(SAirStagingPlatformUnit) {
         end
     end,
 
+    ---@param self BSB5205
     OnShieldDisabled = function(self)
         SAirStagingPlatformUnit.OnShieldDisabled(self)
         self.Rotator1:SetTargetSpeed(0)
@@ -110,6 +115,7 @@ BSB5205 = Class(SAirStagingPlatformUnit) {
         end
     end,
 
+    ---@param self BSB5205
     InitialDroneSpawn = function(self)
         local numcreate = 8
 
@@ -131,6 +137,7 @@ BSB5205 = Class(SAirStagingPlatformUnit) {
         end
     end,
 
+    ---@param self BSB5205
     InitialRepairDroneSpawn = function(self)
         local numcreate = 4
 
@@ -152,6 +159,7 @@ BSB5205 = Class(SAirStagingPlatformUnit) {
         end
     end,
 
+    ---@param self BSB5205
     SpawnDrone = function(self)
         WaitSeconds(5)
 
@@ -256,6 +264,7 @@ BSB5205 = Class(SAirStagingPlatformUnit) {
         end
     end,
 
+    ---@param self BSB5205
     SpawnRepairDrone = function(self)
         WaitSeconds(3)
 
@@ -359,6 +368,7 @@ BSB5205 = Class(SAirStagingPlatformUnit) {
         end
     end,
 
+    ---@param self BSB5205
     NotifyOfDroneDeath = function(self)
         -- Only respawns the drones if the parent unit is not dead
         if not self.Dead then
@@ -379,6 +389,7 @@ BSB5205 = Class(SAirStagingPlatformUnit) {
         end
     end,
 
+    ---@param self BSB5205
     NotifyOfRepairDroneDeath = function(self)
         -- Only respawns the drones if the parent unit is not dead
         if not self.Dead then
@@ -399,6 +410,7 @@ BSB5205 = Class(SAirStagingPlatformUnit) {
         end
     end,
 
+    ---@param self BSB5205
     EconomyWait = function(self)
         if not self.Dead then
         WaitSeconds(4)
@@ -408,6 +420,7 @@ BSB5205 = Class(SAirStagingPlatformUnit) {
         end
     end,
 
+    ---@param self BSB5205
     EconomyWait2 = function(self)
         if not self.Dead then
         WaitSeconds(4)
@@ -417,6 +430,7 @@ BSB5205 = Class(SAirStagingPlatformUnit) {
         end
     end,
 
+    ---@param self BSB5205
     AssistHeartBeat = function(self)
         while not self.Dead do
             WaitSeconds(1)
@@ -461,6 +475,8 @@ BSB5205 = Class(SAirStagingPlatformUnit) {
         end
     end,
 
+    ---@param self BSB5205
+    ---@return nil
     GetDistanceToAttacker = function(self)
         local tpos = self.MyAttacker:GetPosition()
         local mpos = self:GetPosition()
@@ -468,6 +484,11 @@ BSB5205 = Class(SAirStagingPlatformUnit) {
         return dist
     end,
 
+    ---@param self BSB5205
+    ---@param instigator Unit
+    ---@param amount number
+    ---@param vector Vector
+    ---@param damagetype DamageType
     OnDamage = function(self, instigator, amount, vector, damagetype)
         -- Check to make sure that the carrier isnt already dead and what just damaged it is a unit we can attack
         if not self.Dead and damagetype == 'Normal' and self.MyAttacker == nil then
@@ -478,6 +499,10 @@ BSB5205 = Class(SAirStagingPlatformUnit) {
         SAirStagingPlatformUnit.OnDamage(self, instigator, amount, vector, damagetype)
     end,
 
+    ---@param self BSB5205
+    ---@param instigator Unit
+    ---@param type string
+    ---@param overkillRatio number
     OnKilled = function(self, instigator, type, overkillRatio)
         self:SetWeaponEnabledByLabel('TorpedoTurret01', false)
         self:SetWeaponEnabledByLabel('TorpedoTurret02', false)
@@ -505,9 +530,11 @@ BSB5205 = Class(SAirStagingPlatformUnit) {
         SAirStagingPlatformUnit.OnKilled(self, instigator, type, overkillRatio)
     end,
 
+    ---@param self BSB5205
     OnProductionPaused = function(self)
     end,
 
+    ---@param self BSB5205
     OnProductionUnpaused = function(self)
     end,
 }

@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/BSS0401/BSS0401_script.lua
 -- Author(s):  Jessica St. Croix, Gordon Duclos, Aaron Lundquist
 -- Summary  :  Seraphim Battleship Script
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2007 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local SSeaUnit = import('/lua/seraphimunits.lua').SSeaUnit
@@ -15,6 +15,7 @@ local SIFHuAntiNukeWeapon = import('/lua/seraphimweapons.lua').SIFHuAntiNukeWeap
 local SDFSinnuntheWeapon = SeraphimWeapons.SDFSinnuntheWeapon
 local nukeFiredOnGotTarget = false
 
+---@class BSS0401 : SSeaUnit
 BSS0401 = Class(SSeaUnit) {
     FxDamageScale = 2,
     DestructionTicks = 400,
@@ -116,6 +117,9 @@ BSS0401 = Class(SSeaUnit) {
         },
     },
 
+    ---@param self BSS0401
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self, builder, layer)
         self:HideBone('Pod04', true)
         self:HideBone('Pod05', true)
@@ -123,6 +127,10 @@ BSS0401 = Class(SSeaUnit) {
         SSeaUnit.OnStopBeingBuilt(self, builder, layer)
     end,
 
+    ---@param self BSS0401
+    ---@param instigator Unit
+    ---@param damagetype DamageType
+    ---@param overkillRatio number
     OnKilled = function(self, instigator, damagetype, overkillRatio)
         self.Trash:Destroy()
         self.Trash = TrashBag()

@@ -9,6 +9,7 @@ local SAAOlarisCannonWeapon = WeaponsFile.SAAOlarisCannonWeapon
 local EffectUtil = import('/lua/EffectUtilities.lua')
 local explosion = import('/lua/defaultexplosions.lua')
 
+---@class BSL0401 : SHoverLandUnit
 BSL0401 = Class(BaseTransport, SHoverLandUnit, AirDroneCarrier) {
     SpawnEffects = {
         '/effects/emitters/seraphim_othuy_spawn_01_emit.bp',
@@ -169,11 +170,17 @@ BSL0401 = Class(BaseTransport, SHoverLandUnit, AirDroneCarrier) {
         RightAA = Class(SAAOlarisCannonWeapon) {},
     },
 
+    ---@param self BSL0401
+    ---@param builder Unit
+    ---@param layer Layer
     StartBeingBuiltEffects = function(self, builder, layer)
         SHoverLandUnit.StartBeingBuiltEffects(self, builder, layer)
         self:ForkThread(EffectUtil.CreateSeraphimExperimentalBuildBaseThread, builder, self.OnBeingBuiltEffectsBag)
     end,
 
+    ---@param self BSL0401
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         SHoverLandUnit.OnStopBeingBuilt(self,builder,layer)
         self.BeamChargeEffects1 = {}
@@ -186,12 +193,19 @@ BSL0401 = Class(BaseTransport, SHoverLandUnit, AirDroneCarrier) {
     end,
 
     -- Places the Goliath's first drone-targetable attacker into a global
+    ---@param self BSL0401
+    ---@param instigator Unit
+    ---@param amount number
+    ---@param vector Vector
+    ---@param damagetype DamageType
     OnDamage = function(self, instigator, amount, vector, damagetype)
         SHoverLandUnit.OnDamage(self, instigator, amount, vector, damagetype)
         AirDroneCarrier.SetAttacker(self, instigator)
     end,
 
     -- Drone control buttons
+    ---@param self BSL0401
+    ---@param bit number
     OnScriptBitSet = function(self, bit)
         -- Drone assist toggle, on
         if bit == 1 then
@@ -205,6 +219,9 @@ BSL0401 = Class(BaseTransport, SHoverLandUnit, AirDroneCarrier) {
             SHoverLandUnit.OnScriptBitSet(self, bit)
         end
     end,
+
+    ---@param self BSL0401
+    ---@param bit number
     OnScriptBitClear = function(self, bit)
         -- Drone assist toggle, off
         if bit == 1 then
@@ -218,6 +235,9 @@ BSL0401 = Class(BaseTransport, SHoverLandUnit, AirDroneCarrier) {
     end,
 
     -- Handles drone docking
+    ---@param self BSL0401
+    ---@param attachBone string
+    ---@param unit Unit
     OnTransportAttach = function(self, attachBone, unit)
         BaseTransport.OnTransportAttach(self, attachBone, unit)
         SHoverLandUnit.OnTransportAttach(self, attachBone, unit)
@@ -227,6 +247,9 @@ BSL0401 = Class(BaseTransport, SHoverLandUnit, AirDroneCarrier) {
     end,
 
     -- Handles drone undocking, also called when docked drones die
+    ---@param self BSL0401
+    ---@param attachBone string
+    ---@param unit Unit
     OnTransportDetach = function(self, attachBone, unit)
         BaseTransport.OnTransportDetach(self, attachBone, unit)
         SHoverLandUnit.OnTransportDetach(self, attachBone, unit)
@@ -237,7 +260,12 @@ BSL0401 = Class(BaseTransport, SHoverLandUnit, AirDroneCarrier) {
             self:CleanupDroneMaintenance(self.BuildingDrone)
         end
     end,
+
     -- Cleans up threads and drones on death
+    ---@param self BSL0401
+    ---@param instigator Unit
+    ---@param damageType DamageType
+    ---@param overkillRatio number
     OnKilled = function(self, instigator, damageType, overkillRatio)
         -- Kill our heartbeat thread
         KillThread(self.HeartBeatThread)
@@ -257,7 +285,9 @@ BSL0401 = Class(BaseTransport, SHoverLandUnit, AirDroneCarrier) {
         end,
     },
 
-    DeathThread = function(self, overkillRatio , instigator)
+    ---@param self BSL0401
+    ---@param overkillRatio number
+    DeathThread = function(self, overkillRatio)
         local bigExplosionBones = {'BSL0401', 'Beam_Muzzle01'}
         local explosionBones = {'Focus_Beam02_Emitter03', 'Left_AA_Barrel',
                                 'Focus_Beam01_Emitter01', 'Right_AA_Turret', 'Beam_Point_Focus03'}
@@ -311,6 +341,7 @@ BSL0401 = Class(BaseTransport, SHoverLandUnit, AirDroneCarrier) {
         self:Destroy()
     end,
 
+    ---@param self BSL0401
     OnDestroy = function(self)
         SHoverLandUnit.OnDestroy(self)
 
@@ -327,21 +358,26 @@ BSL0401 = Class(BaseTransport, SHoverLandUnit, AirDroneCarrier) {
         end
     end,
 
+    ---@param self BSL0401
+    ---@param attached Unit
     OnAttachedKilled = function(self, attached)
         BaseTransport.OnAttachedKilled(self, attached)
         SHoverLandUnit.OnAttachedKilled(self, attached)
     end,
 
+    ---@param self BSL0401
     OnStartTransportLoading = function(self)
         BaseTransport.OnStartTransportLoading(self)
         SHoverLandUnit.OnStartTransportLoading(self)
     end,
 
+    ---@param self BSL0401
     OnStopTransportLoading = function(self)
         BaseTransport.OnStopTransportLoading(self)
         SHoverLandUnit.OnStopTransportLoading(self)
     end,
 
+    ---@param self BSL0401
     DestroyedOnTransport = function(self)
         BaseTransport.DestroyedOnTransport(self)
         SHoverLandUnit.DestroyedOnTransport(self)

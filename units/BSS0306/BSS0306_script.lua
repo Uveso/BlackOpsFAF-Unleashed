@@ -4,7 +4,7 @@
 --**
 -- Summary  :  Seraphim Frigate Script: BSS0306
 --**
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2007 Gas Powered Games, Inc.  All rights reserved.
 --****************************************************************************
 
 local SSeaUnit = import('/lua/seraphimunits.lua').SSeaUnit
@@ -32,7 +32,9 @@ BSS0306 = Class(SSeaUnit) {
         },
     },
 
-
+    ---@param self BSS0306
+    ---@param builder Unit
+    ---@param layer number
     OnStopBeingBuilt = function(self,builder,layer)
         SSeaUnit.OnStopBeingBuilt(self,builder,layer)
         IssueDive({self})
@@ -40,6 +42,10 @@ BSS0306 = Class(SSeaUnit) {
         CreateAttachedEmitter(self, 'Orb', self:GetArmy(), '/mods/BlackOpsFAF-Unleashed/effects/emitters/orbeffect_01.bp'):ScaleEmitter(2)
     end,
 
+    ---@param self BSS0306
+    ---@param instigator Unit
+    ---@param damagetype DamageType
+    ---@param overkillRatio number
     OnKilled = function(self, instigator, damagetype, overkillRatio)
         self.Trash:Destroy()
         self.Trash = TrashBag()

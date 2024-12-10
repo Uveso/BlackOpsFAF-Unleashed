@@ -10,12 +10,14 @@ local Buff = import('/lua/sim/Buff.lua')
 local EffectTemplate = import('/lua/EffectTemplates.lua')
 local AIUtils = import('/lua/AI/aiutilities.lua')
 
+---@class BSB4205 : SStructureUnit
 BSB4205 = Class(SStructureUnit) {
     AmbientEffects = 'ST2PowerAmbient',
     ShieldEffects = {
         '/effects/emitters/seraphim_regenerative_aura_01_emit.bp',
     },
 
+    ---@param self BSB4205
     RegenBuffThread = function(self)
         while not self.Dead do
             -- Get friendly units in the area (including self)
@@ -28,6 +30,9 @@ BSB4205 = Class(SStructureUnit) {
         end
     end,
 
+    ---@param self BSB4205
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         SStructureUnit.OnStopBeingBuilt(self,builder,layer)
         self:SetMaintenanceConsumptionActive()

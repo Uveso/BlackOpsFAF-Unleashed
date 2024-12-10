@@ -7,6 +7,7 @@
 
 local SStructureUnit = import('/lua/seraphimunits.lua').SStructureUnit
 
+---@class BSB4309 : SStructureUnit
 BSB4309 = Class(SStructureUnit) {
     AntiTeleport = {
        '/effects/emitters/op_seraphim_quantum_jammer_tower_emit.bp',
@@ -17,6 +18,9 @@ BSB4309 = Class(SStructureUnit) {
        '/effects/emitters/seraphim_gate_05_emit.bp',
     },
 
+    ---@param self BSB4309
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         SStructureUnit.OnStopBeingBuilt(self,builder,layer)
         self:SetScriptBit('RULEUTC_ShieldToggle', true)
@@ -28,6 +32,8 @@ BSB4309 = Class(SStructureUnit) {
         self:ForkThread(self.ResourceThread)
     end,
 
+    ---@param self BSB4309
+    ---@param bit number
     OnScriptBitSet = function(self, bit)
         SStructureUnit.OnScriptBitSet(self, bit)
         if bit == 0 then
@@ -56,6 +62,7 @@ BSB4309 = Class(SStructureUnit) {
         end
     end,
 
+    ---@param self BSB4309
     AntiteleportEffects = function(self)
         if self.AntiTeleportBag then
             for k, v in self.AntiTeleportBag do
@@ -94,6 +101,8 @@ BSB4309 = Class(SStructureUnit) {
         end
     end,
 
+    ---@param self BSB4309
+    ---@param bit number
     OnScriptBitClear = function(self, bit)
         SStructureUnit.OnScriptBitClear(self, bit)
         if bit == 0 then
@@ -136,6 +145,7 @@ BSB4309 = Class(SStructureUnit) {
         end
     end,
 
+    ---@param self BSB4309
     antiteleportEmitter = function(self)
         if not self.Dead then
             WaitSeconds(0.5)
@@ -160,8 +170,8 @@ BSB4309 = Class(SStructureUnit) {
         end
     end,
 
-
-    KillantiteleportEmitter = function(self, instigator, type, overkillRatio)
+    ---@param self BSB4309
+    KillantiteleportEmitter = function(self)
         -- Small bit of table manipulation to sort thru all of the avalible rebulder bots and remove them after the platform is dead
         if table.getn({self.antiteleportEmitterTable}) > 0 then
             for k, v in self.antiteleportEmitterTable do
@@ -171,6 +181,7 @@ BSB4309 = Class(SStructureUnit) {
         end
     end,
 
+    ---@param self BSB4309
     ResourceThread = function(self)
         if not self.Dead then
             local energy = self:GetAIBrain():GetEconomyStored('Energy')
@@ -184,6 +195,7 @@ BSB4309 = Class(SStructureUnit) {
         end
     end,
 
+    ---@param self BSB4309
     EconomyWaitUnit = function(self)
         if not self.Dead then
         WaitSeconds(2)
@@ -193,6 +205,7 @@ BSB4309 = Class(SStructureUnit) {
         end
     end,
 
+    ---@param self BSB4309
     ResourceThread2 = function(self)
         if not self.Dead then
             local energy = self:GetAIBrain():GetEconomyStored('Energy')
@@ -207,6 +220,7 @@ BSB4309 = Class(SStructureUnit) {
         end
     end,
 
+    ---@param self BSB4309
     EconomyWaitUnit2 = function(self)
         if not self.Dead then
         WaitSeconds(2)
