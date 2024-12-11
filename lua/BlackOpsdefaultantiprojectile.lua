@@ -116,9 +116,11 @@ TorpRedirectField = Class(Entity) {
     -- Return true to process this collision, false to ignore it.
     WaitingState = State{
         OnCollisionCheck = function(self, other)
-            if EntityCategoryContains(categories.TORPEDO, other) and not EntityCategoryContains(categories.STRATEGIC, other)
-                    and other ~= self.EnemyProj and IsEnemy(self.Army, other.Army) then
-                self.Enemy = other.Launcher
+            if EntityCategoryContains(categories.TORPEDO, other)
+                and not EntityCategoryContains(categories.STRATEGIC, other)
+                and other ~= self.EnemyProj
+                and IsEnemy(self.Army, other.Army)
+            then                self.Enemy = other.Launcher
                 self.EnemyProj = other
                 self.EXFiring = false
                 if self.Enemy and (not other.lastRedirector or other.lastRedirector ~= self.Army) then
