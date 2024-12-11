@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/UAA0203/UAA0203_script.lua
 -- Author(s):  Drew Staltman, Gordon Duclos
 -- Summary  :  Seraphim Gunship Script
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2007 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local SAirUnit = import('/lua/seraphimunits.lua').SAirUnit
@@ -10,6 +10,7 @@ local SAALosaareAutoCannonWeapon = import('/lua/seraphimweapons.lua').SAALosaare
 local SLaanseMissileWeapon = import('/lua/seraphimweapons.lua').SLaanseMissileWeapon
 local SDFThauCannon = import('/lua/seraphimweapons.lua').SDFThauCannon
 
+---@class BSA0310 : SAirUnit
 BSA0310 = Class(SAirUnit) {
     Weapons = {
         MainTurret = Class(SLaanseMissileWeapon) {},

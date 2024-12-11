@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/XSB1102/XSB1102_script.lua
 -- Author(s):  Dru Staltman, Greg Kohne
 -- Summary  :  Seraphim Hydrocarbon Power Plant Script
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2007 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local SEnergyCreationUnit = import('/lua/seraphimunits.lua').SEnergyCreationUnit
@@ -16,6 +16,9 @@ BSB1302 = Class(SEnergyCreationUnit) {
     WaterEffects = {'/effects/emitters/underwater_idle_bubbles_01_emit.bp',},
     WaterEffectsBones = {'Exhaust01','Exhaust02','Exhaust03','Exhaust04','Exhaust05','Exhaust06'},
 
+    ---@param self BSB1202
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         SEnergyCreationUnit.OnStopBeingBuilt(self,builder,layer)
         local effects = {}
@@ -42,6 +45,10 @@ BSB1302 = Class(SEnergyCreationUnit) {
         self.Trash:Add(self.LoopAnimation)
     end,
 
+    ---@param self BSB1202
+    ---@param instigator Unit
+    ---@param type string
+    ---@param overkillRatio number
     OnKilled = function(self, instigator, type, overkillRatio)
         if self.LoopAnimation then
             self.LoopAnimation:SetRate(0.0)

@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/XSA0309/XSA0309_script.lua
 -- Author(s):  Greg Kohne, Aaron Lundquist
 -- Summary  : Seraphim T2 Transport Script
--- Copyright © 2007 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2007 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local AirTransport = import('/lua/defaultunits.lua').AirTransport
@@ -13,6 +13,7 @@ local SAAShleoCannonWeapon = SeraphimWeapons.SAAShleoCannonWeapon
 local SDFHeavyPhasicAutoGunWeapon = SeraphimWeapons.SDFHeavyPhasicAutoGunWeapon
 local SeraLambdaFieldDestroyer = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsDefaultAntiProjectile.lua').SeraLambdaFieldDestroyer
 
+---@class BSA0309 : AirTransport
 BSA0309 = Class(AirTransport) {
     AirDestructionEffectBones = {'XSA0309','Left_Attachpoint08','Right_Attachpoint02'},
 
@@ -24,6 +25,9 @@ BSA0309 = Class(AirTransport) {
         AARight02 = Class(SAAShleoCannonWeapon) {},
     },
 
+    ---@param self BSA0309
+    ---@param builder Unit
+    ---@param layer string
     OnStopBeingBuilt = function(self, builder, layer)
         local bp = self:GetBlueprint().Defense.LambdaField
         local field = SeraLambdaFieldDestroyer {
@@ -38,10 +42,13 @@ BSA0309 = Class(AirTransport) {
     end,
 
     -- Override air destruction effects so we can do something custom here
+    ---@param self BSA0309
+    ---@param scale number
     CreateUnitAirDestructionEffects = function(self, scale)
         self:ForkThread(self.AirDestructionEffectsThread, self)
     end,
 
+    ---@param self BSA0309
     AirDestructionEffectsThread = function(self)
         local numExplosions = math.floor(table.getn(self.AirDestructionEffectBones) * 0.5)
         for i = 0, numExplosions do

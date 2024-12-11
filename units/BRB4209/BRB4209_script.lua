@@ -6,35 +6,53 @@
 -----------------------------------------------------------------
 
 local CStructureUnit = import('/lua/cybranunits.lua').CStructureUnit
-local Shield = import('/lua/shield.lua').Shield
+local TrashBagAdd = TrashBag.Add
 
+---@class BRB4209 : CStructureUnit
 BRB4209 = Class(CStructureUnit) {
+
+    ---@param self BRB4209
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         CStructureUnit.OnStopBeingBuilt(self,builder,layer)
+        local trash = self.Trash
+
         self:SetScriptBit('RULEUTC_ShieldToggle', true)
         -- only used to show anti-teleport range
         self:DisableIntel('CloakField')
         self.antiteleportEmitterTable = {}
-        self:ForkThread(self.ResourceThread)
+        TrashBagAdd(trash , self:ForkThread(self.ResourceThread, self))
     end,
 
+
+    ---@param self BRB4209
+    ---@param bit number
     OnScriptBitSet = function(self, bit)
-           CStructureUnit.OnScriptBitSet(self, bit)
-           if bit == 0 then
-               self:ForkThread(self.antiteleportEmitter)
+        CStructureUnit.OnScriptBitSet(self, bit)
+        local trash = self.Trash
+
+        if bit == 0 then
+            TrashBagAdd(trash , self:ForkThread(self.antiteleportEmitter, self))
             self:SetMaintenanceConsumptionActive()
         end
     end,
 
+    ---@param self BRB4209
+    ---@param bit number
     OnScriptBitClear = function(self, bit)
         CStructureUnit.OnScriptBitClear(self, bit)
+        local trash = self.Trash
+
         if bit == 0 then
-            self:ForkThread(self.KillantiteleportEmitter)
+            TrashBagAdd(trash , self:ForkThread(self.KillantiteleportEmitter, self))
             self:SetMaintenanceConsumptionInactive()
         end
     end,
 
+    ---@param self BRB4209
     antiteleportEmitter = function(self)
+        local trash = self.Trash
         if not self.Dead then
             WaitSeconds(0.5)
             if not self.Dead then
@@ -45,7 +63,7 @@ BRB4209 = Class(CStructureUnit) {
                 local location = self:GetPosition('Shaft')
 
                 -- Creates our antiteleportEmitter over the platform with a ranomly generated Orientation
-                local antiteleportEmitter = CreateUnit('brb0007', self:GetArmy(), location[1], location[2], location[3], platOrient[1], platOrient[2], platOrient[3], platOrient[4], 'Land')
+                local antiteleportEmitter = CreateUnit('brb0007', self.Army, location[1], location[2], location[3], platOrient[1], platOrient[2], platOrient[3], platOrient[4], 'Land')
 
                 -- Adds the newly created antiteleportEmitter to the parent platforms antiteleportEmitter table
                 table.insert (self.antiteleportEmitterTable, antiteleportEmitter)
@@ -55,63 +73,73 @@ BRB4209 = Class(CStructureUnit) {
                 -- Sets the platform unit as the antiteleportEmitter parent
                 antiteleportEmitter:SetParent(self, 'brb4209')
                 antiteleportEmitter:SetCreator(self)
-                self.Trash:Add(antiteleportEmitter)
+                TrashBagAdd(trash, antiteleportEmitter)
             end
         end
     end,
 
-    KillantiteleportEmitter = function(self, instigator, type, overkillRatio)
+    ---@param self BRB4209
+    KillantiteleportEmitter = function(self)
         -- Small bit of table manipulation to sort thru all of the avalible rebulder bots and remove them after the platform is dead
         if table.getn({self.antiteleportEmitterTable}) > 0 then
-            for k, v in self.antiteleportEmitterTable do
+            for k, _ in self.antiteleportEmitterTable do
                 IssueClearCommands({self.antiteleportEmitterTable[k]})
                 IssueKillSelf({self.antiteleportEmitterTable[k]})
             end
         end
     end,
 
+    ---@param self BRB4209
     ResourceThread = function(self)
+        local trash = self.Trash
+
         if not self.Dead then
-            local energy = self:GetAIBrain():GetEconomyStored('Energy')
+            local energy = self.AIBrain:GetEconomyStored('Energy')
 
             -- Check to see if the player has enough mass / energy
             if  energy <= 10 then
                 self:SetScriptBit('RULEUTC_ShieldToggle', false)
-                self:ForkThread(self.ResourceThread2)
+                TrashBagAdd(trash , self:ForkThread(self.ResourceThread2, self))
             else
-                self:ForkThread(self.EconomyWaitUnit)
+                TrashBagAdd(trash , self:ForkThread(self.EconomyWaitUnit, self))
             end
         end
     end,
 
+    ---@param self BRB4209
     EconomyWaitUnit = function(self)
+        local trash = self.Trash
         if not self.Dead then
         WaitSeconds(2)
             if not self.Dead then
-                self:ForkThread(self.ResourceThread)
+                TrashBagAdd(trash , ForkThread(self.ResourceThread, self))
             end
         end
     end,
 
+    ---@param self BRB4209
     ResourceThread2 = function(self)
+        local trash = self.Trash
         if not self.Dead then
-            local energy = self:GetAIBrain():GetEconomyStored('Energy')
+            local energy = self.AIBrain:GetEconomyStored('Energy')
 
             -- Check to see if the player has enough mass / energy
             if  energy >= 3000 then
                 self:SetScriptBit('RULEUTC_ShieldToggle', true)
-                self:ForkThread(self.ResourceThread)
+                TrashBagAdd(trash , self:ForkThread(self.ResourceThread, self))
             else
-                self:ForkThread(self.EconomyWaitUnit2)
+                TrashBagAdd(trash , ForkThread(self.EconomyWaitUnit2, self))
             end
         end
     end,
 
+    ---@param self BRB4209
     EconomyWaitUnit2 = function(self)
+        local trash = self.Trash
         if not self.Dead then
         WaitSeconds(2)
             if not self.Dead then
-                self:ForkThread(self.ResourceThread2)
+                TrashBagAdd(trash , ForkThread(self.ResourceThread2, self))
             end
         end
     end,

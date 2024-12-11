@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/BRS0304/BRS0304_script.lua
 -- Author(s):  David Tomandl, Jessica St. Croix
 -- Summary  :  Cybran Cruiser Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local CSeaUnit = import('/lua/cybranunits.lua').CSeaUnit
@@ -14,8 +14,8 @@ local CAMZapperWeapon02 = CybranWeaponsFile.CAMZapperWeapon02
 local CANNaniteTorpedoWeapon = CybranWeaponsFile.CANNaniteTorpedoWeapon
 local CIFSmartCharge = CybranWeaponsFile.CIFSmartCharge
 local MartyrHeavyMicrowaveLaserGenerator = WeaponsFile.MartyrHeavyMicrowaveLaserGenerator
-local MissileRedirect = import('/lua/defaultantiprojectile.lua').MissileRedirect
 
+---@class BRS0304 : CSeaUnit
 BRS0304 = Class(CSeaUnit) {
     Weapons = {
         ParticleGun = Class(CDFProtonCannonWeapon) {},
@@ -29,11 +29,14 @@ BRS0304 = Class(CSeaUnit) {
         AntiTorpedo = Class(CIFSmartCharge) {},
     },
 
+    ---@param self BRS0304
     OnCreate = function(self)
         CSeaUnit.OnCreate(self)
         self:SetWeaponEnabledByLabel('GroundGun', false)
     end,
 
+    ---@param self BRS0304
+    ---@param bit number
     OnScriptBitSet = function(self, bit)
         CSeaUnit.OnScriptBitSet(self, bit)
         if bit == 1 then
@@ -43,6 +46,8 @@ BRS0304 = Class(CSeaUnit) {
         end
     end,
 
+    ---@param self BRS0304
+    ---@param bit number
     OnScriptBitClear = function(self, bit)
         CSeaUnit.OnScriptBitClear(self, bit)
         if bit == 1 then
@@ -52,6 +57,10 @@ BRS0304 = Class(CSeaUnit) {
         end
     end,
 
+    ---@param self BRS0304
+    ---@param instigator Unit
+    ---@param damagetype DamageType
+    ---@param overkillRatio number
     OnKilled = function(self, instigator, damagetype, overkillRatio)
         self.Trash:Destroy()
         self.Trash = TrashBag()

@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/URS0302/URS0302_script.lua
 -- Author(s):  John Comes, David Tomandl, Jessica St. Croix
 -- Summary  :  Cybran Battleship Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local CSeaUnit = import('/lua/cybranunits.lua').CSeaUnit
@@ -15,6 +15,7 @@ local CAMZapperWeapon = CybranWeaponsFile.CAMZapperWeapon
 local MGAALaserWeapon = CybranWeaponsFile2.MGAALaserWeapon
 local HailfireLauncherWeapon = CybranWeaponsFile2.HailfireLauncherWeapon
 
+---@class BRS0402 : CSeaUnit
 BRS0402= Class(CSeaUnit) {
     MuzzleFlashEffects01 = {
         '/mods/BlackOpsFAF-Unleashed/effects/emitters/xcannon_cannon_muzzle_01_emit.bp',
@@ -197,6 +198,9 @@ BRS0402= Class(CSeaUnit) {
         HailfireRocket = Class(HailfireLauncherWeapon) {},
     },
 
+    ---@param self BRS0402
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         CSeaUnit.OnStopBeingBuilt(self,builder,layer)
         self.MuzzleFlashWep1Effects01Bag = {}

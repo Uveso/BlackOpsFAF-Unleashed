@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/XRB2306/XRB2306_script.lua
 -- Author(s):  David Tomandl
 -- Summary  :  Cybran Long Range Radar Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local CRadarUnit = import('/lua/cybranunits.lua').CRadarUnit
@@ -10,6 +10,7 @@ local cWeapons = import('/lua/cybranweapons.lua')
 local CDFLaserHeavyWeapon = cWeapons.CDFLaserHeavyWeapon
 local StunZapperWeapon = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsWeapons.lua').StunZapperWeapon
 
+---@class BRB2306 : CRadarUnit
 BRB2306 = Class(CRadarUnit) {
     ChargeEffects01 = {
         '/mods/BlackOpsFAF-Unleashed/effects/emitters/manticore_charge_laser_flash_01_emit.bp',  --glow
@@ -86,6 +87,9 @@ BRB2306 = Class(CRadarUnit) {
         },
     },
 
+    ---@param self BRB2306
+    ---@param builder Unit
+    ---@param layer Layer
     OnStopBeingBuilt = function(self,builder,layer)
         CRadarUnit.OnStopBeingBuilt(self,builder,layer)
         self.BeamChargeEffects = {}

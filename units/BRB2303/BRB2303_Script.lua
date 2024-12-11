@@ -2,7 +2,7 @@
 -- File     :  /cdimage/units/URB2303/URB2303_script.lua
 -- Author(s):  John Comes, David Tomandl, Jessica St. Croix
 -- Summary  :  Cybran Light Artillery Script
--- Copyright © 2005 Gas Powered Games, Inc.  All rights reserved.
+-- Copyright ï¿½ 2005 Gas Powered Games, Inc.  All rights reserved.
 -----------------------------------------------------------------
 
 local CStructureUnit = import('/lua/cybranunits.lua').CStructureUnit
@@ -13,6 +13,7 @@ local HailfireLauncherWeapon = CybranWeaponsFile.HailfireLauncherWeapon
 local muzzleBones = {'Muzzle_1', 'Muzzle_2', 'Muzzle_3', 'Muzzle_4', 'Muzzle_5', 'Muzzle_6'}
 local recoilgroup1 = {'Recoil_1', 'Recoil_2', 'Recoil_3', 'Recoil_4', 'Recoil_5', 'Recoil_6'}
 
+---@class BRB2303 : CStructureUnit
 BRB2303 = Class(CStructureUnit) {
     Weapons = {
         MainGun = Class(HailfireLauncherWeapon) {

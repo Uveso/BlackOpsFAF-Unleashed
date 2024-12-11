@@ -3,6 +3,7 @@
 local SConstructionUnit = import('/lua/seraphimunits.lua').SConstructionUnit
 local EffectUtil = import('/lua/EffectUtilities.lua')
 
+---@class BSA0002 : SConstructionUnit
 BSA0002 = Class(SConstructionUnit) {
     Parent = nil,
     ExhaustLaunch01 = '/effects/emitters/seraphim_inaino_launch_01_emit.bp',
@@ -12,6 +13,9 @@ BSA0002 = Class(SConstructionUnit) {
     ExhaustLaunch05 = '/effects/emitters/seraphim_inaino_launch_05_emit.bp',
     BeamLaunch = '/effects/emitters/missile_exhaust_fire_beam_01_emit.bp',
 
+    ---@param self BSA0002
+    ---@param parent Unit
+    ---@param droneName string
     SetParent = function(self, parent, droneName)
         self.Parent = parent
         self.Drone = droneName
@@ -20,11 +24,16 @@ BSA0002 = Class(SConstructionUnit) {
         self.HeartBeatThread = self:ForkThread(self.DistanceHeartbeat)
     end,
 
+    ---@param self BSA0002
+    ---@param unitBeingBuilt Unit
     OnStopbuild = function(self, unitBeingBuilt)
         self:ForkThread(self.Patrolplatform)
         SConstructionUnit.OnStopBuild(self, unitBeingBuilt)
     end,
 
+    ---@param self BSA0002
+    ---@param new string
+    ---@param old string
     OnMotionHorzEventChange = function(self, new, old)
         if new == 'Stopped' then
             self:ForkThread(self.Patrolplatform)
@@ -32,6 +41,7 @@ BSA0002 = Class(SConstructionUnit) {
         SConstructionUnit.OnMotionHorzEventChange(self, new, old)
     end,
 
+    ---@param self BSA0002
     DistanceHeartbeat = function(self)
         self.CapTable = {
             'RULEUCC_Guard',
@@ -74,6 +84,8 @@ BSA0002 = Class(SConstructionUnit) {
         end
     end,
 
+    ---@param self BSA0002
+    ---@param override boolean
     Patrolplatform = function(self, override)
         if override or (not self.Dead and not self.Parent.Dead and self:IsIdleState()) then
             local location = self.Parent:GetPosition()
@@ -102,6 +114,11 @@ BSA0002 = Class(SConstructionUnit) {
        end
     end,
 
+    ---@param self BSA0002
+    ---@param instigator Unit
+    ---@param amount number
+    ---@param vector Vector
+    ---@param damagetype DamageType
     OnDamage = function(self, instigator, amount, vector, damagetype)
         if not self.Dead and instigator and IsUnit(instigator) and not instigator.Dead and not self.EvadeThread then
             self.EvadeThread = self:ForkThread(function()
@@ -118,6 +135,10 @@ BSA0002 = Class(SConstructionUnit) {
         SConstructionUnit.OnDamage(self, instigator, amount, vector, damagetype)
     end,
 
+    ---@param self BSA0002
+    ---@param instigator Unit
+    ---@param type string
+    ---@param overkillRatio number
     OnKilled = function(self, instigator, type, overkillRatio)
 
         -- Clears the current RebuilderBot commands if any
@@ -132,6 +153,7 @@ BSA0002 = Class(SConstructionUnit) {
         SConstructionUnit.OnKilled(self, instigator, type, overkillRatio)
     end,
 
+    ---@param self BSA0002
     LaunchEffects = function(self)
         -- Are we dead?
         if not self.Dead then
