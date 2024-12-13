@@ -53,7 +53,7 @@ BAA0001 = Class(AirDroneUnit) {
         if ((new == 'Top' or new == 'Up') and old == 'Down') then
             self.AnimManip:SetRate(-1)
         elseif (new == 'Down') then
-            self.AnimManip:PlayAnim(bp).Display.AnimationLand, false):SetRate(1)
+            self.AnimManip:PlayAnim(bp.Display.AnimationLand, false):SetRate(1)
         elseif (new == 'Up') then
             self.AnimManip:PlayAnim(bp.Display.AnimationTakeOff, false):SetRate(1)
         end
