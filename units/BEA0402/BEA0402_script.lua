@@ -13,10 +13,12 @@ local CitadelHVMWeapon = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsWeapons
 local CitadelPlasmaGatlingCannonWeapon = import('/mods/BlackOpsFAF-Unleashed/lua/BlackOpsWeapons.lua').CitadelPlasmaGatlingCannonWeapon
 local EffectUtils = import('/lua/effectutilities.lua')
 local Effects = import('/lua/effecttemplates.lua')
+local DummyWeapon = import("/lua/aeonweapons.lua").AAASonicPulseBatteryWeapon
 
 ---@class BEA0402 : TAirUnit
 BEA0402 = Class(TAirUnit) {
     Weapons = {
+        GuidanceSystem = ClassWeapon(DummyWeapon) {},
         MainTurret01 = Class(RailGunWeapon02) {},
         MainTurret02 = Class(RailGunWeapon02) {},
         HVMTurret01 = Class(CitadelHVMWeapon) {},

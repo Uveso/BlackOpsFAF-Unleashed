@@ -16,8 +16,8 @@ UnitBlueprint {
         },
     },
     Air = {
-        BankFactor = 0,
-        BankForward = false,
+        BankFactor = 0.1,
+        BankForward = true,
         CanFly = true,
         CirclingDirChange = false,
         CirclingElevationChangeRatio = 0.1,
@@ -289,6 +289,33 @@ UnitBlueprint {
     VeteranMassMult = 0.5,
     Weapon = {
         {
+            Damage = 0,
+            DisplayName = "Weapon Guidance System",
+            FireTargetLayerCapsTable = {
+                Air = "Land|Water|Seabed",
+                Land = "Land|Water|Seabed",
+            },
+            Label = "GuidanceSystem",
+            MaxRadius = 40,
+            MuzzleSalvoDelay = 1,
+            MuzzleSalvoSize = 0,
+            ProjectileId = "/projectiles/AAASonicPulse02/AAASonicPulse02_proj.bp",
+            RackBones = {
+                {
+                    MuzzleBones = { "Muzzle_R" },
+                    RackBone = "Turret_Right",
+                },
+            },
+            RackRecoilDistance = 0,
+            TargetRestrictDisallow = "UNTARGETABLE AIR",
+            TurretPitch = 0,
+            TurretPitchRange = 45,
+            TurretPitchSpeed = 360,
+            TurretYaw = 0,
+            TurretYawRange = 180,
+            TurretYawSpeed = 360,
+        },
+        {
             AboveWaterFireOnly = true,
             AboveWaterTargetsOnly = true,
             Audio = {
@@ -374,10 +401,10 @@ UnitBlueprint {
             TurretBoneYaw = 'Railgun_Turret_1',
             TurretDualManipulators = false,
             TurretPitch = 0, -- Horizontal, bones are orientated incorrectly
-            TurretPitchRange = 150,
+            TurretPitchRange = 360,
             TurretPitchSpeed = 40,
             TurretYaw = 0, -- Vertical, bones are orientated incorrectly
-            TurretYawRange = 70,
+            TurretYawRange = 360,
             TurretYawSpeed = 40,
             Turreted = true,
             WeaponCategory = 'Direct Fire',
