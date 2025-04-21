@@ -1,5 +1,5 @@
 --- 
-## v26 (not released)
+## v26 (21.Apr.2025)
 
 - Added Annotations (MrRowey)
 - Speed up functions (MrRowey)
