@@ -110,7 +110,7 @@ UnitBlueprint {
         },
         UISelection = Sound {
             Bank = 'Interface',
-            Cue = 'UEF_Select_Tank',
+            Cue = 'UEF_Select_Air',
             LodCutoff = 'UnitMove_LodCutoff',
         },
     },

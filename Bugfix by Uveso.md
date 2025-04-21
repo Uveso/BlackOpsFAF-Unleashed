@@ -5,6 +5,7 @@
 - Speed up functions (MrRowey)
 - Fixed CreateProjectileAtMuzzle hooks by returning the projectile to parent function
 - Unit bea0402 (Experimental Aerial Fortress) now has a dummy weapon to attack enemies directly below.
+- Unit bea0402 (Experimental Aerial Fortress) UISelection from tank tp air unit (thanks to DJ_Calaco)
 
 ---
 
